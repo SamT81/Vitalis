@@ -1,0 +1,351 @@
+/* =============================================================================
+   Vitalis · RIBAS — ESTILOS GLOBALES COMPARTIDOS
+   -----------------------------------------------------------------------------
+   Se carga en TODAS las páginas, antes del CSS específico de cada pantalla.
+   Contiene: tokens de diseño, tipografía base, marca, navbar (con estados de
+   sesión), footer, botones, formularios y widgets reutilizables (tarjetas de
+   estadística, insignias, barras de progreso, filas de historial…).
+   Paleta y escala conservadas del diseño original (rose / slate).
+   ============================================================================= */
+
+/* ─── 1. Tokens de diseño ─────────────────────────────────────────────────── */
+:root {
+  --rose-50:  #fff1f2;  --rose-100: #ffe4e6;  --rose-200: #fecdd3;
+  --rose-400: #fb7185;  --rose-500: #f43f5e;  --rose-600: #e11d48;
+  --rose-700: #be123c;  --rose-900: #881337;
+
+  --slate-50:  #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0;
+  --slate-300: #cbd5e1; --slate-400: #94a3b8; --slate-500: #64748b;
+  --slate-600: #475569; --slate-700: #334155; --slate-900: #0f172a;
+
+  --emerald-50: #ecfdf5; --emerald-100: #d1fae5; --emerald-200: #a7f3d0;
+  --emerald-500: #10b981; --emerald-600: #059669; --emerald-700: #047857;
+  --sky-50: #f0f9ff; --sky-100: #e0f2fe; --sky-600: #0284c7; --sky-700: #0369a1;
+  --amber-50: #fffbeb; --amber-100: #fef3c7; --amber-400: #fbbf24;
+  --amber-500: #f59e0b; --amber-600: #d97706; --amber-700: #b45309;
+  --orange-50: #fff7ed; --orange-600: #ea580c;
+
+  --r-lg: .75rem;    /* rounded-xl  */
+  --r-xl: 1rem;      /* rounded-2xl */
+  --r-2xl: 1.5rem;   /* rounded-3xl */
+
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, .04), 0 8px 24px rgba(15, 23, 42, .05);
+}
+
+/* ─── 2. Base ─────────────────────────────────────────────────────────────── */
+* { -webkit-font-smoothing: antialiased; }
+
+body {
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--slate-50);
+  color: var(--slate-900);
+  letter-spacing: -0.01em;
+}
+
+h1, h2, h3 { letter-spacing: -0.025em; font-weight: 600; }
+
+.text-rose        { color: var(--rose-600) !important; }
+.text-muted-soft  { color: var(--slate-400) !important; }
+.fw-medium        { font-weight: 500; }
+.fw-semibold      { font-weight: 600; }
+.min-w-0          { min-width: 0; }
+
+.container-xl     { max-width: 1120px; }
+.container-narrow { max-width: 768px; margin-inline: auto; padding-inline: 1.5rem; }
+
+.py-section { padding-block: 5rem; }
+.pb-section { padding-bottom: 6rem; }
+
+section[id] { scroll-margin-top: 6.5rem; }
+
+/* ─── 3. Marca / logotipo ─────────────────────────────────────────────────── */
+.brand { display: inline-flex; align-items: center; gap: .6rem; text-decoration: none; }
+/* Logo del Navbar: imagen PNG única, nítida y alineada con el menú */
+.navbar-brand img {
+  height: 70px;      /* altura fija para no deformar el navbar */
+  width: auto;       /* mantiene la proporción original */
+  object-fit: contain;
+  display: block;
+}
+
+/* Logo de Vitalis en el Footer: misma imagen, tamaño armónico */
+.footer-logo {
+  height: 46px;
+  width: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.brand-mark {
+  width: 36px; height: 36px; border-radius: var(--r-lg);
+  background: var(--rose-600); color: #fff;
+  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.brand-mark svg { width: 18px; height: 18px; }
+
+.brand-name { font-weight: 700; color: var(--slate-900); letter-spacing: -0.02em; line-height: 1; }
+.brand-sub  { font-size: .68rem; color: var(--slate-400); letter-spacing: .04em; text-transform: uppercase; margin-top: 3px; }
+
+/* ─── 4. Cabecera / navbar ────────────────────────────────────────────────── */
+.site-header {
+  background: rgba(255, 255, 255, .85);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--slate-100);
+  z-index: 1030;
+}
+.site-header .navbar { padding-block: .5rem; }
+
+.navbar-nav .nav-link {
+  font-size: .9rem; color: var(--slate-500); font-weight: 500;
+  transition: color .15s ease; position: relative;
+}
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link:focus { color: var(--slate-900); }
+.navbar-nav .nav-link.active { color: var(--rose-600); font-weight: 600; }
+
+@media (min-width: 992px) {
+  .navbar-nav .nav-link.active::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: -6px;
+    height: 2px; border-radius: 2px; background: var(--rose-600);
+  }
+}
+
+.navbar-toggler { color: var(--slate-700); padding: .25rem; border: 0; }
+.navbar-toggler:focus { box-shadow: none; }
+.navbar-toggler svg { width: 24px; height: 24px; }
+
+/* Estado de sesión: muestra/oculta bloques según data-auth del <html> */
+html[data-auth="guest"] [data-auth="user"],
+html[data-auth="user"]  [data-auth="guest"] { display: none !important; }
+
+.nav-user {
+  display: inline-flex; align-items: center; gap: .5rem;
+  text-decoration: none; padding: .2rem .3rem; border-radius: 999px;
+}
+.nav-user:hover { background: var(--slate-100); }
+.nav-user-avatar {
+  width: 30px; height: 30px; border-radius: 999px; flex-shrink: 0;
+  background: var(--rose-50); border: 1px solid var(--rose-100); color: var(--rose-600);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .72rem; font-weight: 700;
+}
+.nav-user-name { font-size: .85rem; font-weight: 600; color: var(--slate-700); }
+
+/* ─── 5. Botones ──────────────────────────────────────────────────────────── */
+.btn {
+  font-weight: 600; border-radius: var(--r-lg);
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease, transform .15s ease;
+}
+.btn svg { width: 16px; height: 16px; }
+.btn-lg { padding: .8rem 1.6rem; font-size: .95rem; }
+.btn-sm { padding: .4rem .8rem; font-size: .8rem; border-radius: .6rem; }
+
+.btn-brand { background: var(--rose-600); color: #fff; box-shadow: 0 1px 2px var(--rose-200); }
+.btn-brand:hover, .btn-brand:focus-visible { background: var(--rose-700); color: #fff; }
+
+.btn-ghost { color: var(--slate-700); background: transparent; }
+.btn-ghost:hover { color: var(--slate-900); background: var(--slate-100); }
+
+.btn-outline-soft { color: var(--slate-700); background: #fff; border: 1px solid var(--slate-200); }
+.btn-outline-soft:hover { border-color: var(--slate-300); background: var(--slate-50); color: var(--slate-900); }
+
+.btn-light { background: #fff; color: var(--slate-900); }
+.btn-light:hover { background: var(--slate-100); color: var(--slate-900); }
+
+.link-brand { background: none; border: 0; padding: 0; color: var(--rose-600); font-weight: 500; font-size: inherit; }
+.link-brand:hover { color: var(--rose-700); text-decoration: underline; }
+
+/* ─── 6. Componentes reutilizables ────────────────────────────────────────── */
+.pill {
+  display: inline-flex; align-items: center; gap: .4rem;
+  background: var(--rose-50); border: 1px solid var(--rose-100); color: var(--rose-700);
+  font-size: .78rem; font-weight: 500; padding: .38rem .9rem; border-radius: 999px;
+}
+.pill svg { width: 14px; height: 14px; }
+
+.card-soft {
+  background: #fff; border: 1px solid var(--slate-100);
+  border-radius: var(--r-xl); box-shadow: var(--shadow-card);
+}
+
+.section-band {
+  background: rgba(248, 250, 252, .7);
+  border-block: 1px solid var(--slate-100);
+  padding-block: 5rem;
+}
+
+.section-head { max-width: 560px; margin-bottom: 3.5rem; text-align: center; }
+.section-head h2 { font-size: 1.9rem; color: var(--slate-900); }
+.section-head p  { color: var(--slate-500); margin-top: .75rem; margin-bottom: 0; }
+
+.block-title { font-size: 1.05rem; font-weight: 600; color: var(--slate-900); }
+.hint { font-size: .75rem; color: var(--slate-400); }
+
+.icon-circle {
+  width: 60px; height: 60px; border-radius: 999px;
+  background: var(--rose-600); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+}
+.icon-circle svg { width: 26px; height: 26px; }
+
+.page-head { padding-top: 3.5rem; padding-bottom: 1rem; text-align: center; }
+.page-head h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); color: var(--slate-900); }
+.page-head p  { color: var(--slate-500); max-width: 40rem; margin: 1rem auto 0; }
+
+/* Barras de progreso reutilizables */
+.progress-thin { height: 6px; background: var(--slate-100); border-radius: 999px; }
+.progress-thin .progress-bar { border-radius: 999px; }
+.bg-rose  { background: var(--rose-500); }
+.bg-grad-level { background: linear-gradient(90deg, var(--rose-500), var(--amber-400)); }
+
+/* Etiquetas de estado */
+.tag {
+  display: inline-flex; align-items: center; gap: .25rem;
+  font-size: .72rem; font-weight: 500; padding: .25rem .6rem;
+  border-radius: .5rem; border: 1px solid transparent;
+}
+.tag-emerald { background: var(--emerald-50); color: var(--emerald-700); border-color: var(--emerald-100); }
+.tag-sky     { background: var(--sky-50); color: var(--sky-700); border-color: var(--sky-100); }
+.tag-amber   { background: var(--amber-50); color: var(--amber-700); border-color: var(--amber-100); }
+.tag-slate   { background: var(--slate-100); color: var(--slate-500); border-color: var(--slate-200); }
+
+/* ─── 7. Formularios ──────────────────────────────────────────────────────── */
+.form-label {
+  font-size: .78rem; font-weight: 500; color: var(--slate-500);
+  text-transform: uppercase; letter-spacing: .04em; margin-bottom: .4rem;
+}
+.form-control, .form-select {
+  background: var(--slate-50); border: 1px solid var(--slate-200);
+  border-radius: var(--r-lg); font-size: .9rem; color: var(--slate-900); padding: .6rem .85rem;
+}
+.form-control::placeholder { color: var(--slate-400); }
+.form-control:focus, .form-select:focus {
+  background: #fff; border-color: var(--rose-400); box-shadow: 0 0 0 3px var(--rose-100);
+}
+.form-success {
+  display: flex; align-items: center; gap: .4rem;
+  font-size: .85rem; color: var(--emerald-700); font-weight: 500;
+}
+.form-success svg { width: 16px; height: 16px; }
+.form-error {
+  display: none; align-items: center; gap: .4rem;
+  font-size: .82rem; color: var(--rose-700); font-weight: 500;
+  background: var(--rose-50); border: 1px solid var(--rose-100);
+  border-radius: var(--r-lg); padding: .6rem .8rem;
+}
+.form-error.show { display: flex; }
+.form-error svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+/* ─── 8. Widgets compartidos (perfil + gamificación) ──────────────────────── */
+.avatar-lg {
+  width: 64px; height: 64px; border-radius: 999px;
+  background: var(--rose-50); border: 2px solid var(--rose-100); color: var(--rose-600);
+  display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.25rem;
+}
+.donor-name { font-size: 1.1rem; font-weight: 600; color: var(--slate-900); }
+.donor-id   { font-size: .72rem; color: var(--slate-400); }
+
+.blood-chip {
+  display: inline-flex; align-items: center; gap: .35rem;
+  background: var(--rose-50); border: 1px solid var(--rose-100);
+  border-radius: 999px; padding: .25rem .8rem;
+  color: var(--rose-700); font-weight: 700; font-size: .85rem;
+}
+.blood-chip svg { width: 14px; height: 14px; }
+
+.stat-tile { border: 1px solid var(--slate-100); border-radius: var(--r-xl); padding: 1rem; display: flex; gap: .75rem; height: 100%; }
+.stat-tile svg { width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px; }
+.stat-tile .st-label { font-size: .72rem; color: var(--slate-500); margin-bottom: .35rem; }
+.stat-tile .st-value { font-weight: 700; font-size: 1.05rem; line-height: 1.2; }
+.st-rose   { background: var(--rose-50); }   .st-rose   .st-value, .st-rose   svg { color: var(--rose-600); }
+.st-amber  { background: var(--amber-50); }  .st-amber  .st-value, .st-amber  svg { color: var(--amber-600); }
+.st-sky    { background: var(--sky-50); }    .st-sky    .st-value, .st-sky    svg { color: var(--sky-600); }
+.st-orange { background: var(--orange-50); } .st-orange .st-value, .st-orange svg { color: var(--orange-600); }
+.st-emerald{ background: var(--emerald-50); }.st-emerald .st-value, .st-emerald svg { color: var(--emerald-600); }
+
+.progress-card { background: #fff; border: 1px solid var(--slate-100); border-radius: var(--r-xl); padding: 1rem; box-shadow: var(--shadow-card); }
+.progress-card .pc-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: .5rem; }
+.progress-card .pc-label { font-size: .72rem; font-weight: 500; color: var(--slate-500); display: flex; align-items: center; gap: .4rem; }
+.progress-card .pc-label svg { width: 14px; height: 14px; }
+.progress-card .pc-value { font-size: .85rem; font-weight: 700; color: var(--slate-900); }
+.progress-card .progress { height: 8px; background: var(--slate-100); border-radius: 999px; }
+.progress-card .pc-hint { font-size: .72rem; color: var(--slate-400); margin: .4rem 0 0; }
+
+.badge-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: .75rem; }
+.badge-btn {
+  aspect-ratio: 1; border-radius: var(--r-xl);
+  border: 1px solid var(--slate-100); background: var(--slate-50);
+  font-size: 1.5rem; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all .15s ease;
+}
+.badge-btn:hover { background: var(--slate-100); }
+.badge-btn.is-active { border-color: var(--rose-200); background: var(--rose-50); transform: scale(1.05); }
+.badge-btn.is-locked { opacity: .35; filter: grayscale(1); }
+
+.badge-detail {
+  background: var(--slate-50); border: 1px solid var(--slate-100);
+  border-radius: var(--r-lg); padding: 1rem; display: flex; gap: 1rem; align-items: flex-start;
+}
+.badge-detail .bd-ico {
+  width: 44px; height: 44px; border-radius: var(--r-lg); background: var(--rose-50);
+  display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0;
+}
+.badge-detail .bd-ico.is-locked { background: var(--slate-100); filter: grayscale(1); opacity: .6; }
+.badge-detail .bd-name { font-weight: 600; font-size: .88rem; color: var(--slate-900); }
+.badge-detail p { font-size: .75rem; color: var(--slate-500); margin: .35rem 0 0; }
+.badge-detail p b { color: var(--slate-600); font-weight: 500; }
+
+.chip { font-size: .68rem; font-weight: 500; padding: .1rem .5rem; border-radius: 999px; border: 1px solid transparent; white-space: nowrap; }
+.chip-unlocked { background: var(--emerald-50); color: var(--emerald-700); border-color: var(--emerald-100); }
+.chip-locked   { background: var(--slate-100); color: var(--slate-500); border-color: var(--slate-200); }
+
+.history-row { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .9rem 1.25rem; flex-wrap: wrap; }
+.history-row + .history-row { border-top: 1px solid var(--slate-100); }
+.history-ico {
+  width: 32px; height: 32px; border-radius: .5rem; background: var(--rose-50); color: var(--rose-600);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.history-ico svg { width: 14px; height: 14px; }
+.history-inst { font-size: .85rem; font-weight: 500; color: var(--slate-900); }
+.history-meta { font-size: .72rem; color: var(--slate-400); }
+
+.empty-state {
+  text-align: center; padding: 2.5rem 1.5rem; color: var(--slate-400);
+  font-size: .88rem;
+}
+.empty-state svg { width: 26px; height: 26px; margin-bottom: .5rem; color: var(--slate-300); }
+
+@media (min-width: 576px) {
+  .badge-grid { grid-template-columns: repeat(8, 1fr); }
+}
+
+/* ─── 9. Barra de confianza + footer ──────────────────────────────────────── */
+.trust-bar { border-top: 1px solid var(--slate-100); background: rgba(248, 250, 252, .5); padding-block: 2rem; }
+.trust-bar svg { width: 16px; height: 16px; color: var(--slate-400); flex-shrink: 0; }
+.trust-bar p  { font-size: .75rem; color: var(--slate-400); max-width: 46rem; }
+
+.site-footer { border-top: 1px solid var(--slate-100); background: #fff; padding-block: 2.75rem; }
+.footer-grid { display: flex; flex-wrap: wrap; gap: 2rem 3rem; align-items: flex-start; justify-content: space-between; }
+.footer-brand { max-width: 20rem; }
+.footer-brand p { font-size: .8rem; color: var(--slate-500); line-height: 1.6; margin: .75rem 0 0; }
+
+.footer-links { display: flex; gap: 3rem; flex-wrap: wrap; }
+.footer-col h4 { font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--slate-400); margin-bottom: .75rem; }
+.footer-col a { display: block; font-size: .85rem; color: var(--slate-600); text-decoration: none; padding: .2rem 0; }
+.footer-col a:hover { color: var(--rose-600); }
+
+.footer-bottom {
+  margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--slate-100);
+  display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; justify-content: space-between;
+}
+.footer-bottom, .footer-bottom a { font-size: .74rem; color: var(--slate-400); }
+.footer-bottom a { text-decoration: none; }
+.footer-bottom a:hover { color: var(--rose-600); }
+
+/* ─── 10. Responsive base ─────────────────────────────────────────────────── */
+@media (max-width: 991.98px) {
+  .navbar-collapse { padding-top: .5rem; }
+  .section-band, .py-section { padding-block: 3.5rem; }
+  .navbar-nav { gap: .25rem; }
+}

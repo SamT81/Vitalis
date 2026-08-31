@@ -1,0 +1,123 @@
+/* =============================================================================
+   Vitalis · RIBAS — MÓDULO DE CAMPAÑAS (campanas.html)
+   Depende de: css/global.css
+   ============================================================================= */
+
+/* ─── Controles superiores (vista + filtro) ───────────────────────────────── */
+.campaign-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;
+}
+.view-switch { display: inline-flex; background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: .5rem; padding: 2px; }
+.view-btn {
+  display: inline-flex; align-items: center; gap: .35rem;
+  border: 0; background: transparent; color: var(--slate-400);
+  font-size: .75rem; font-weight: 500; padding: .3rem .65rem; border-radius: .4rem;
+}
+.view-btn svg { width: 14px; height: 14px; }
+.view-btn.is-active { background: #fff; color: var(--slate-900); box-shadow: 0 1px 2px rgba(15,23,42,.1); }
+
+.date-input { max-width: 170px; font-size: .78rem; }
+.icon-btn {
+  background: none; border: 0; padding: .25rem;
+  color: var(--slate-400); transition: color .15s ease;
+}
+.icon-btn:hover { color: var(--slate-700); }
+.icon-btn svg { width: 18px; height: 18px; }
+
+/* ─── Subtítulo de grupo (Activas / Próximas) ─────────────────────────────── */
+.group-title {
+  display: flex; align-items: center; gap: .6rem;
+  font-size: 1rem; font-weight: 600; color: var(--slate-900);
+  margin: 2.5rem 0 1.25rem;
+}
+.group-title:first-of-type { margin-top: 0; }
+.group-title .count {
+  font-size: .72rem; font-weight: 500; color: var(--slate-500);
+  background: var(--slate-100); border-radius: 999px; padding: .1rem .6rem;
+}
+.group-dot { width: 8px; height: 8px; border-radius: 999px; flex-shrink: 0; }
+.group-dot.is-live { background: var(--emerald-500, #10b981); box-shadow: 0 0 0 4px var(--emerald-100); }
+.group-dot.is-soon { background: var(--amber-400); box-shadow: 0 0 0 4px var(--amber-100); }
+
+/* ─── Tarjeta de campaña ──────────────────────────────────────────────────── */
+.campaign-card {
+  background: #fff; border: 1px solid var(--slate-100); border-radius: var(--r-xl);
+  padding: 1.4rem; height: 100%; box-shadow: var(--shadow-card);
+  transition: border-color .2s ease, transform .2s ease;
+  display: flex; flex-direction: column;
+}
+.campaign-card:hover { transform: translateY(-2px); }
+.campaign-card.is-enrolled { border-color: var(--emerald-200); }
+
+.cc-head { display: flex; justify-content: space-between; align-items: flex-start; gap: .75rem; margin-bottom: .85rem; }
+.cc-name { font-size: .95rem; font-weight: 600; color: var(--slate-900); margin-bottom: .3rem; }
+.cc-loc { display: flex; align-items: flex-start; gap: .35rem; font-size: .76rem; color: var(--slate-400); }
+.cc-loc svg { width: 13px; height: 13px; flex-shrink: 0; margin-top: 2px; }
+.cc-dist { font-size: .72rem; color: var(--slate-300); white-space: nowrap; }
+.badge-inscrito {
+  display: inline-block; margin-top: .35rem; padding: .1rem .5rem;
+  font-size: .68rem; font-weight: 500; border-radius: .3rem;
+  background: var(--emerald-50); color: var(--emerald-700); border: 1px solid var(--emerald-100);
+}
+
+.cc-datetime { display: flex; flex-wrap: wrap; gap: .35rem 1rem; margin-bottom: 1rem; }
+.cc-datetime span { display: flex; align-items: center; gap: .4rem; font-size: .78rem; color: var(--slate-500); }
+.cc-datetime svg { width: 13px; height: 13px; color: var(--rose-500); }
+
+/* Barra de progreso de la meta */
+.cc-progress { margin-bottom: 1rem; }
+.cc-progress-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: .4rem; }
+.cc-progress-pct { font-size: .82rem; font-weight: 700; color: var(--rose-600); }
+.cc-progress-goal { font-size: .72rem; color: var(--slate-400); }
+.cc-bar { height: 8px; background: var(--slate-100); border-radius: 999px; overflow: hidden; }
+.cc-bar > div { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--rose-500), var(--rose-600)); transition: width .4s ease; }
+.cc-progress-hint { font-size: .72rem; color: var(--slate-400); margin: .4rem 0 0; }
+
+.cc-types { display: flex; flex-wrap: wrap; gap: .3rem; margin-bottom: 1rem; }
+.bt-chip {
+  font-size: .7rem; font-weight: 500; color: var(--rose-600);
+  background: var(--rose-50); border: 1px solid var(--rose-100);
+  padding: .1rem .4rem; border-radius: .35rem;
+}
+
+.btn-enroll {
+  width: 100%; border: 0; border-radius: var(--r-lg); margin-top: auto;
+  padding: .7rem; font-size: .85rem; font-weight: 600;
+  background: var(--rose-600); color: #fff; transition: all .2s ease;
+  display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
+}
+.btn-enroll svg { width: 15px; height: 15px; }
+.btn-enroll:hover { background: var(--rose-700); }
+.btn-enroll.is-enrolled {
+  background: var(--emerald-50); color: var(--emerald-700); border: 1px solid var(--emerald-200);
+}
+.btn-enroll.is-enrolled:hover { background: var(--rose-50); color: var(--rose-600); border-color: var(--rose-200); }
+
+/* ─── Vista mapa (previsualización) ───────────────────────────────────────── */
+.campaign-map {
+  position: relative; min-height: 340px; overflow: hidden;
+  background: var(--slate-50); border: 1px solid var(--slate-100); border-radius: var(--r-xl);
+  background-image:
+    linear-gradient(to right, #e2e8f0 1px, transparent 1px),
+    linear-gradient(to bottom, #e2e8f0 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+.map-pins { position: relative; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; padding: 2.5rem; place-items: center; }
+.map-pin { display: flex; flex-direction: column; align-items: center; gap: .5rem; text-align: center; }
+.map-pin .mp-dot {
+  width: 36px; height: 36px; border-radius: 999px; background: var(--rose-600); color: #fff;
+  display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(15,23,42,.15);
+}
+.map-pin.is-enrolled .mp-dot { background: var(--emerald-600); }
+.map-pin .mp-dot svg { width: 16px; height: 16px; }
+.map-pin .mp-name { font-size: .72rem; font-weight: 500; color: var(--slate-600); max-width: 120px; line-height: 1.3; }
+.map-pin .mp-dist { font-size: .68rem; color: var(--slate-400); }
+.map-note {
+  position: absolute; bottom: .75rem; right: .75rem;
+  background: rgba(255,255,255,.9); border: 1px solid var(--slate-200);
+  border-radius: .5rem; padding: .3rem .7rem; font-size: .68rem; color: var(--slate-400);
+}
+
+@media (min-width: 576px) { .map-pins { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 575.98px) { .map-pins { padding: 1.5rem; } }

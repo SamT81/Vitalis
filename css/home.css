@@ -1,0 +1,87 @@
+/* =============================================================================
+   Vitalis · RIBAS — PÁGINA PRINCIPAL / BIENVENIDA (index.html)
+   Depende de: css/global.css
+   ============================================================================= */
+
+/* ─── Hero ────────────────────────────────────────────────────────────────── */
+.hero { padding-top: 5rem; padding-bottom: 4rem; text-align: center; }
+.hero-title { font-size: clamp(2.2rem, 6vw, 3.6rem); line-height: 1.1; max-width: 46rem; margin-inline: auto; color: var(--slate-900); }
+.hero-lead  { color: var(--slate-500); font-size: 1.12rem; line-height: 1.6; max-width: 36rem; margin: 1.5rem auto 0; }
+.hero-kicker {
+  color: var(--rose-600); font-size: .72rem; font-weight: 600;
+  letter-spacing: .2em; text-transform: uppercase; margin-top: 1.25rem;
+}
+
+.hero-stats {
+  max-width: 32rem; margin: 4rem auto 0; padding-top: 2.5rem;
+  border-top: 1px solid var(--slate-100);
+}
+.stat-value { font-size: 1.5rem; font-weight: 600; color: var(--slate-900); }
+.stat-label { font-size: .75rem; color: var(--slate-400); margin-top: .25rem; }
+
+/* ─── Misión institucional ────────────────────────────────────────────────── */
+.mission {
+  background: var(--slate-900);
+  border-radius: var(--r-2xl);
+  padding: 3.5rem 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.mission-glow {
+  position: absolute; width: 20rem; height: 20rem; border-radius: 999px;
+  background: rgba(225, 29, 72, .18); filter: blur(70px);
+  top: -6rem; right: -6rem;
+}
+.mission .position-relative { max-width: 46rem; margin-inline: auto; text-align: center; }
+.mission-label {
+  display: inline-flex; align-items: center; gap: .4rem;
+  color: var(--rose-400); font-size: .72rem; font-weight: 600;
+  letter-spacing: .16em; text-transform: uppercase; margin-bottom: 1.25rem;
+}
+.mission-label svg { width: 15px; height: 15px; }
+.mission-quote {
+  color: #fff; font-size: clamp(1.15rem, 2.4vw, 1.6rem);
+  line-height: 1.55; font-weight: 500; margin: 0;
+}
+.mission-quote::before,
+.mission-quote::after { content: '"'; color: var(--rose-400); }
+.mission-sign { color: var(--slate-400); font-size: .82rem; margin-top: 1.5rem; }
+
+/* ─── Beneficios / pilares de la red ──────────────────────────────────────── */
+.benefit-card {
+  background: #fff; border: 1px solid var(--slate-100); border-radius: var(--r-xl);
+  padding: 1.75rem; height: 100%;
+  transition: box-shadow .2s ease, transform .2s ease;
+}
+.benefit-card:hover { box-shadow: 0 10px 30px rgba(148, 163, 184, .25); transform: translateY(-2px); }
+.benefit-ico {
+  width: 44px; height: 44px; border-radius: var(--r-lg);
+  background: var(--rose-50); color: var(--rose-600);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem;
+}
+.benefit-ico svg { width: 20px; height: 20px; }
+.benefit-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: .5rem; }
+.benefit-card p  { font-size: .88rem; color: var(--slate-500); line-height: 1.6; margin: 0; }
+
+/* ─── Cómo funciona ───────────────────────────────────────────────────────── */
+.step-num { font-size: 3rem; font-weight: 600; color: var(--slate-100); line-height: 1; }
+.step h3  { font-size: 1rem; font-weight: 600; margin: .5rem 0; }
+.step p   { font-size: .88rem; color: var(--slate-500); line-height: 1.6; margin: 0; }
+
+/* ─── CTA ─────────────────────────────────────────────────────────────────── */
+.cta-box {
+  position: relative; overflow: hidden;
+  background: var(--slate-900); border-radius: var(--r-2xl);
+  padding: 3.5rem 2rem; text-align: center;
+}
+.cta-glow { position: absolute; width: 16rem; height: 16rem; border-radius: 999px; filter: blur(60px); }
+.cta-glow-1 { top: -4rem; right: -4rem; background: rgba(225, 29, 72, .22); }
+.cta-glow-2 { bottom: -4rem; left: -4rem; background: rgba(225, 29, 72, .12); }
+.cta-icon { width: 32px; height: 32px; color: var(--rose-400); margin-bottom: 1rem; }
+.cta-title { color: #fff; font-size: 1.7rem; max-width: 30rem; margin-inline: auto; }
+
+@media (max-width: 575.98px) {
+  .hero { padding-top: 3rem; }
+  .cta-title { font-size: 1.4rem; }
+  .mission { padding: 2.5rem 1.5rem; }
+}

@@ -1,0 +1,73 @@
+/* =============================================================================
+   Vitalis · RIBAS — GAMIFICACIÓN GENERAL (gamificacion.html)
+   Explicación pública del sistema de puntos, niveles/insignias e impacto de la red.
+   Depende de: css/global.css
+   ============================================================================= */
+
+/* ─── Sistema de puntos ───────────────────────────────────────────────────── */
+.points-hero {
+  background: linear-gradient(135deg, var(--rose-600), var(--rose-900));
+  border-radius: var(--r-xl); padding: 1.75rem; color: #fff;
+  display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap;
+}
+.points-hero .ph-icon {
+  width: 52px; height: 52px; border-radius: var(--r-lg);
+  background: rgba(255,255,255,.15); display: flex; align-items: center; justify-content: center;
+}
+.points-hero .ph-icon svg { width: 24px; height: 24px; }
+.points-hero .ph-title { font-size: 1.05rem; font-weight: 700; }
+.points-hero .ph-label { font-size: .82rem; opacity: .9; margin-top: .2rem; }
+
+.point-rule {
+  display: flex; align-items: center; gap: .85rem;
+  padding: .9rem 1rem; border: 1px solid var(--slate-100);
+  border-radius: var(--r-lg); background: #fff; height: 100%;
+}
+.point-rule .pr-ico {
+  width: 38px; height: 38px; border-radius: .6rem; background: var(--rose-50); color: var(--rose-600);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.point-rule .pr-ico svg { width: 17px; height: 17px; }
+.point-rule .pr-title { font-size: .85rem; font-weight: 600; color: var(--slate-900); }
+.point-rule .pr-pts { font-size: .75rem; font-weight: 700; color: var(--rose-600); }
+.point-rule .pr-desc { font-size: .72rem; color: var(--slate-400); }
+
+/* ─── Niveles de héroe / catálogo de insignias ────────────────────────────── */
+.hero-level {
+  background: #fff; border: 1px solid var(--slate-100); border-radius: var(--r-xl);
+  padding: 1.4rem; height: 100%; text-align: center;
+  transition: border-color .2s ease, transform .2s ease;
+}
+.hero-level:hover { border-color: var(--rose-200); transform: translateY(-2px); }
+.hero-level .hl-icon {
+  width: 56px; height: 56px; margin: 0 auto .75rem; border-radius: 999px;
+  background: var(--rose-50); display: flex; align-items: center; justify-content: center; font-size: 1.6rem;
+}
+.hero-level .hl-name { font-size: .95rem; font-weight: 600; color: var(--slate-900); }
+.hero-level .hl-req { font-size: .78rem; color: var(--slate-500); margin: .5rem 0 .35rem; line-height: 1.5; }
+.hero-level .hl-benefit { font-size: .74rem; color: var(--slate-400); line-height: 1.5; }
+.hero-level .hl-benefit b { color: var(--rose-600); font-weight: 600; }
+
+/* ─── Tabla de impacto social (ranking público) ───────────────────────────── */
+.impact-counters { display: grid; grid-template-columns: repeat(2, 1fr); gap: .9rem; }
+.impact-counter { border: 1px solid var(--slate-100); border-radius: var(--r-xl); padding: 1.15rem; background: #fff; text-align: center; }
+.impact-counter svg { width: 20px; height: 20px; color: var(--rose-600); }
+.impact-counter .ic-value { font-size: 1.5rem; font-weight: 700; color: var(--slate-900); margin-top: .35rem; }
+.impact-counter .ic-label { font-size: .72rem; color: var(--slate-400); margin-top: .15rem; }
+
+.leaderboard { border: 1px solid var(--slate-100); border-radius: var(--r-xl); background: #fff; overflow: hidden; }
+.lb-row { display: flex; align-items: center; gap: .9rem; padding: .85rem 1.1rem; }
+.lb-row + .lb-row { border-top: 1px solid var(--slate-100); }
+.lb-rank {
+  width: 26px; height: 26px; border-radius: 999px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .78rem; font-weight: 700; color: var(--slate-500); background: var(--slate-100);
+}
+.lb-rank.top { background: var(--amber-100); color: var(--amber-700); }
+.lb-name { font-size: .85rem; font-weight: 500; color: var(--slate-900); flex-grow: 1; min-width: 0; }
+.lb-name small { display: block; font-size: .7rem; font-weight: 400; color: var(--slate-400); }
+.lb-score { font-size: .82rem; font-weight: 700; color: var(--rose-600); white-space: nowrap; }
+
+@media (min-width: 576px) {
+  .impact-counters { grid-template-columns: repeat(4, 1fr); }
+}

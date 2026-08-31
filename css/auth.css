@@ -1,0 +1,65 @@
+/* =============================================================================
+   Vitalis · RIBAS — AUTENTICACIÓN (login.html + registro.html)
+   Depende de: css/global.css
+   ============================================================================= */
+
+.auth-wrap {
+  min-height: calc(100vh - 64px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 3rem 1.25rem;
+}
+
+.auth-card {
+  width: 100%; max-width: 460px;
+  background: #fff; border: 1px solid var(--slate-200);
+  border-radius: var(--r-2xl);
+  box-shadow: 0 30px 60px rgba(15, 23, 42, .10);
+  padding: 2.25rem;
+}
+.auth-card.is-wide { max-width: 560px; }
+
+.auth-head { text-align: center; margin-bottom: 1.75rem; }
+.auth-head .icon-circle { margin: 0 auto .9rem; width: 46px; height: 46px; border-radius: var(--r-lg); }
+.auth-head .icon-circle svg { width: 20px; height: 20px; }
+.auth-head h1 { font-size: 1.3rem; color: var(--slate-900); }
+.auth-head p  { font-size: .85rem; color: var(--slate-500); margin: .4rem 0 0; }
+
+.auth-card .form-control,
+.auth-card .form-select { padding: .65rem .9rem; }
+
+.auth-remember {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: .8rem; color: var(--slate-500); margin: .25rem 0 .25rem;
+}
+.auth-remember label { display: flex; align-items: center; gap: .45rem; cursor: pointer; margin: 0; }
+.auth-remember input { accent-color: var(--rose-600); width: 15px; height: 15px; }
+
+.auth-switch { text-align: center; font-size: .82rem; color: var(--slate-500); margin-top: 1.25rem; }
+.auth-switch a { color: var(--rose-600); font-weight: 600; text-decoration: none; }
+.auth-switch a:hover { text-decoration: underline; }
+
+.auth-divider {
+  display: flex; align-items: center; gap: .75rem;
+  color: var(--slate-400); font-size: .72rem; text-transform: uppercase; letter-spacing: .06em;
+  margin: 1.25rem 0;
+}
+.auth-divider::before, .auth-divider::after {
+  content: ""; flex: 1; height: 1px; background: var(--slate-200);
+}
+
+.auth-demo {
+  background: var(--slate-50); border: 1px solid var(--slate-200);
+  border-radius: var(--r-lg); padding: .85rem 1rem; font-size: .78rem; color: var(--slate-500);
+}
+.auth-demo b { color: var(--slate-700); }
+.auth-demo code {
+  background: #fff; border: 1px solid var(--slate-200); border-radius: .4rem;
+  padding: .05rem .35rem; color: var(--rose-700); font-size: .74rem;
+}
+
+.privacy-note {
+  display: flex; gap: .5rem; align-items: flex-start;
+  background: var(--slate-50); border: 1px solid var(--slate-200);
+  border-radius: var(--r-lg); padding: .8rem; font-size: .72rem; color: var(--slate-500);
+}
+.privacy-note svg { width: 14px; height: 14px; color: var(--slate-400); flex-shrink: 0; margin-top: 2px; }

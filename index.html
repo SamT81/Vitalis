@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vitalis · RIBAS — Red Interinstitucional de Bancos de Sangre</title>
+  <meta name="description"
+        content="Vitalis conecta y optimiza la Red Interinstitucional de Bancos de Sangre (RIBAS): gestión, donación y distribución oportuna de componentes sanguíneos para salvar vidas." />
+  <meta name="theme-color" content="#e11d48" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <script>try{document.documentElement.dataset.auth=JSON.parse(localStorage.getItem('vitalis_session'))?'user':'guest';}catch(e){document.documentElement.dataset.auth='guest';}</script>
+
+  <!-- Tipografía -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Bootstrap 5 + estilos del proyecto -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/home.css" />
+</head>
+
+<body>
+
+<!-- ═══════════════ NAVBAR (compartido) ═══════════════ -->
+<header class="site-header sticky-top">
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-xl">
+      <a class="navbar-brand" href="index.html">
+        <img src="assets/image-Photoroom.png" alt="Logo Vitalis" />
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
+              aria-controls="navMenu" aria-expanded="false" aria-label="Abrir menú de navegación">
+        <i data-lucide="menu"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav mx-lg-auto gap-lg-4">
+          <li class="nav-item"><a class="nav-link active" aria-current="page" href="index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="campanas.html">Campañas</a></li>
+          <li class="nav-item"><a class="nav-link" href="gamificacion.html">Gamificación</a></li>
+          <li class="nav-item"><a class="nav-link" href="informacion.html">Información</a></li>
+          <li class="nav-item" data-auth="user"><a class="nav-link" href="perfil.html">Mi perfil</a></li>
+        </ul>
+        <div class="d-flex flex-column flex-lg-row gap-2 mt-3 mt-lg-0 align-items-lg-center">
+          <div class="d-flex flex-column flex-lg-row gap-2" data-auth="guest">
+            <a class="btn btn-ghost" href="login.html">Iniciar sesión</a>
+            <a class="btn btn-brand" href="registro.html">Registrarme</a>
+          </div>
+          <div class="d-flex align-items-center gap-2" data-auth="user">
+            <a href="perfil.html" class="nav-user">
+              <span class="nav-user-avatar" data-auth-initials>··</span>
+              <span class="nav-user-name" data-auth-firstname>Donante</span>
+            </a>
+            <button class="btn btn-outline-soft btn-sm" data-auth-logout type="button">Salir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <!-- ─── Hero ─────────────────────────────────────────────────────────────── -->
+  <section id="inicio" class="container-xl hero">
+    <span class="pill mb-4"><i data-lucide="heart"></i> Red Interinstitucional de Bancos de Sangre</span>
+    <h1 class="hero-title">Cada donación es una vida que continúa</h1>
+    <p class="hero-lead">
+      Vitalis conecta los bancos de sangre de la red RIBAS en una sola plataforma: encuentra campañas,
+      agenda tu donación y sigue en tiempo real el impacto de cada componente sanguíneo que das.
+    </p>
+    <p class="hero-kicker">Tecnología al servicio de la vida</p>
+
+    <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 mt-4">
+      <a class="btn btn-brand btn-lg" href="campanas.html">Ver campañas activas <i data-lucide="arrow-right"></i></a>
+      <a class="btn btn-outline-soft btn-lg" href="informacion.html">¿Puedo donar?</a>
+    </div>
+
+    <div class="row row-cols-3 g-4 hero-stats">
+      <div class="col"><div class="stat-value">12,400+</div><div class="stat-label">Donantes activos</div></div>
+      <div class="col"><div class="stat-value">38,200</div><div class="stat-label">Unidades donadas</div></div>
+      <div class="col"><div class="stat-value">9,700</div><div class="stat-label">Vidas asistidas</div></div>
+    </div>
+  </section>
+
+  <!-- ─── Misión institucional ─────────────────────────────────────────────── -->
+  <section id="mision" class="container-xl py-section">
+    <div class="mission">
+      <span class="mission-glow"></span>
+      <div class="position-relative">
+        <span class="mission-label"><i data-lucide="target"></i> Nuestra misión</span>
+        <p class="mission-quote">
+          Conectar y optimizar la Red Interinstitucional de Bancos de Sangre (RIBAS) mediante una
+          plataforma tecnológica eficiente, ágil y transparente que facilite la gestión, donación y
+          distribución oportuna de componentes sanguíneos para salvar vidas.
+        </p>
+        <p class="mission-sign">— Vitalis · RIBAS</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Pilares de la red ────────────────────────────────────────────────── -->
+  <section id="beneficios" class="section-band">
+    <div class="container-xl">
+      <div class="section-head mx-auto">
+        <h2>Una red, muchos bancos de sangre</h2>
+        <p>Todo lo que necesitas para convertir la donación en un hábito, sin fricción.</p>
+      </div>
+      <div class="row g-4" id="benefits-grid"><!-- Se rellena desde js/main.js --></div>
+    </div>
+  </section>
+
+  <!-- ─── Cómo funciona ────────────────────────────────────────────────────── -->
+  <section id="como-funciona" class="container-xl py-section">
+    <div class="section-head mx-auto">
+      <h2>Cómo funciona</h2>
+      <p>Tres pasos entre tú y tu próxima donación.</p>
+    </div>
+    <div class="row g-4 g-lg-5" id="steps-grid"><!-- Se rellena desde js/main.js --></div>
+  </section>
+
+  <!-- ─── CTA ──────────────────────────────────────────────────────────────── -->
+  <section class="container-xl pb-section">
+    <div class="cta-box">
+      <span class="cta-glow cta-glow-1"></span>
+      <span class="cta-glow cta-glow-2"></span>
+      <div class="position-relative">
+        <i data-lucide="shield-check" class="cta-icon"></i>
+        <h2 class="cta-title">Únete a la red de donantes y empieza a sumar estrellas</h2>
+        <a class="btn btn-light btn-lg mt-4" href="campanas.html">Inscribirme a una campaña <i data-lucide="arrow-right"></i></a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ═══════════════ CONFIANZA + FOOTER (compartido) ═══════════════ -->
+<section class="trust-bar">
+  <div class="container-xl d-flex flex-column flex-sm-row align-items-center justify-content-center gap-2 text-center">
+    <i data-lucide="shield-check"></i>
+    <p class="mb-0">
+      Tus datos y resultados de tamizaje se manejan de forma confidencial, conforme al Decreto 1571 de 1993
+      y la normativa de protección de datos vigente en Colombia.
+    </p>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container-xl">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="index.html">
+          <img src="assets/image-Photoroom.png" alt="Logo Vitalis" class="footer-logo" />
+        </a>
+        <p>Red Interinstitucional de Bancos de Sangre (RIBAS). Tecnología al servicio de la vida.</p>
+      </div>
+      <nav class="footer-links">
+        <div class="footer-col">
+          <h4>Plataforma</h4>
+          <a href="index.html">Inicio</a>
+          <a href="campanas.html">Campañas</a>
+          <a href="gamificacion.html">Gamificación</a>
+          <a href="informacion.html">Información</a>
+        </div>
+        <div class="footer-col">
+          <h4>Recursos</h4>
+          <a href="informacion.html#requisitos">Requisitos para donar</a>
+          <a href="informacion.html#mitos">Mitos y realidades</a>
+          <a href="informacion.html#faq">Preguntas frecuentes</a>
+        </div>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Vitalis · RIBAS · Tecnología al servicio de la vida</span>
+      <span>Datos y tamizaje confidenciales · Decreto 1571 de 1993</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════ Scripts ═══════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
