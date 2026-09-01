@@ -8,7 +8,7 @@
         content="Vitalis conecta y optimiza la Red Interinstitucional de Bancos de Sangre (RIBAS): gestión, donación y distribución oportuna de componentes sanguíneos para salvar vidas." />
   <meta name="theme-color" content="#e11d48" />
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
-  <script>try{document.documentElement.dataset.auth=JSON.parse(localStorage.getItem('vitalis_session'))?'user':'guest';}catch(e){document.documentElement.dataset.auth='guest';}</script>
+  <script src="js/auth-guard.js"></script>
 
   <!-- Tipografía -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -41,6 +41,8 @@
           <li class="nav-item"><a class="nav-link" href="gamificacion.html">Gamificación</a></li>
           <li class="nav-item"><a class="nav-link" href="informacion.html">Información</a></li>
           <li class="nav-item" data-auth="user"><a class="nav-link" href="perfil.html">Mi perfil</a></li>
+          <li class="nav-item" data-role="institucion admin" hidden><a class="nav-link" href="panel-institucional.html">Panel institucional</a></li>
+          <li class="nav-item" data-role="admin" hidden><a class="nav-link" href="admin-dashboard.html">Administración</a></li>
         </ul>
         <div class="d-flex flex-column flex-lg-row gap-2 mt-3 mt-lg-0 align-items-lg-center">
           <div class="d-flex flex-column flex-lg-row gap-2" data-auth="guest">
@@ -80,6 +82,37 @@
       <div class="col"><div class="stat-value">12,400+</div><div class="stat-label">Donantes activos</div></div>
       <div class="col"><div class="stat-value">38,200</div><div class="stat-label">Unidades donadas</div></div>
       <div class="col"><div class="stat-value">9,700</div><div class="stat-label">Vidas asistidas</div></div>
+    </div>
+  </section>
+
+  <!-- ─── Semáforo de disponibilidad de la red (OA-10) ─────────────────────── -->
+  <section id="semaforo" class="section-band">
+    <div class="container-xl">
+      <div class="semaforo-head">
+        <div>
+          <h2>Semáforo de la red</h2>
+          <p>Disponibilidad y nivel crítico de inventario por tipo de sangre y región, actualizado por los bancos de RIBAS.</p>
+        </div>
+        <label class="semaforo-region">
+          <span>Región</span>
+          <select id="semaforo-region" class="form-select form-select-sm"><!-- opciones desde js/main.js --></select>
+        </label>
+      </div>
+
+      <div class="semaforo-legend">
+        <span class="status status-critical">Crítico</span>
+        <span class="status status-warn">Bajo</span>
+        <span class="status status-ok">Estable</span>
+        <span class="semaforo-updated" id="semaforo-updated"></span>
+      </div>
+
+      <div class="semaforo-grid" id="semaforo-grid"><!-- se rellena desde js/main.js --></div>
+
+      <p class="semaforo-note">
+        <i data-lucide="info"></i>
+        Este indicador es informativo para la ciudadanía. La gestión detallada de unidades se realiza en el
+        <a href="panel-institucional.html">panel institucional</a>.
+      </p>
     </div>
   </section>
 
@@ -179,6 +212,7 @@
 <!-- ═══════════════ Scripts ═══════════════ -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script src="js/api-service.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/main.js"></script>
 </body>

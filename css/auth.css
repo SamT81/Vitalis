@@ -63,3 +63,10 @@
   border-radius: var(--r-lg); padding: .8rem; font-size: .72rem; color: var(--slate-500);
 }
 .privacy-note svg { width: 14px; height: 14px; color: var(--slate-400); flex-shrink: 0; margin-top: 2px; }
+
+.optional-block {
+  border: 1px dashed var(--slate-300); border-radius: var(--r-lg); padding: 1rem 1.1rem 1.15rem;
+}
+.optional-head { display: flex; flex-direction: column; gap: .15rem; }
+.optional-head span { font-size: .8rem; font-weight: 700; color: var(--slate-700); }
+.optional-head small { font-size: .72rem; color: var(--slate-400); }

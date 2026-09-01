@@ -8,7 +8,7 @@
         content="Campañas activas y próximas de donación de sangre de la red RIBAS. Consulta ubicación, fecha y progreso de cada jornada e inscríbete en un clic." />
   <meta name="theme-color" content="#e11d48" />
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
-  <script>try{document.documentElement.dataset.auth=JSON.parse(localStorage.getItem('vitalis_session'))?'user':'guest';}catch(e){document.documentElement.dataset.auth='guest';}</script>
+  <script src="js/auth-guard.js"></script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -39,6 +39,8 @@
           <li class="nav-item"><a class="nav-link" href="gamificacion.html">Gamificación</a></li>
           <li class="nav-item"><a class="nav-link" href="informacion.html">Información</a></li>
           <li class="nav-item" data-auth="user"><a class="nav-link" href="perfil.html">Mi perfil</a></li>
+          <li class="nav-item" data-role="institucion admin" hidden><a class="nav-link" href="panel-institucional.html">Panel institucional</a></li>
+          <li class="nav-item" data-role="admin" hidden><a class="nav-link" href="admin-dashboard.html">Administración</a></li>
         </ul>
         <div class="d-flex flex-column flex-lg-row gap-2 mt-3 mt-lg-0 align-items-lg-center">
           <div class="d-flex flex-column flex-lg-row gap-2" data-auth="guest">
@@ -69,10 +71,14 @@
   </header>
 
   <section id="campanas-activas" class="pb-section">
-    <!-- Barra de herramientas: vista lista/mapa + filtro por fecha -->
+    <!-- Barra de herramientas: filtro por región/cobertura + vista + fecha -->
     <div class="campaign-toolbar">
       <p class="text-muted-soft small mb-0" id="campaigns-meta">Cargando jornadas…</p>
       <div class="d-flex align-items-center gap-2 flex-wrap">
+        <label class="visually-hidden" for="campaign-region">Filtrar por región</label>
+        <select id="campaign-region" class="form-select form-select-sm region-select" aria-label="Filtrar campañas por región o cobertura">
+          <!-- opciones desde js/main.js -->
+        </select>
         <div class="view-switch" role="tablist" aria-label="Cambiar vista de jornadas">
           <button class="view-btn is-active" data-view="lista" type="button"><i data-lucide="list"></i> Lista</button>
           <button class="view-btn" data-view="mapa" type="button"><i data-lucide="map"></i> Mapa</button>
@@ -80,7 +86,7 @@
         <i data-lucide="calendar" class="text-muted-soft"></i>
         <input type="date" id="campaign-filter" class="form-control form-control-sm date-input"
                aria-label="Filtrar jornadas desde una fecha" />
-        <button class="icon-btn d-none" id="clear-filter" type="button" aria-label="Quitar filtro"><i data-lucide="x"></i></button>
+        <button class="icon-btn d-none" id="clear-filter" type="button" aria-label="Quitar filtros"><i data-lucide="x"></i></button>
       </div>
     </div>
 
@@ -89,6 +95,9 @@
 
     <!-- Vista MAPA (previsualización) -->
     <div id="campaigns-map" class="campaign-map d-none"><!-- Se rellena desde js/main.js --></div>
+
+    <!-- Menú flotante de compartir (OA-22) -->
+    <div id="share-menu" class="share-menu" hidden></div>
   </section>
 </main>
 
@@ -137,6 +146,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script src="js/api-service.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/main.js"></script>
 </body>

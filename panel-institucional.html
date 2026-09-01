@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel institucional · Vitalis RIBAS</title>
+  <meta name="description" content="Panel B2B para bancos de sangre y hospitales de la red RIBAS: inventario, intercambio, cadena de frío y campañas." />
+  <meta name="theme-color" content="#e11d48" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <!-- Guardián de sesión (modo desarrollo: no redirige) -->
+  <script src="js/auth-guard.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/panel.css" />
+</head>
+
+<body data-requires-auth="true">
+
+<!-- ═══════════════ NAVBAR (compartido) ═══════════════ -->
+<header class="site-header sticky-top">
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-xl">
+      <a class="navbar-brand" href="index.html"><img src="assets/image-Photoroom.png" alt="Logo Vitalis" /></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
+              aria-controls="navMenu" aria-expanded="false" aria-label="Abrir menú de navegación">
+        <i data-lucide="menu"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav mx-lg-auto gap-lg-4">
+          <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="campanas.html">Campañas</a></li>
+          <li class="nav-item"><a class="nav-link" href="gamificacion.html">Gamificación</a></li>
+          <li class="nav-item"><a class="nav-link" href="informacion.html">Información</a></li>
+          <li class="nav-item" data-auth="user"><a class="nav-link" href="perfil.html">Mi perfil</a></li>
+          <li class="nav-item" data-role="institucion admin" hidden><a class="nav-link active" aria-current="page" href="panel-institucional.html">Panel institucional</a></li>
+          <li class="nav-item" data-role="admin" hidden><a class="nav-link" href="admin-dashboard.html">Administración</a></li>
+        </ul>
+        <div class="d-flex flex-column flex-lg-row gap-2 mt-3 mt-lg-0 align-items-lg-center">
+          <div class="d-flex flex-column flex-lg-row gap-2" data-auth="guest">
+            <a class="btn btn-ghost" href="login.html">Iniciar sesión</a>
+            <a class="btn btn-brand" href="registro.html">Registrarme</a>
+          </div>
+          <div class="d-flex align-items-center gap-2" data-auth="user">
+            <a href="perfil.html" class="nav-user">
+              <span class="nav-user-avatar" data-auth-initials>··</span>
+              <span class="nav-user-name" data-auth-firstname>Donante</span>
+            </a>
+            <button class="btn btn-outline-soft btn-sm" data-auth-logout type="button">Salir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main class="container-xl" id="panel-page">
+
+  <header class="page-head" style="text-align:left; padding-bottom:1.5rem;">
+    <span class="pill mb-3"><i data-lucide="building-2"></i> Vista institucional · B2B</span>
+    <h1>Panel institucional</h1>
+    <p style="margin-left:0;">Gestión de inventario, intercambio entre bancos de la red y creación de campañas.</p>
+  </header>
+
+  <div class="role-banner" id="panel-role-banner" hidden>
+    <i data-lucide="info"></i>
+    <span>Estás viendo esta pantalla en modo demostración. Para operar como institución, entra con la cuenta
+      <a href="login.html">banco@vitalis.co</a> (contraseña <code>demo1234</code>).</span>
+  </div>
+
+  <!-- Pestañas -->
+  <div class="tab-nav" role="tablist">
+    <button class="tab-btn is-active" data-tab="inventario" type="button"><i data-lucide="package"></i> Inventario y unidades</button>
+    <button class="tab-btn" data-tab="intercambio" type="button"><i data-lucide="refresh-cw"></i> Intercambio y cadena de frío</button>
+    <button class="tab-btn" data-tab="campanas" type="button"><i data-lucide="megaphone"></i> Campañas y convocatorias</button>
+  </div>
+
+  <!-- ═════════ TAB 1 · INVENTARIO ═════════ -->
+  <section class="tab-panel" data-tab="inventario">
+    <div class="role-banner" id="expiry-alert" hidden style="background:var(--rose-50);border-color:var(--rose-100);color:var(--rose-700);">
+      <i data-lucide="alert-triangle"></i>
+      <span data-alert-text>—</span>
+    </div>
+
+    <div class="panel-toolbar">
+      <h2 class="block-title mb-0">Unidades registradas</h2>
+      <label class="inline-field">
+        <span>Estado</span>
+        <select id="unit-estado-filter" class="form-select form-select-sm">
+          <option value="todas">Todas</option>
+          <option value="apta">Apta</option>
+          <option value="tamizaje">En tamizaje</option>
+          <option value="no_apta">No apta</option>
+        </select>
+      </label>
+    </div>
+    <div class="data-table-wrap" id="units-table"><!-- js/panel.js --></div>
+
+    <!-- Disposición / descarte de unidades no aptas (OA-23) -->
+    <div class="card-soft p-4 mt-4">
+      <h3 class="block-title mb-1">Registrar disposición / descarte de unidad no apta</h3>
+      <p class="text-muted-soft small mb-3">Queda registrado con motivo, fecha y responsable para trazabilidad y auditoría.</p>
+      <form id="disposal-form" class="row g-3" novalidate>
+        <div class="col-12 col-md-4">
+          <label class="form-label" for="disp-unit">Unidad</label>
+          <select id="disp-unit" class="form-select" required></select>
+        </div>
+        <div class="col-12 col-md-4">
+          <label class="form-label" for="disp-motivo">Motivo</label>
+          <select id="disp-motivo" class="form-select" required>
+            <option value="">Selecciona…</option>
+            <option>Reactivo en tamizaje</option>
+            <option>Vencimiento</option>
+            <option>Ruptura de cadena de frío</option>
+            <option>Volumen insuficiente</option>
+            <option>Hemólisis / lipemia</option>
+          </select>
+          <div class="invalid-feedback">Selecciona un motivo.</div>
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label" for="disp-fecha">Fecha</label>
+          <input type="date" id="disp-fecha" class="form-control" required />
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label" for="disp-responsable">Responsable</label>
+          <input type="text" id="disp-responsable" class="form-control" placeholder="Nombre" required />
+          <div class="invalid-feedback">Indica el responsable.</div>
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn btn-brand"><i data-lucide="trash-2"></i> Registrar disposición</button>
+        </div>
+      </form>
+      <ul class="disposal-log mt-3" id="disposal-log"></ul>
+      <p class="text-muted-soft small mb-0" id="disposal-log-empty">Aún no hay disposiciones registradas en esta sesión.</p>
+    </div>
+  </section>
+
+  <!-- ═════════ TAB 2 · INTERCAMBIO Y CADENA DE FRÍO ═════════ -->
+  <section class="tab-panel" data-tab="intercambio" hidden>
+    <h2 class="block-title">Solicitudes de unidades entre bancos</h2>
+    <div class="data-table-wrap mb-4" id="requests-table"><!-- js/panel.js --></div>
+
+    <div class="card-soft p-4">
+      <h3 class="block-title mb-1">Despacho de transferencia</h3>
+      <p class="text-muted-soft small mb-3">Registra las unidades, la ruta y las lecturas de temperatura de la cadena de frío (rango recomendado 2 – 6 °C).</p>
+      <form id="dispatch-form" class="row g-3" novalidate>
+        <div class="col-6 col-md-2">
+          <label class="form-label" for="disp-cantidad">Unidades</label>
+          <input type="number" id="disp-cantidad" class="form-control" min="1" value="4" required />
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label" for="disp-tipo">Tipo</label>
+          <select id="disp-tipo" class="form-select" required>
+            <option>O−</option><option>O+</option><option>A−</option><option>A+</option>
+            <option>B−</option><option>B+</option><option>AB−</option><option>AB+</option>
+          </select>
+        </div>
+        <div class="col-12 col-md-4">
+          <label class="form-label" for="dispatch-destino">Banco destino</label>
+          <input type="text" id="dispatch-destino" class="form-control" placeholder="Ej: Hospital San Ignacio" required />
+          <div class="invalid-feedback">Indica el destino.</div>
+        </div>
+        <div class="col-12 col-md-4">
+          <label class="form-label" for="dispatch-transportadora">Transportadora / responsable de traslado</label>
+          <input type="text" id="dispatch-transportadora" class="form-control" placeholder="Ej: LogiSalud - vehículo 12" required />
+          <div class="invalid-feedback">Indica el responsable del traslado.</div>
+        </div>
+        <div class="col-12">
+          <label class="form-label" for="dispatch-eventos">Eventos del traslado</label>
+          <textarea id="dispatch-eventos" class="form-control" rows="2" placeholder="Salida 06:00, verificación de sellos, entrega 10:30…"></textarea>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Control de temperatura (cadena de frío)</label>
+          <div id="coldchain-readings" class="coldchain-readings"></div>
+          <button type="button" id="add-reading" class="btn-row mt-2"><i data-lucide="plus"></i> Agregar lectura</button>
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn btn-brand"><i data-lucide="truck"></i> Despachar transferencia</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ═════════ TAB 3 · CAMPAÑAS Y CONVOCATORIAS ═════════ -->
+  <section class="tab-panel" data-tab="campanas" hidden>
+    <div class="row g-4">
+      <div class="col-12 col-lg-6">
+        <div class="card-soft p-4 h-100">
+          <h3 class="block-title mb-1">Crear campaña</h3>
+          <p class="text-muted-soft small mb-3">Publica una nueva jornada de recolección en la red.</p>
+          <form id="campaign-form" class="row g-3" novalidate>
+            <div class="col-12">
+              <label class="form-label" for="camp-nombre">Nombre</label>
+              <input type="text" id="camp-nombre" class="form-control" placeholder="Jornada …" required />
+              <div class="invalid-feedback">Ingresa un nombre.</div>
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="camp-sede">Sede / punto de donación</label>
+              <input type="text" id="camp-sede" class="form-control" placeholder="Dirección o lugar" required />
+              <div class="invalid-feedback">Ingresa la sede.</div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <label class="form-label" for="camp-zona">Zona</label>
+              <select id="camp-zona" class="form-select"></select>
+            </div>
+            <div class="col-6 col-sm-3">
+              <label class="form-label" for="camp-fecha">Fecha</label>
+              <input type="date" id="camp-fecha" class="form-control" required />
+            </div>
+            <div class="col-6 col-sm-3">
+              <label class="form-label" for="camp-cupos">Cupos</label>
+              <input type="number" id="camp-cupos" class="form-control" min="1" value="80" required />
+            </div>
+            <div class="col-12">
+              <label class="form-label">Tipos de sangre requeridos</label>
+              <div id="camp-tipos" class="check-chips"></div>
+            </div>
+            <div class="col-12"><button type="submit" class="btn btn-brand"><i data-lucide="calendar-plus"></i> Crear campaña</button></div>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-6">
+        <div class="card-soft p-4 h-100">
+          <h3 class="block-title mb-1">Enviar convocatoria segmentada</h3>
+          <p class="text-muted-soft small mb-3">Notifica a los donantes por tipo de sangre y zona (OA-17).</p>
+          <form id="convocatoria-form" class="row g-3">
+            <div class="col-12">
+              <label class="form-label">Tipos de sangre</label>
+              <div id="conv-tipos" class="check-chips"></div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <label class="form-label" for="conv-zona">Zona</label>
+              <select id="conv-zona" class="form-select"></select>
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="conv-mensaje">Mensaje</label>
+              <textarea id="conv-mensaje" class="form-control" rows="2" placeholder="Necesitamos tu ayuda: escasez de O− esta semana…"></textarea>
+            </div>
+            <div class="col-12">
+              <p class="conv-preview" id="conv-preview">Alcance estimado: —</p>
+              <button type="submit" class="btn btn-brand"><i data-lucide="send"></i> Enviar convocatoria</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="panel-toast" id="panel-toast" role="status"></div>
+</main>
+
+<footer class="site-footer">
+  <div class="container-xl">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="index.html"><img src="assets/image-Photoroom.png" alt="Logo Vitalis" class="footer-logo" /></a>
+        <p>Red Interinstitucional de Bancos de Sangre (RIBAS). Tecnología al servicio de la vida.</p>
+      </div>
+      <nav class="footer-links">
+        <div class="footer-col">
+          <h4>Plataforma</h4>
+          <a href="index.html">Inicio</a>
+          <a href="campanas.html">Campañas</a>
+          <a href="gamificacion.html">Gamificación</a>
+          <a href="informacion.html">Información</a>
+        </div>
+        <div class="footer-col">
+          <h4>Institucional</h4>
+          <a href="panel-institucional.html">Panel institucional</a>
+          <a href="admin-dashboard.html">Administración</a>
+          <a href="login.html">Iniciar sesión</a>
+        </div>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Vitalis · RIBAS · Tecnología al servicio de la vida</span>
+      <span>Datos y tamizaje confidenciales · Decreto 1571 de 1993</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script src="js/api-service.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script src="js/panel.js"></script>
+</body>
+</html>

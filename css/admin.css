@@ -1,0 +1,44 @@
+/* =============================================================================
+   Vitalis · RIBAS — CONSOLA DE ADMINISTRACIÓN (admin-dashboard.html)
+   Depende de: css/global.css
+   ============================================================================= */
+
+.admin-section { margin-top: 2.5rem; }
+.admin-section > .block-title {
+  display: flex; align-items: center; gap: .5rem; font-size: 1.15rem; margin-bottom: 1.25rem;
+}
+.admin-section > .block-title svg { width: 18px; height: 18px; color: var(--rose-600); }
+.admin-subtitle { font-size: .95rem; font-weight: 600; color: var(--slate-700); margin: 0 0 .75rem; }
+
+.role-select { min-width: 190px; }
+
+/* Gráfico */
+.chart-box { overflow-x: auto; }
+.chart-svg { width: 100%; min-width: 520px; height: auto; display: block; }
+.chart-legend { display: flex; gap: 1.25rem; margin-top: .75rem; font-size: .78rem; color: var(--slate-500); }
+.chart-legend i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: .35rem; vertical-align: middle; }
+
+/* Predicción de escasez */
+.shortage-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .9rem; }
+@media (min-width: 768px) { .shortage-grid { grid-template-columns: repeat(4, 1fr); } }
+.shortage-card {
+  border: 1px solid var(--slate-100); border-left: 4px solid var(--slate-300);
+  border-radius: var(--r-lg); padding: 1rem; background: #fff;
+}
+.shortage-card.risk-alto  { border-left-color: var(--rose-600);    background: var(--rose-50); }
+.shortage-card.risk-medio { border-left-color: var(--amber-400);   background: var(--amber-50); }
+.shortage-card.risk-bajo  { border-left-color: var(--emerald-500); background: var(--emerald-50); }
+.sc-type  { font-size: 1rem; font-weight: 700; color: var(--slate-900); }
+.sc-days  { font-size: 1.6rem; font-weight: 700; color: var(--slate-900); margin-top: .25rem; }
+.sc-days span { font-size: .8rem; font-weight: 600; color: var(--slate-500); }
+.sc-label { font-size: .7rem; color: var(--slate-400); margin-bottom: .5rem; }
+.sc-trend { font-size: .7rem; color: var(--slate-400); margin-top: .5rem; }
+
+/* Toast (reutiliza el del panel) */
+.panel-toast {
+  position: fixed; left: 50%; bottom: 1.5rem; transform: translateX(-50%) translateY(160%);
+  background: var(--slate-900); color: #fff; font-size: .84rem; font-weight: 500;
+  padding: .7rem 1.1rem; border-radius: var(--r-lg); box-shadow: 0 12px 30px rgba(15,23,42,.25);
+  z-index: 1090; transition: transform .25s ease; max-width: 90vw; text-align: center;
+}
+.panel-toast.show { transform: translateX(-50%) translateY(0); }

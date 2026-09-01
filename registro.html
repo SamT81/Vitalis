@@ -7,7 +7,7 @@
   <meta name="description" content="Crea tu cuenta de donante en Vitalis · Red RIBAS y empieza a sumar puntos e impacto." />
   <meta name="theme-color" content="#e11d48" />
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
-  <script>try{document.documentElement.dataset.auth=JSON.parse(localStorage.getItem('vitalis_session'))?'user':'guest';}catch(e){document.documentElement.dataset.auth='guest';}</script>
+  <script src="js/auth-guard.js"></script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -38,6 +38,8 @@
           <li class="nav-item"><a class="nav-link" href="gamificacion.html">Gamificación</a></li>
           <li class="nav-item"><a class="nav-link" href="informacion.html">Información</a></li>
           <li class="nav-item" data-auth="user"><a class="nav-link" href="perfil.html">Mi perfil</a></li>
+          <li class="nav-item" data-role="institucion admin" hidden><a class="nav-link" href="panel-institucional.html">Panel institucional</a></li>
+          <li class="nav-item" data-role="admin" hidden><a class="nav-link" href="admin-dashboard.html">Administración</a></li>
         </ul>
         <div class="d-flex flex-column flex-lg-row gap-2 mt-3 mt-lg-0 align-items-lg-center">
           <div class="d-flex flex-column flex-lg-row gap-2" data-auth="guest">
@@ -108,6 +110,28 @@
         </div>
       </div>
 
+      <!-- OA-02 · Campos opcionales (no son requisito para donar) -->
+      <div class="optional-block mt-4">
+        <div class="optional-head">
+          <span>Datos opcionales</span>
+          <small>No son obligatorios para donar. Ayudan a contactarte por campañas cercanas.</small>
+        </div>
+        <div class="row g-3 mt-0">
+          <div class="col-12 col-sm-6">
+            <label class="form-label" for="reg-phone">Teléfono</label>
+            <input type="tel" class="form-control" id="reg-phone" placeholder="300 000 0000" autocomplete="tel" />
+          </div>
+          <div class="col-12 col-sm-6">
+            <label class="form-label" for="reg-birthdate">Fecha de nacimiento</label>
+            <input type="date" class="form-control" id="reg-birthdate" autocomplete="bday" />
+          </div>
+          <div class="col-12">
+            <label class="form-label" for="reg-address">Dirección</label>
+            <input type="text" class="form-control" id="reg-address" placeholder="Calle 00 # 00-00" autocomplete="street-address" />
+          </div>
+        </div>
+      </div>
+
       <div class="privacy-note mt-3">
         <i data-lucide="lock"></i>
         <span>Teléfono, dirección e historial médico son opcionales y no son requisito para donar.
@@ -157,6 +181,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script src="js/api-service.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/main.js"></script>
 </body>

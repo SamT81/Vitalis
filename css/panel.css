@@ -1,0 +1,56 @@
+/* =============================================================================
+   Vitalis · RIBAS — PANEL INSTITUCIONAL B2B (panel-institucional.html)
+   Depende de: css/global.css (usa .tab-nav, .data-table, .status, .role-banner…)
+   ============================================================================= */
+
+.panel-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;
+}
+.inline-field {
+  display: flex; align-items: center; gap: .5rem;
+  font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--slate-400);
+}
+.inline-field select { min-width: 150px; }
+
+/* Registro de disposiciones (OA-23) */
+.disposal-log { list-style: none; margin: 0; padding: 0; display: grid; gap: .4rem; }
+.disposal-log li {
+  font-size: .78rem; color: var(--slate-600);
+  background: var(--slate-50); border: 1px solid var(--slate-100);
+  border-radius: .5rem; padding: .5rem .7rem;
+}
+.disposal-log code { color: var(--rose-700); font-weight: 600; }
+
+/* Cadena de frío */
+.coldchain-readings { display: grid; gap: .5rem; }
+.cc-reading { display: grid; grid-template-columns: 1fr 1fr auto; gap: .5rem; align-items: center; max-width: 340px; }
+
+/* Chips de selección de tipos de sangre */
+.check-chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+.check-chip {
+  display: inline-flex; align-items: center; gap: .35rem;
+  border: 1px solid var(--slate-200); border-radius: 999px;
+  padding: .3rem .7rem; font-size: .8rem; font-weight: 600; color: var(--slate-600); cursor: pointer;
+}
+.check-chip input { accent-color: var(--rose-600); }
+.check-chip:has(input:checked) { border-color: var(--rose-300); background: var(--rose-50); color: var(--rose-700); }
+
+.conv-preview {
+  font-size: .82rem; font-weight: 600; color: var(--slate-700);
+  background: var(--sky-50); border: 1px solid var(--sky-100);
+  border-radius: var(--r-lg); padding: .6rem .8rem; margin-bottom: .9rem;
+}
+
+/* Toast */
+.panel-toast {
+  position: fixed; left: 50%; bottom: 1.5rem; transform: translateX(-50%) translateY(160%);
+  background: var(--slate-900); color: #fff; font-size: .84rem; font-weight: 500;
+  padding: .7rem 1.1rem; border-radius: var(--r-lg); box-shadow: 0 12px 30px rgba(15,23,42,.25);
+  z-index: 1090; transition: transform .25s ease; max-width: 90vw; text-align: center;
+}
+.panel-toast.show { transform: translateX(-50%) translateY(0); }
+
+@media (max-width: 575.98px) {
+  .cc-reading { grid-template-columns: 1fr 1fr auto; }
+}

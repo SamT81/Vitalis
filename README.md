@@ -1,95 +1,118 @@
 # Vitalis · RIBAS — Red Interinstitucional de Bancos de Sangre
 
-Sitio web **multipágina con autenticación simulada** para **Vitalis**, la plataforma de
-la Red Interinstitucional de Bancos de Sangre (RIBAS). HTML5 + CSS3/Bootstrap 5 +
-JavaScript (ES6+), sin framework ni proceso de build.
+Frontend **multipágina** de la plataforma RIBAS, con autenticación y roles simulados y una
+capa de servicios API con datos *mock* de respaldo. HTML5 + CSS3/Bootstrap 5 + JavaScript
+(ES6+), sin framework ni proceso de build. Cubre las tres capas del sistema (B2C, B2B y SaaS).
 
 ## Arquitectura modular
 
 ```
 Vitalis/
-├── index.html          + css/home.css          # Bienvenida + misión institucional
-├── login.html          + css/auth.css          # Inicio de sesión
-├── registro.html       + css/auth.css          # Registro de donantes
-├── perfil.html         + css/perfil.css        # Panel privado del donante (protegido)
-├── campanas.html       + css/campanas.css      # Campañas + inscripción dinámica
-├── gamificacion.html   + css/gamificacion.css  # Explicación de puntos, niveles e impacto
-├── informacion.html    + css/informacion.css   # Requisitos, mitos y realidades, FAQ
-├── css/global.css      # Variables de color, Navbar, Footer, botones, widgets compartidos
-├── js/
-│   ├── auth.js          # Sesión simulada (localStorage): registro, login, logout, guardas
-│   └── main.js          # Contenido e interactividad de cada pantalla
-└── assets/
-    ├── image-Photoroom.png  # Logo de Vitalis (Navbar y Footer)
-    ├── logo-vitalis.png     # Logo usado solo en el certificado de donación (modal de perfil)
-    └── favicon.svg
+│  CAPA 1 · Portal público y donante (B2C)
+├── index.html            + css/home.css         # Bienvenida · Misión · Semáforo de la red (OA-10)
+├── campanas.html         + css/campanas.css     # Campañas georreferenciadas, turnos, compartir
+├── gamificacion.html     + css/gamificacion.css # Puntos, niveles/insignias, impacto (OA-03/04)
+├── informacion.html      + css/informacion.css  # Requisitos, mitos y realidades, FAQ
+├── login.html            + css/auth.css         # Inicio de sesión (3 cuentas demo)
+├── registro.html         + css/auth.css         # Registro: datos mínimos (OA-01) + opcionales (OA-02)
+├── perfil.html           + css/perfil.css       # Panel privado del donante (protegido)
+│
+│  CAPA 2 · Panel institucional (B2B)
+├── panel-institucional.html + css/panel.css     # Inventario, disposición, intercambio + cadena
+│                                                #   de frío, campañas y convocatorias
+│  CAPA 3 · Administración / analítica / regulación (SaaS · INVIMA)
+├── admin-dashboard.html     + css/admin.css     # Estructura y roles, predicción de escasez,
+│                                                #   auditoría y exportación de informes
+├── css/global.css        # Tokens, Navbar, Footer, botones y widgets compartidos (tablas, tabs…)
+└── js/
+    ├── auth-guard.js      # Guardián de sesión — se carga en el <head> de TODAS las páginas
+    ├── api-service.js     # Controladores REST + datos mock: Donor/Campaign/Inventory/Transfer/Analytics
+    ├── auth.js            # Sesión y roles simulados (localStorage) · window.Vitalis.auth
+    ├── main.js            # Contenido e interactividad B2C (semáforo, campañas, perfil, info)
+    ├── panel.js           # Lógica del panel institucional (B2B)
+    └── admin.js           # Lógica de la consola de administración (SaaS)
 ```
 
-Cada página carga: **Bootstrap 5 (CDN)** → **`global.css`** → **su CSS de pantalla**, y
-al final **`auth.js`** → **`main.js`**. El **Navbar** y el **Footer** son idénticos en
-todas las páginas (definidos en `global.css`) y el Navbar cambia según haya sesión activa.
+Orden de carga por página: **`auth-guard.js`** (en el `<head>`) → **Bootstrap 5 (CDN)** →
+**Lucide** → **`api-service.js`** → **`auth.js`** → **`main.js`** (+ `panel.js` / `admin.js`
+donde aplica). Navbar y Footer son idénticos en todas las páginas y reaccionan a la sesión
+y al rol.
 
-## Sistema de autenticación (simulado con `localStorage`)
+### Modo desarrollo (`js/auth-guard.js`)
 
-`js/auth.js` expone `window.Vitalis.auth` y guarda el estado en el navegador:
+`DEV_MODE = true` (por defecto):
+- **Ninguna página redirige a `login.html`** — se navega libremente por todo el sitio,
+  incluidas `panel-institucional.html` y `admin-dashboard.html`.
+- Si no hay sesión válida, se crea y activa automáticamente un usuario mock
+  **`Dev SuperAdmin` con rol `SUPER_ADMIN`** en `localStorage` (ve todas las secciones).
 
-| Clave | Contenido |
-|---|---|
-| `vitalis_users` | Donantes registrados (incluye una cuenta de demostración) |
-| `vitalis_session` | `{ userId, remember }` del donante con sesión activa |
+Para activar el guardián real (redirección a login en páginas protegidas), cambia
+`DEV_MODE = false` en `js/auth-guard.js`.
 
-El estado de gamificación (puntos, donaciones, inscripciones, historial) vive dentro del
-registro de cada donante en `vitalis_users`.
+### Render inmediato de datos mock
 
-- **Registro** (`registro.html`): nombre, correo, contraseña, documento, tipo de sangre,
-  ciudad. Al crear la cuenta se inicia sesión y se entra al perfil.
-- **Inicio de sesión** (`login.html`): correo + contraseña, casilla *"Recordarme"*, y botón
-  para entrar con la **cuenta de demostración**.
-- **Navbar reactivo**: sin sesión muestra *Iniciar sesión / Registrarme*; con sesión muestra
-  el nombre del donante, el enlace *Mi perfil* y *Salir*. (Se controla con `data-auth` en
-  `<html>`, fijado por un script en línea del `<head>` para evitar parpadeo.)
-- **`perfil.html` está protegido**: si no hay sesión válida, redirige a
-  `login.html?next=perfil.html` antes de pintar la página.
+Cada pantalla pinta primero los datos ficticios de forma **síncrona** (`Vitalis.api.MOCKS.*`)
+y luego, si el backend REST responde, refresca. Ninguna petición fallida (404, red caída,
+`file://`) deja elementos vacíos ni bloquea el HTML.
 
-### 🔑 Cuenta de demostración
-```
-correo:      ana@vitalis.co
-contraseña:  demo1234
-```
-Trae 18 donaciones, medallas desbloqueadas, 1 campaña inscrita e historial con certificados.
+## Capa de servicios (`js/api-service.js`)
 
-## Panel del donante (`perfil.html`)
+`window.Vitalis.api` — cada método hace `fetch('/api/v1/...')` y, si no hay backend,
+responde con un *mock* (modo demostración). Devuelve `{ source: 'api'|'mock', data }`.
 
-- **Mi resumen:** puntos acumulados, tipo de sangre, donaciones realizadas y estimación de
-  vidas salvadas.
-- **Mis medallas y logros:** galería con estado desbloqueada / por desbloquear según tus
-  donaciones, con panel de detalle.
-- **Mis campañas suscritas:** lista con estado *Confirmada* y próxima fecha; se puede cancelar.
-- **Historial de donaciones:** tabla con fecha, lugar, componente, estado y **certificado**
-  (modal imprimible).
+| Controlador | Endpoints base | Ejemplos |
+|---|---|---|
+| `DonorService`     | `/api/v1/donors/...`     | `getProfile`, `listBadges`, `updateProfile` |
+| `CampaignService`  | `/api/v1/campaigns/...`  | `list`, `getSlots`, `enroll`, `createCampaign`, `sendConvocatoria` |
+| `InventoryService` | `/api/v1/inventory/...`  | `getSemaforo`, `listUnits`, `registerDisposal` |
+| `TransferService`  | `/api/v1/transfers/...`  | `listRequests`, `approve`, `dispatch` |
+| `AnalyticsService` | `/api/v1/analytics/...`  | `demandVsAvailability`, `shortagePrediction`, `auditLog`, `banks`, `users`, `exportTraceability` |
 
-## Inscripción a campañas (`campanas.html`)
+## Autenticación, roles y `localStorage`
 
-El botón *"Inscribirme a esta campaña"*:
-- Si **no** hay sesión → redirige a `login.html?next=campanas.html`.
-- Si hay sesión → inscribe/cancela, actualiza la barra de progreso de la meta y añade la
-  campaña a `perfil.html`.
+`vitalis_users` (cuentas) y `vitalis_session` (`{ userId, remember }`). Roles:
+`donante` (B2C), `institucion` (B2B), `admin` (SaaS/regulador). El Navbar muestra los
+enlaces *Panel institucional* / *Administración* según el rol (atributo `data-role`).
+`perfil.html`, `panel-institucional.html` y `admin-dashboard.html` están protegidos
+(redirigen a `login.html?next=...` sin sesión). El rol se refleja con `data-role` en `<html>`.
+
+### 🔑 Cuentas de demostración (contraseña `demo1234` para todas)
+| Correo | Rol | Entra a |
+|---|---|---|
+| `ana@vitalis.co`   | donante     | `perfil.html` (18 donaciones, medallas, historial con certificados) |
+| `banco@vitalis.co` | institucion | `panel-institucional.html` |
+| `admin@vitalis.co` | admin       | `admin-dashboard.html` |
+
+Los 3 botones de la pantalla de login entran directamente con cada cuenta.
+
+## Cobertura de alcances (resumen)
+
+- **OA-01/02** registro con datos mínimos + opcionales · **OA-03/04** gamificación e impacto ·
+  **OA-05/17** crear campañas y convocatorias segmentadas · **OA-06/08/09/10** inventario,
+  estados y semáforo · **OA-11/12/13** (**LI-11**) bancos, categorías, usuarios y roles ·
+  **OA-14/15/16** intercambio entre bancos y cadena de frío · **OA-18/20** (**LI-07**) filtro
+  georreferenciado · **OA-19** agendamiento de turnos · **OA-22** compartir en canales
+  externos · **OA-23** disposición de unidades no aptas · **OA-25/26** (**LI-10**) demanda vs.
+  disponibilidad y predicción de escasez · **OA-27/28** auditoría y exportación de informes
+  de trazabilidad (INVIMA).
+- **LI-12**: el portal del donante nunca expone datos clínicos ni resultados de tamizaje.
 
 ## Cómo probar
 
 ```bash
 python -m http.server 8000
 ```
-Abre <http://localhost:8000>. (También sirve abrir `index.html` directo o usar Live Server.)
+Abre <http://localhost:8000>.
 
-### Recorrido sugerido
-1. **index.html** → navega por el menú; revisa la **Misión**.
-2. **registro.html** → crea una cuenta nueva → entras a **perfil.html** (verás el panel vacío).
-3. **campanas.html** → inscríbete en una campaña (sube el % de la meta) → vuelve a **perfil.html**
-   y verás la campaña en *"Mis campañas suscritas"*.
-4. Pulsa **Salir**. Entra de nuevo con **login.html** → botón *"Entrar con la cuenta de
-   demostración"* → panel completo con medallas, historial y certificados.
-5. Abre `perfil.html` sin sesión (en una ventana de incógnito) → te redirige a `login.html`.
+1. **index.html** → cambia la **región** del *Semáforo de la red* y observa los niveles.
+2. **login.html** → *Banco de sangre* → **panel institucional**: filtra unidades, registra una
+   disposición, aprueba una solicitud, despacha una transferencia con lecturas de temperatura,
+   crea una campaña y envía una convocatoria.
+3. **login.html** → *Administración* → **admin-dashboard**: cambia el rol de un usuario, revisa
+   el gráfico de demanda vs. disponibilidad y la predicción de escasez, y pulsa
+   **Informe (JSON)** / **Auditoría (CSV)** para descargar los informes.
+4. **login.html** → *Donante* → inscríbete a una campaña eligiendo **turno**, compártela, y
+   revísala luego en **perfil.html**.
 
 ## Dependencias (vía CDN, sin instalación)
 

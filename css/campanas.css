@@ -121,3 +121,49 @@
 
 @media (min-width: 576px) { .map-pins { grid-template-columns: repeat(4, 1fr); } }
 @media (max-width: 575.98px) { .map-pins { padding: 1.5rem; } }
+
+/* ─── Filtro por región / cobertura (OA-18/20, LI-07) ─────────────────────── */
+.region-select { max-width: 210px; font-size: .8rem; }
+
+.cc-region {
+  display: flex; align-items: center; gap: .35rem;
+  font-size: .72rem; color: var(--rose-600); font-weight: 500; margin-top: .3rem;
+}
+.cc-region svg { width: 12px; height: 12px; }
+
+/* ─── Selección de turno (OA-19) ─────────────────────────────────────────── */
+.cc-slot { display: flex; flex-direction: column; gap: .25rem; margin-bottom: .6rem; }
+.cc-slot > span {
+  font-size: .68rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--slate-400);
+}
+.cc-slot select { font-size: .8rem; }
+.cc-slot-confirmed {
+  display: flex; align-items: center; gap: .35rem;
+  font-size: .74rem; color: var(--emerald-700); background: var(--emerald-50);
+  border: 1px solid var(--emerald-100); border-radius: .5rem; padding: .35rem .55rem; margin-bottom: .6rem;
+}
+.cc-slot-confirmed svg { width: 13px; height: 13px; }
+
+/* ─── Compartir (OA-22) ──────────────────────────────────────────────────── */
+.cc-share {
+  width: 100%; margin-top: .5rem; border: 1px solid var(--slate-200); background: #fff;
+  color: var(--slate-600); font-size: .78rem; font-weight: 600; border-radius: var(--r-lg);
+  padding: .5rem; display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
+}
+.cc-share:hover { border-color: var(--rose-300); color: var(--rose-600); }
+.cc-share svg { width: 14px; height: 14px; }
+
+.share-menu {
+  position: fixed; left: 50%; bottom: 2rem; transform: translateX(-50%);
+  z-index: 1080; background: #fff; border: 1px solid var(--slate-200);
+  border-radius: var(--r-xl); box-shadow: 0 20px 50px rgba(15,23,42,.18);
+  padding: .5rem; min-width: 260px;
+}
+.share-menu-title { font-size: .78rem; font-weight: 600; color: var(--slate-900); padding: .5rem .6rem .35rem; }
+.share-opt {
+  display: flex; align-items: center; gap: .5rem; width: 100%;
+  border: 0; background: none; text-align: left; text-decoration: none;
+  font-size: .82rem; color: var(--slate-600); padding: .55rem .6rem; border-radius: .6rem;
+}
+.share-opt:hover { background: var(--slate-50); color: var(--rose-600); }
+.share-opt svg { width: 15px; height: 15px; }

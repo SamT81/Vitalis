@@ -44,27 +44,52 @@
       desc: "Acumula puntos, sube de nivel y mira en tiempo real la vida que ayudaste a salvar." },
   ];
 
-  // Jornadas de recolección. status: "activa" | "proxima"
+  // Turnos por jornada (OA-19): franjas horarias con cupos disponibles.
+  const buildSlots = (base) => [
+    { hora: "08:00", cupos: base },
+    { hora: "10:00", cupos: Math.max(0, base - 4) },
+    { hora: "12:00", cupos: Math.max(0, base - 9) },
+    { hora: "14:00", cupos: base + 2 },
+    { hora: "16:00", cupos: Math.max(0, base - 6) },
+  ];
+
+  // Jornadas de recolección georreferenciadas (OA-18/19/20). status: "activa" | "proxima"
   const CAMPAIGNS = [
     { id: "C-001", name: "Jornada Fundación Santa Fe", location: "Fundación Santa Fe de Bogotá",
+      region: "Bogotá D.C.", cobertura: "Localidad de Chapinero",
       distance: "1.2 km", date: "2026-09-02", time: "8:00 a.m. – 4:00 p.m.", status: "activa",
-      bloodTypesNeeded: ["O−", "B−", "AB−"], goal: 80, current: 52 },
+      bloodTypesNeeded: ["O−", "B−", "AB−"], goal: 80, current: 52, slots: buildSlots(10) },
     { id: "C-002", name: "Campaña Universitaria Javeriana", location: "Pontificia Universidad Javeriana, Bogotá",
+      region: "Bogotá D.C.", cobertura: "Localidad de Chapinero",
       distance: "3.8 km", date: "2026-09-05", time: "9:00 a.m. – 3:00 p.m.", status: "activa",
-      bloodTypesNeeded: ["O+", "A+", "B+"], goal: 120, current: 42 },
+      bloodTypesNeeded: ["O+", "A+", "B+"], goal: 120, current: 42, slots: buildSlots(14) },
     { id: "C-003", name: "Jornada Cruz Roja Cundinamarca", location: "Cruz Roja Colombiana, Seccional Cundinamarca",
+      region: "Cundinamarca", cobertura: "Soacha y Sabana Occidente",
       distance: "5.1 km", date: "2026-09-08", time: "7:30 a.m. – 1:00 p.m.", status: "activa",
-      bloodTypesNeeded: ["O−", "O+", "A−", "A+"], goal: 60, current: 53 },
+      bloodTypesNeeded: ["O−", "O+", "A−", "A+"], goal: 60, current: 53, slots: buildSlots(8) },
     { id: "C-004", name: "Jornada Centro Comercial Centro Mayor", location: "Centro Mayor, Bogotá",
+      region: "Bogotá D.C.", cobertura: "Localidad Antonio Nariño",
       distance: "8.9 km", date: "2026-09-20", time: "10:00 a.m. – 6:00 p.m.", status: "proxima",
-      bloodTypesNeeded: ["AB+", "AB−", "B+"], goal: 100, current: 12 },
+      bloodTypesNeeded: ["AB+", "AB−", "B+"], goal: 100, current: 12, slots: buildSlots(16) },
     { id: "C-005", name: "Jornada Hospital San Ignacio", location: "Hospital Universitario San Ignacio, Bogotá",
+      region: "Bogotá D.C.", cobertura: "Localidad de Chapinero",
       distance: "4.0 km", date: "2026-10-04", time: "8:00 a.m. – 2:00 p.m.", status: "proxima",
-      bloodTypesNeeded: ["O−", "A−", "B−"], goal: 90, current: 6 },
+      bloodTypesNeeded: ["O−", "A−", "B−"], goal: 90, current: 6, slots: buildSlots(12) },
     { id: "C-006", name: "Jornada Parque de la 93", location: "Parque de la 93, Bogotá",
+      region: "Bogotá D.C.", cobertura: "Localidad de Chapinero",
       distance: "6.7 km", date: "2026-10-18", time: "9:00 a.m. – 4:00 p.m.", status: "proxima",
-      bloodTypesNeeded: ["O+", "A+", "AB+"], goal: 70, current: 9 },
+      bloodTypesNeeded: ["O+", "A+", "AB+"], goal: 70, current: 9, slots: buildSlots(11) },
+    { id: "C-007", name: "Jornada Universidad de Antioquia", location: "Ciudad Universitaria, Medellín",
+      region: "Antioquia", cobertura: "Comuna 10 - La Candelaria",
+      distance: "—", date: "2026-09-14", time: "8:00 a.m. – 3:00 p.m.", status: "activa",
+      bloodTypesNeeded: ["O−", "O+", "A+"], goal: 110, current: 61, slots: buildSlots(13) },
+    { id: "C-008", name: "Jornada Cali · Estadio Pascual Guerrero", location: "Estadio Pascual Guerrero, Cali",
+      region: "Valle del Cauca", cobertura: "Comuna 19",
+      distance: "—", date: "2026-09-27", time: "9:00 a.m. – 5:00 p.m.", status: "proxima",
+      bloodTypesNeeded: ["B+", "B−", "AB+"], goal: 95, current: 18, slots: buildSlots(15) },
   ];
+
+  const CAMPAIGN_REGIONS = ["Todas", "Bogotá D.C.", "Cundinamarca", "Antioquia", "Valle del Cauca"];
 
   // Catálogo de insignias. Se desbloquean según el número de donaciones del donante.
   const BADGES = [
@@ -237,6 +262,57 @@
       </div>`).join("");
   }
 
+  /* ─── Semáforo de disponibilidad de la red (OA-10) ─────────────────────── */
+  const SEM_LABEL = { critico: "Crítico", bajo: "Bajo", estable: "Estable" };
+
+  function paintSemaforo(rows) {
+    const grid = $("#semaforo-grid");
+    if (!grid) return;
+    grid.innerHTML = rows.map((r) => `
+      <div class="sem-cell is-${r.nivel}">
+        <div class="sem-type">${esc(r.tipo)}</div>
+        <div class="sem-units">${r.unidades} u.</div>
+        <div class="sem-cover">${r.coberturaDias} día${r.coberturaDias === 1 ? "" : "s"} de cobertura</div>
+        <div class="sem-dot" title="${SEM_LABEL[r.nivel]}"></div>
+      </div>`).join("");
+    const upd = $("#semaforo-updated");
+    if (upd) upd.textContent = "Actualizado: " + new Date().toLocaleString("es-CO", { dateStyle: "medium", timeStyle: "short" });
+  }
+
+  // Datos de respaldo locales por si api-service.js no estuviera disponible.
+  const SEMAFORO_FALLBACK = ["O−","O+","A−","A+","B−","B+","AB−","AB+"].map((t, i) => {
+    const n = (i * 13 + 7) % 10;
+    const nivel = n < 3 ? "critico" : n < 6 ? "bajo" : "estable";
+    return { tipo: t, nivel, unidades: nivel === "critico" ? 5 : nivel === "bajo" ? 18 : 44, coberturaDias: nivel === "critico" ? 1 : nivel === "bajo" ? 3 : 8 };
+  });
+
+  function loadSemaforo(region) {
+    const api = window.Vitalis && window.Vitalis.api;
+    // 1) Pintado inmediato con datos mock (nunca queda vacío)
+    let base = SEMAFORO_FALLBACK;
+    try { if (api && api.MOCKS) base = api.MOCKS.semaforo(region) || SEMAFORO_FALLBACK; } catch (_) {}
+    paintSemaforo(base);
+    // 2) Refresco opcional si el backend REST responde
+    if (!api || !api.InventoryService) return;
+    Promise.resolve()
+      .then(() => api.InventoryService.getSemaforo(region))
+      .then((res) => { if (res && res.data && res.data.length) paintSemaforo(res.data); })
+      .catch((e) => console.warn("[semáforo]", e && e.message));
+  }
+
+  function renderSemaforo() {
+    const grid = $("#semaforo-grid");
+    if (!grid) return;
+    const api = window.Vitalis && window.Vitalis.api;
+    const sel = $("#semaforo-region");
+    const regions = (api && api.REGIONS) || ["Bogotá D.C.", "Cundinamarca", "Antioquia", "Valle del Cauca", "Atlántico", "Nacional"];
+    if (sel && !sel.options.length) {
+      sel.innerHTML = regions.map((r) => `<option value="${r}" ${r === "Bogotá D.C." ? "selected" : ""}>${r}</option>`).join("");
+    }
+    if (sel) sel.addEventListener("change", () => loadSemaforo(sel.value));
+    loadSemaforo(sel ? sel.value : "Bogotá D.C.");
+  }
+
 
   /* ==========================================================================
      4. CAMPAÑAS
@@ -245,9 +321,12 @@
   let campaignView = "lista"; // "lista" | "mapa"
 
   function visibleCampaigns() {
-    const input = $("#campaign-filter");
-    const from = input ? input.value : "";
-    return CAMPAIGNS.filter((c) => !from || c.date >= from);
+    const from = $("#campaign-filter") ? $("#campaign-filter").value : "";
+    const region = $("#campaign-region") ? $("#campaign-region").value : "Todas";
+    return CAMPAIGNS.filter((c) =>
+      (!from || c.date >= from) &&
+      (!region || region === "Todas" || c.region === region)
+    );
   }
 
   /** current mostrado = base del mock + 1 si el donante en sesión está inscrito. */
@@ -260,38 +339,95 @@
       location.href = "login.html?next=campanas.html";
       return;
     }
-    auth.toggleEnrollment(id);
+    if (auth.isEnrolled(id)) {
+      auth.toggleEnrollment(id);
+    } else {
+      // Turno elegido en el selector de la tarjeta (OA-19)
+      const sel = document.querySelector(`[data-slot="${id}"]`);
+      auth.toggleEnrollment(id, sel ? sel.value : null);
+    }
     renderCampaigns();
+  }
+
+  /** Compartir en canales externos (OA-22): Web Share API con alternativas. */
+  function shareCampaign(c) {
+    const url = location.origin + location.pathname.replace(/[^/]*$/, "campanas.html") + "#" + c.id;
+    const text = `Únete a la jornada de donación "${c.name}" (${formatLong(c.date)}) — Red RIBAS · Vitalis`;
+    if (navigator.share) {
+      navigator.share({ title: "Vitalis · RIBAS", text, url }).catch(() => {});
+      return;
+    }
+    const enc = encodeURIComponent;
+    const opts = [
+      ["WhatsApp", `https://wa.me/?text=${enc(text + " " + url)}`],
+      ["X (Twitter)", `https://twitter.com/intent/tweet?text=${enc(text)}&url=${enc(url)}`],
+      ["Facebook", `https://www.facebook.com/sharer/sharer.php?u=${enc(url)}`],
+    ];
+    const box = document.getElementById("share-menu");
+    box.innerHTML = `
+      <div class="share-menu-inner">
+        <div class="share-menu-title">Compartir "${esc(c.name)}"</div>
+        ${opts.map(([n, href]) => `<a class="share-opt" target="_blank" rel="noopener" href="${href}"><i data-lucide="external-link"></i>${n}</a>`).join("")}
+        <button class="share-opt" type="button" data-copy="${esc(url)}"><i data-lucide="link"></i>Copiar enlace</button>
+      </div>`;
+    box.hidden = false;
+    refreshIcons();
+    const onCopy = box.querySelector("[data-copy]");
+    if (onCopy) onCopy.addEventListener("click", () => {
+      navigator.clipboard && navigator.clipboard.writeText(onCopy.dataset.copy);
+      onCopy.textContent = "¡Enlace copiado!";
+      setTimeout(() => { box.hidden = true; }, 900);
+    });
+    setTimeout(() => document.addEventListener("click", function h(ev) {
+      if (!box.contains(ev.target)) { box.hidden = true; document.removeEventListener("click", h); }
+    }), 0);
+  }
+
+  function slotSelectHtml(c) {
+    const opts = c.slots.map((s) =>
+      `<option value="${s.hora}" ${s.cupos <= 0 ? "disabled" : ""}>${s.hora} — ${s.cupos > 0 ? s.cupos + " cupos" : "sin cupos"}</option>`
+    ).join("");
+    return `
+      <label class="cc-slot">
+        <span>Turno</span>
+        <select class="form-select form-select-sm" data-slot="${c.id}">${opts}</select>
+      </label>`;
   }
 
   function campaignCardHtml(c) {
     const enrolled = !!(auth && auth.isEnrolled(c.id));
     const authed   = !!(auth && auth.isAuthenticated());
+    const slot     = enrolled && auth ? auth.getEnrollmentSlot(c.id) : null;
     const cur = shownCurrent(c);
     const p = pct(cur, c.goal);
 
-    let btn;
+    let action;
     if (!authed) {
-      btn = `<button class="btn-enroll" data-enroll="${c.id}" type="button">
-               <i data-lucide="lock"></i> Inicia sesión para inscribirte
-             </button>`;
+      action = `<button class="btn-enroll" data-enroll="${c.id}" type="button">
+                  <i data-lucide="lock"></i> Inicia sesión para inscribirte
+                </button>`;
     } else if (enrolled) {
-      btn = `<button class="btn-enroll is-enrolled" data-enroll="${c.id}" type="button">
-               ✓ Inscrito — Cancelar inscripción
-             </button>`;
+      action = `
+        ${slot ? `<div class="cc-slot-confirmed"><i data-lucide="check"></i> Turno confirmado: <b>${esc(slot)}</b></div>` : ""}
+        <button class="btn-enroll is-enrolled" data-enroll="${c.id}" type="button">
+          ✓ Inscrito — Cancelar inscripción
+        </button>`;
     } else {
-      btn = `<button class="btn-enroll" data-enroll="${c.id}" type="button">
-               <i data-lucide="calendar-plus"></i> Inscribirme a esta campaña
-             </button>`;
+      action = `
+        ${slotSelectHtml(c)}
+        <button class="btn-enroll" data-enroll="${c.id}" type="button">
+          <i data-lucide="calendar-plus"></i> Inscribirme a esta campaña
+        </button>`;
     }
 
     return `
-      <div class="col-12 col-md-6 col-xl-4">
+      <div class="col-12 col-md-6 col-xl-4" id="${c.id}">
         <div class="campaign-card ${enrolled ? "is-enrolled" : ""}">
           <div class="cc-head">
             <div>
               <div class="cc-name">${esc(c.name)}</div>
               <div class="cc-loc"><i data-lucide="map-pin"></i>${esc(c.location)}</div>
+              <div class="cc-region"><i data-lucide="navigation"></i>${esc(c.region)} · ${esc(c.cobertura)}</div>
             </div>
             <div class="text-end flex-shrink-0">
               <div class="cc-dist">${esc(c.distance)}</div>
@@ -317,7 +453,8 @@
             ${c.bloodTypesNeeded.map((bt) => `<span class="bt-chip">${esc(bt)}</span>`).join("")}
           </div>
 
-          ${btn}
+          ${action}
+          <button class="cc-share" data-share="${c.id}" type="button"><i data-lucide="share-2"></i> Compartir</button>
         </div>
       </div>`;
   }
@@ -357,12 +494,14 @@
     const activas  = list.filter((c) => c.status === "activa");
     const proximas = list.filter((c) => c.status === "proxima");
 
+    const region = $("#campaign-region") ? $("#campaign-region").value : "Todas";
     const meta = $("#campaigns-meta");
-    if (meta) meta.textContent = `Bogotá y Cundinamarca · ${activas.length} activas · ${proximas.length} próximas`;
+    if (meta) meta.textContent =
+      `${region === "Todas" ? "Todas las regiones" : region} · ${activas.length} activas · ${proximas.length} próximas`;
 
     const clearBtn = $("#clear-filter");
     const filterInput = $("#campaign-filter");
-    if (clearBtn && filterInput) clearBtn.classList.toggle("d-none", !filterInput.value);
+    if (clearBtn && filterInput) clearBtn.classList.toggle("d-none", !filterInput.value && region === "Todas");
 
     const showMap = campaignView === "mapa";
     listEl.classList.toggle("d-none", showMap);
@@ -380,19 +519,40 @@
       });
     }
 
+    // Compartir (funciona en lista y mapa)
+    $$("[data-share]").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        shareCampaign(CAMPAIGNS.find((c) => c.id === btn.dataset.share));
+      });
+    });
+
     $$(".view-btn").forEach((b) => b.classList.toggle("is-active", b.dataset.view === campaignView));
     refreshIcons();
   }
 
   function initCampaignControls() {
     if (!$("#campaigns-list")) return;
+
+    // Filtro por región / cobertura (OA-18, OA-20, LI-07)
+    const regionSel = $("#campaign-region");
+    if (regionSel && !regionSel.options.length) {
+      regionSel.innerHTML = CAMPAIGN_REGIONS.map((r) => `<option value="${r}">${r === "Todas" ? "Todas las regiones" : r}</option>`).join("");
+      renderCampaigns(); // repinta el resumen con la región por defecto
+    }
+    if (regionSel) regionSel.addEventListener("change", renderCampaigns);
+
     $$(".view-btn").forEach((btn) => {
       btn.addEventListener("click", () => { campaignView = btn.dataset.view; renderCampaigns(); });
     });
     const filterInput = $("#campaign-filter");
     if (filterInput) filterInput.addEventListener("change", renderCampaigns);
     const clearBtn = $("#clear-filter");
-    if (clearBtn) clearBtn.addEventListener("click", () => { $("#campaign-filter").value = ""; renderCampaigns(); });
+    if (clearBtn) clearBtn.addEventListener("click", () => {
+      $("#campaign-filter").value = "";
+      if (regionSel) regionSel.value = "Todas";
+      renderCampaigns();
+    });
   }
 
 
@@ -758,26 +918,33 @@
      9. ARRANQUE
      ========================================================================== */
 
+  /** Ejecuta una función aislando sus errores: si falla, se registra y el
+      resto del renderizado continúa. Nunca bloquea la página. */
+  function safe(label, fn) {
+    try { fn(); } catch (e) { console.error("[Vitalis] " + label + ":", e); }
+  }
+
   function init() {
-    renderBenefits();
-    renderSteps();
+    safe("renderBenefits", renderBenefits);
+    safe("renderSteps", renderSteps);
+    safe("renderSemaforo", renderSemaforo);
 
-    renderCampaigns();
-    initCampaignControls();
+    safe("renderCampaigns", renderCampaigns);
+    safe("initCampaignControls", initCampaignControls);
 
-    renderPointRules();
-    renderHeroLevels();
-    renderImpact();
+    safe("renderPointRules", renderPointRules);
+    safe("renderHeroLevels", renderHeroLevels);
+    safe("renderImpact", renderImpact);
 
-    renderPerfil();
+    safe("renderPerfil", renderPerfil);
 
-    renderRequirements();
-    renderMyths();
-    renderFaq();
-    initQuestionForm();
+    safe("renderRequirements", renderRequirements);
+    safe("renderMyths", renderMyths);
+    safe("renderFaq", renderFaq);
+    safe("initQuestionForm", initQuestionForm);
 
-    initNav();
-    refreshIcons();
+    safe("initNav", initNav);
+    safe("refreshIcons", refreshIcons);
   }
 
   if (document.readyState === "loading") {

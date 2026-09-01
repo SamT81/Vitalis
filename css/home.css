@@ -80,8 +80,49 @@
 .cta-icon { width: 32px; height: 32px; color: var(--rose-400); margin-bottom: 1rem; }
 .cta-title { color: #fff; font-size: 1.7rem; max-width: 30rem; margin-inline: auto; }
 
+/* ─── Semáforo de la red (OA-10) ──────────────────────────────────────────── */
+.semaforo-head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;
+}
+.semaforo-head h2 { font-size: 1.6rem; color: var(--slate-900); }
+.semaforo-head p  { color: var(--slate-500); margin: .4rem 0 0; max-width: 40rem; font-size: .9rem; }
+.semaforo-region { display: flex; flex-direction: column; gap: .3rem; font-size: .72rem; font-weight: 600; color: var(--slate-500); text-transform: uppercase; letter-spacing: .04em; }
+.semaforo-region select { min-width: 190px; }
+
+.semaforo-legend { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.semaforo-updated { font-size: .72rem; color: var(--slate-400); margin-left: auto; }
+
+.semaforo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .75rem; }
+@media (min-width: 576px) { .semaforo-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 992px) { .semaforo-grid { grid-template-columns: repeat(8, 1fr); } }
+
+.sem-cell {
+  border: 1px solid var(--slate-100); border-radius: var(--r-lg);
+  background: #fff; padding: .9rem .75rem; text-align: center;
+  border-top: 3px solid var(--slate-200);
+}
+.sem-cell.is-critico  { border-top-color: var(--rose-600);    background: var(--rose-50); }
+.sem-cell.is-bajo     { border-top-color: var(--amber-400);   background: var(--amber-50); }
+.sem-cell.is-estable  { border-top-color: var(--emerald-500); background: var(--emerald-50); }
+.sem-type { font-weight: 700; font-size: 1.05rem; color: var(--slate-900); }
+.sem-units { font-size: .72rem; color: var(--slate-500); margin-top: .15rem; }
+.sem-cover { font-size: .68rem; color: var(--slate-400); margin-top: .1rem; }
+.sem-dot { width: 8px; height: 8px; border-radius: 999px; margin: .4rem auto 0; }
+.sem-cell.is-critico .sem-dot { background: var(--rose-600); }
+.sem-cell.is-bajo    .sem-dot { background: var(--amber-400); }
+.sem-cell.is-estable .sem-dot { background: var(--emerald-500); }
+
+.semaforo-note {
+  display: flex; align-items: flex-start; gap: .5rem;
+  font-size: .75rem; color: var(--slate-400); margin-top: 1.25rem;
+}
+.semaforo-note svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 1px; }
+.semaforo-note a { color: var(--rose-600); font-weight: 500; }
+
 @media (max-width: 575.98px) {
   .hero { padding-top: 3rem; }
   .cta-title { font-size: 1.4rem; }
   .mission { padding: 2.5rem 1.5rem; }
+  .semaforo-updated { margin-left: 0; width: 100%; }
 }

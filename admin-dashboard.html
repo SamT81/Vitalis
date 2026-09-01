@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Administración · Vitalis RIBAS</title>
+  <meta name="description" content="Consola de administración RIBAS: estructura institucional y roles, predicción de escasez y auditoría regulatoria (INVIMA)." />
+  <meta name="theme-color" content="#e11d48" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <!-- Guardián de sesión (modo desarrollo: no redirige) -->
+  <script src="js/auth-guard.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+
+<body data-requires-auth="true">
+
+<!-- ═══════════════ NAVBAR (compartido) ═══════════════ -->
+<header class="site-header sticky-top">
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-xl">
+      <a class="navbar-brand" href="index.html"><img src="assets/image-Photoroom.png" alt="Logo Vitalis" /></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
+              aria-controls="navMenu" aria-expanded="false" aria-label="Abrir menú de navegación">
+        <i data-lucide="menu"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav mx-lg-auto gap-lg-4">
+          <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="campanas.html">Campañas</a></li>
+          <li class="nav-item"><a class="nav-link" href="gamificacion.html">Gamificación</a></li>
+          <li class="nav-item"><a class="nav-link" href="informacion.html">Información</a></li>
+          <li class="nav-item" data-auth="user"><a class="nav-link" href="perfil.html">Mi perfil</a></li>
+          <li class="nav-item" data-role="institucion admin" hidden><a class="nav-link" href="panel-institucional.html">Panel institucional</a></li>
+          <li class="nav-item" data-role="admin" hidden><a class="nav-link active" aria-current="page" href="admin-dashboard.html">Administración</a></li>
+        </ul>
+        <div class="d-flex flex-column flex-lg-row gap-2 mt-3 mt-lg-0 align-items-lg-center">
+          <div class="d-flex flex-column flex-lg-row gap-2" data-auth="guest">
+            <a class="btn btn-ghost" href="login.html">Iniciar sesión</a>
+            <a class="btn btn-brand" href="registro.html">Registrarme</a>
+          </div>
+          <div class="d-flex align-items-center gap-2" data-auth="user">
+            <a href="perfil.html" class="nav-user">
+              <span class="nav-user-avatar" data-auth-initials>··</span>
+              <span class="nav-user-name" data-auth-firstname>Donante</span>
+            </a>
+            <button class="btn btn-outline-soft btn-sm" data-auth-logout type="button">Salir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main class="container-xl" id="admin-page">
+
+  <header class="page-head" style="text-align:left; padding-bottom:1.5rem;">
+    <span class="pill mb-3"><i data-lucide="shield"></i> Administración general · SaaS / INVIMA</span>
+    <h1>Consola de administración</h1>
+    <p style="margin-left:0;">Gobierno de la red RIBAS: instituciones y roles, analítica predictiva y trazabilidad regulatoria.</p>
+  </header>
+
+  <div class="role-banner" id="admin-role-banner" hidden>
+    <i data-lucide="info"></i>
+    <span>Vista de demostración. Para operar como administrador, entra con la cuenta
+      <a href="login.html">admin@vitalis.co</a> (contraseña <code>demo1234</code>).</span>
+  </div>
+
+  <!-- ═════════ 1 · ESTRUCTURA INSTITUCIONAL Y ROLES ═════════ -->
+  <section class="admin-section">
+    <h2 class="block-title"><i data-lucide="network"></i> Estructura institucional y roles</h2>
+
+    <h3 class="admin-subtitle">Bancos participantes</h3>
+    <div class="data-table-wrap" id="banks-table"><!-- js/admin.js --></div>
+
+    <div class="card-soft p-4 mt-3">
+      <h3 class="block-title mb-3">Agregar banco participante</h3>
+      <form id="bank-form" class="row g-3" novalidate>
+        <div class="col-12 col-md-5">
+          <label class="form-label" for="bank-nombre">Nombre</label>
+          <input type="text" id="bank-nombre" class="form-control" required />
+          <div class="invalid-feedback">Ingresa el nombre.</div>
+        </div>
+        <div class="col-6 col-md-3">
+          <label class="form-label" for="bank-ciudad">Ciudad</label>
+          <input type="text" id="bank-ciudad" class="form-control" required />
+          <div class="invalid-feedback">Ingresa la ciudad.</div>
+        </div>
+        <div class="col-6 col-md-3">
+          <label class="form-label" for="bank-categoria">Categoría</label>
+          <select id="bank-categoria" class="form-select">
+            <option>Banco de sangre A</option>
+            <option>Banco de sangre B</option>
+            <option>Servicio transfusional</option>
+          </select>
+        </div>
+        <div class="col-12 col-md-1 d-flex align-items-end">
+          <button type="submit" class="btn btn-brand w-100"><i data-lucide="plus"></i></button>
+        </div>
+      </form>
+    </div>
+
+    <h3 class="admin-subtitle mt-4">Usuarios y asignación de roles</h3>
+    <div class="data-table-wrap" id="users-table"><!-- js/admin.js --></div>
+  </section>
+
+  <!-- ═════════ 2 · PREDICCIÓN Y ANÁLISIS HISTÓRICO ═════════ -->
+  <section class="admin-section">
+    <h2 class="block-title"><i data-lucide="trending-up"></i> Predicción y análisis histórico</h2>
+
+    <div class="card-soft p-4">
+      <h3 class="block-title mb-1">Demanda proyectada vs. disponibilidad</h3>
+      <p class="text-muted-soft small mb-3" id="demand-summary">—</p>
+      <div id="demand-chart" class="chart-box"><!-- SVG desde js/admin.js --></div>
+    </div>
+
+    <h3 class="admin-subtitle mt-4">Predicción de escasez</h3>
+    <p class="text-muted-soft small">Modelo analítico de apoyo a la decisión (estimación de días hasta nivel crítico por tipo).</p>
+    <div class="shortage-grid" id="shortage-grid"><!-- js/admin.js --></div>
+  </section>
+
+  <!-- ═════════ 3 · AUDITORÍA E INSPECCIÓN REGULATORIA ═════════ -->
+  <section class="admin-section pb-section">
+    <h2 class="block-title"><i data-lucide="clipboard-check"></i> Auditoría e inspección regulatoria</h2>
+
+    <div class="card-soft p-4 mb-3">
+      <h3 class="block-title mb-1">Exportar informe técnico de trazabilidad (INVIMA)</h3>
+      <p class="text-muted-soft small mb-3">Genera el paquete de trazabilidad para entes de supervisión y control.</p>
+      <div class="row g-3 align-items-end">
+        <div class="col-6 col-md-3">
+          <label class="form-label" for="export-desde">Desde</label>
+          <input type="date" id="export-desde" class="form-control" value="2026-07-01" />
+        </div>
+        <div class="col-6 col-md-3">
+          <label class="form-label" for="export-hasta">Hasta</label>
+          <input type="date" id="export-hasta" class="form-control" value="2026-08-31" />
+        </div>
+        <div class="col-12 col-md-6 d-flex gap-2">
+          <button type="button" id="export-json" class="btn btn-brand"><i data-lucide="file-down"></i> Informe (JSON)</button>
+          <button type="button" id="export-csv" class="btn btn-outline-soft"><i data-lucide="table"></i> Auditoría (CSV)</button>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="admin-subtitle">Registro de auditoría</h3>
+    <div class="data-table-wrap" id="audit-table"><!-- js/admin.js --></div>
+  </section>
+
+  <div class="panel-toast" id="admin-toast" role="status"></div>
+</main>
+
+<footer class="site-footer">
+  <div class="container-xl">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="index.html"><img src="assets/image-Photoroom.png" alt="Logo Vitalis" class="footer-logo" /></a>
+        <p>Red Interinstitucional de Bancos de Sangre (RIBAS). Tecnología al servicio de la vida.</p>
+      </div>
+      <nav class="footer-links">
+        <div class="footer-col">
+          <h4>Plataforma</h4>
+          <a href="index.html">Inicio</a>
+          <a href="campanas.html">Campañas</a>
+          <a href="gamificacion.html">Gamificación</a>
+          <a href="informacion.html">Información</a>
+        </div>
+        <div class="footer-col">
+          <h4>Institucional</h4>
+          <a href="panel-institucional.html">Panel institucional</a>
+          <a href="admin-dashboard.html">Administración</a>
+          <a href="login.html">Iniciar sesión</a>
+        </div>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Vitalis · RIBAS · Tecnología al servicio de la vida</span>
+      <span>Datos y tamizaje confidenciales · Decreto 1571 de 1993</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script src="js/api-service.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
