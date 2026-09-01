@@ -22,14 +22,44 @@
   const read  = (k, fb) => { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? fb : v; } catch { return fb; } };
   const write = (k, v)  => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
 
-  /* ─── Cuenta de demostración (se crea la primera vez) ───────────────────── */
-  const DEMO = { email: "ana@vitalis.co", password: "demo1234" };
+  /* ─── Roles del sistema (ver SRS) ────────────────────────────────────────
+     donante              → auto-registro público, panel en perfil.html
+     operativo            → personal de banco de sangre / centro de salud
+     admin_institucional  → administrador de una sede/tenant
+     auditor              → auditor regulatorio INVIMA (transversal, solo lectura)
+     admin_general        → superusuario del sistema (Vitalis)
+     Solo "donante" se auto-registra; las cuentas staff las crea un administrador,
+     por eso aquí solo existen como cuentas semilla de demostración. ────────── */
+  const ROLE_HOME = {
+    donante:              "perfil.html",
+    operativo:            "operativo.html",
+    admin_institucional:  "admin-institucional.html",
+    auditor:              "auditoria.html",
+    admin_general:        "admin-general.html",
+  };
+
+  /* ─── Cuentas de demostración (se crean la primera vez, una por rol) ────── */
+  const DEMOS = {
+    donante:             { email: "ana@vitalis.co",        password: "demo1234" },
+    operativo:           { email: "carlos@ribas.co",       password: "demo1234" },
+    admin_institucional: { email: "laura@ribas.co",        password: "demo1234" },
+    auditor:             { email: "invima@ribas.co",       password: "demo1234" },
+    admin_general:       { email: "superadmin@vitalis.co", password: "demo1234" },
+  };
+  const DEMO = DEMOS.donante; // alias retrocompatible
 
   function ensureSeed() {
     const users = read(USERS_KEY, []);
-    if (users.some((u) => u.email === DEMO.email)) return;
-    users.push({
-      id: "U-DEMO", name: "Ana García Solano", email: DEMO.email, password: DEMO.password,
+    let changed = false;
+    const addIfMissing = (user) => {
+      if (users.some((u) => u.email === user.email)) return;
+      users.push(user);
+      changed = true;
+    };
+
+    addIfMissing({
+      id: "U-DEMO", name: "Ana García Solano", email: DEMOS.donante.email, password: DEMOS.donante.password,
+      role: "donante",
       bloodType: "O+", document: "1032456789", city: "Bogotá",
       donations: 18, points: 2400, streak: 6,
       enrollments: ["C-003"],
@@ -40,9 +70,51 @@
       ],
       createdAt: "2024-01-01T00:00:00.000Z",
     });
-    write(USERS_KEY, users);
+
+    addIfMissing({
+      id: "U-DEMO-OP", name: "Carlos Ramírez Peña", email: DEMOS.operativo.email, password: DEMOS.operativo.password,
+      role: "operativo",
+      institution: "Cruz Roja Colombiana, Seccional Cundinamarca", document: "1019345678", city: "Bogotá",
+      bloodType: null, donations: 0, points: 0, streak: 0, enrollments: [], history: [],
+      createdAt: "2024-01-01T00:00:00.000Z",
+    });
+
+    addIfMissing({
+      id: "U-DEMO-ADMIN-INST", name: "Laura Jiménez Rojas", email: DEMOS.admin_institucional.email, password: DEMOS.admin_institucional.password,
+      role: "admin_institucional",
+      institution: "Cruz Roja Colombiana, Seccional Cundinamarca", document: "1019876543", city: "Bogotá",
+      bloodType: null, donations: 0, points: 0, streak: 0, enrollments: [], history: [],
+      createdAt: "2024-01-01T00:00:00.000Z",
+    });
+
+    addIfMissing({
+      id: "U-DEMO-AUDITOR", name: "María Fernanda Ospina", email: DEMOS.auditor.email, password: DEMOS.auditor.password,
+      role: "auditor",
+      institution: "INVIMA — Instituto Nacional de Vigilancia de Medicamentos y Alimentos", document: "1020112233", city: "Bogotá",
+      bloodType: null, donations: 0, points: 0, streak: 0, enrollments: [], history: [],
+      createdAt: "2024-01-01T00:00:00.000Z",
+    });
+
+    addIfMissing({
+      id: "U-DEMO-SUPERADMIN", name: "Julián Torres Medina", email: DEMOS.admin_general.email, password: DEMOS.admin_general.password,
+      role: "admin_general",
+      institution: "Vitalis · RIBAS (Sistema)", document: "1020998877", city: "Bogotá",
+      bloodType: null, donations: 0, points: 0, streak: 0, enrollments: [], history: [],
+      createdAt: "2024-01-01T00:00:00.000Z",
+    });
+
+    if (changed) write(USERS_KEY, users);
   }
   ensureSeed();
+
+  /** Migra cuentas creadas antes del sistema de roles: sin `role` → "donante". */
+  function migrateRoles() {
+    const users = read(USERS_KEY, []);
+    let changed = false;
+    users.forEach((u) => { if (!u.role) { u.role = "donante"; changed = true; } });
+    if (changed) write(USERS_KEY, users);
+  }
+  migrateRoles();
 
   /* ─── Lectura / escritura de usuarios y sesión ──────────────────────────── */
   const getUsers  = () => read(USERS_KEY, []);
@@ -66,6 +138,9 @@
   const initials = (name) => String(name).trim().split(/\s+/).slice(0, 2).map((w) => w[0] || "").join("").toUpperCase();
 
   /* ─── Registro / login / logout ────────────────────────────────────────── */
+  // El auto-registro público es exclusivo del rol Donante (SRS): el personal
+  // operativo, los administradores institucionales, los auditores INVIMA y el
+  // administrador general no se auto-registran, sus cuentas las crea un admin.
   function register(data) {
     const users = getUsers();
     if (users.some((u) => u.email.toLowerCase() === data.email.toLowerCase())) {
@@ -74,6 +149,7 @@
     const user = {
       id: "U-" + Date.now().toString(36),
       name: data.name.trim(), email: data.email.trim(), password: data.password,
+      role: "donante",
       bloodType: data.bloodType, document: data.document.trim(), city: data.city.trim(),
       donations: 0, points: 100, streak: 0, enrollments: [], history: [],
       createdAt: new Date().toISOString(),
@@ -92,6 +168,16 @@
     write(SESSION_KEY, { userId: user.id, remember: !!remember });
     return { ok: true, user };
   }
+
+  /** Inicia sesión con la cuenta de demostración del rol indicado. */
+  function loginAsDemo(role) {
+    const demo = DEMOS[role];
+    if (!demo) return { ok: false, error: "Rol de demostración inválido." };
+    return login(demo.email, demo.password, true);
+  }
+
+  /** Página de destino tras iniciar sesión, según el rol del usuario. */
+  function roleHome(role) { return ROLE_HOME[role] || "perfil.html"; }
 
   function logout() { try { localStorage.removeItem(SESSION_KEY); } catch {} }
 
@@ -133,10 +219,15 @@
   }
 
   /* ─── Formularios de login / registro ─────────────────────────────────── */
-  const ALLOWED_NEXT = ["perfil.html", "campanas.html", "index.html", "gamificacion.html", "informacion.html"];
-  function nextTarget() {
+  const ALLOWED_NEXT = [
+    "perfil.html", "campanas.html", "index.html", "gamificacion.html", "informacion.html",
+    "operativo.html", "admin-institucional.html", "auditoria.html", "admin-general.html",
+  ];
+  /** Respeta ?next= si es una página conocida; si no, cae al home del rol dado. */
+  function nextTarget(fallback) {
     const p = new URLSearchParams(location.search).get("next");
-    return ALLOWED_NEXT.includes(p) ? p : "perfil.html";
+    if (ALLOWED_NEXT.includes(p)) return p;
+    return fallback || "perfil.html";
   }
   function showFormError(el, msg) {
     if (!el) return;
@@ -160,12 +251,14 @@
           document.getElementById("login-remember") && document.getElementById("login-remember").checked
         );
         if (!res.ok) { showFormError(err, res.error); return; }
-        location.href = nextTarget();
+        location.href = nextTarget(roleHome(res.user.role));
       });
       const demoBtn = document.getElementById("login-demo");
       if (demoBtn) demoBtn.addEventListener("click", () => {
-        login(DEMO.email, DEMO.password, true);
-        location.href = nextTarget();
+        const role = demoBtn.dataset.role || "donante";
+        const res = loginAsDemo(role);
+        if (!res.ok) return;
+        location.href = nextTarget(roleHome(role));
       });
     }
 
@@ -192,11 +285,25 @@
     }
   }
 
-  /* ─── Protección de páginas privadas ───────────────────────────────────── */
+  /* ─── Protección de páginas privadas ─────────────────────────────────────
+     Cada panel declara en <body data-requires-auth="true"
+     data-requires-role="operativo"> qué rol(es) puede verlo (separados por
+     coma si aplica más de uno). Sin sesión, o con el rol equivocado, siempre
+     redirige a login.html?next=<pagina> — nunca se pinta el panel de otro rol. */
   function guardProtectedPage() {
-    if (document.body && document.body.dataset.requiresAuth === "true" && !isAuthenticated()) {
-      const page = (location.pathname.split("/").pop() || "perfil.html");
+    if (!document.body || document.body.dataset.requiresAuth !== "true") return;
+    const page = (location.pathname.split("/").pop() || "perfil.html");
+    const user = getUser();
+    if (!user) {
       location.replace("login.html?next=" + encodeURIComponent(page));
+      return;
+    }
+    const requiredRole = document.body.dataset.requiresRole;
+    if (requiredRole) {
+      const allowed = requiredRole.split(",").map((r) => r.trim());
+      if (!allowed.includes(user.role)) {
+        location.replace("login.html?next=" + encodeURIComponent(page));
+      }
     }
   }
 
@@ -204,9 +311,9 @@
   window.Vitalis = window.Vitalis || {};
   window.Vitalis.auth = {
     getUser, isAuthenticated, initials,
-    register, login, logout,
+    register, login, loginAsDemo, logout, roleHome,
     isEnrolled, toggleEnrollment, saveUser,
-    DEMO,
+    DEMO, DEMOS,
   };
 
   guardProtectedPage();

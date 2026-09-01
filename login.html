@@ -60,10 +60,28 @@
 <!-- ═══════════════ FORMULARIO DE INICIO DE SESIÓN ═══════════════ -->
 <main class="auth-wrap">
   <div class="auth-card">
+    <div class="role-selector" role="tablist" aria-label="Selecciona tu tipo de acceso">
+      <button type="button" class="role-pill active" data-role="donante" role="tab" aria-selected="true">
+        <i data-lucide="user-round"></i> Donante
+      </button>
+      <button type="button" class="role-pill" data-role="operativo" role="tab" aria-selected="false">
+        <i data-lucide="clipboard-list"></i> Personal Operativo
+      </button>
+      <button type="button" class="role-pill" data-role="admin_institucional" role="tab" aria-selected="false">
+        <i data-lucide="building-2"></i> Admin. Institucional
+      </button>
+      <button type="button" class="role-pill" data-role="auditor" role="tab" aria-selected="false">
+        <i data-lucide="shield-check"></i> Auditor INVIMA
+      </button>
+      <button type="button" class="role-pill" data-role="admin_general" role="tab" aria-selected="false">
+        <i data-lucide="server-cog"></i> Admin. General
+      </button>
+    </div>
+
     <div class="auth-head">
       <span class="icon-circle"><i data-lucide="log-in"></i></span>
-      <h1>Iniciar sesión</h1>
-      <p>Accede a tu panel de donante para ver tus puntos, medallas y campañas.</p>
+      <h1 id="auth-title">Iniciar sesión</h1>
+      <p id="auth-subtitle">Accede a tu panel de donante para ver tus puntos, medallas y campañas.</p>
     </div>
 
     <div id="login-error" class="form-error mb-3" role="alert"></div>
@@ -87,12 +105,13 @@
     </form>
 
     <div class="auth-divider">o</div>
-    <button type="button" id="login-demo" class="btn btn-outline-soft w-100">Entrar con la cuenta de demostración</button>
+    <button type="button" id="login-demo" class="btn btn-outline-soft w-100" data-role="donante">Entrar con la cuenta de demostración</button>
     <div class="auth-demo mt-3">
-      <b>Cuenta demo:</b> correo <code>ana@vitalis.co</code> · contraseña <code>demo1234</code>
+      <b>Cuenta demo:</b> correo <code id="demo-email">ana@vitalis.co</code> · contraseña <code id="demo-password">demo1234</code>
     </div>
+    <p id="auth-staff-note" class="text-muted-soft small mt-2" hidden>Estas cuentas las crea un administrador: el personal de banco de sangre, los administradores institucionales, los auditores INVIMA y el administrador general no se auto-registran.</p>
 
-    <p class="auth-switch">¿Primera vez donando? <a href="registro.html">Regístrate aquí</a></p>
+    <p class="auth-switch" id="auth-switch">¿Primera vez donando? <a href="registro.html">Regístrate aquí</a></p>
   </div>
 </main>
 

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel de Auditoría INVIMA · Vitalis RIBAS</title>
+  <meta name="description" content="Acceso transversal de solo lectura para auditoría regulatoria INVIMA: instituciones de la red, trazabilidad de unidades e informes de desecho biológico." />
+  <meta name="theme-color" content="#e11d48" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <!-- Guardián: sin sesión válida o con rol distinto de "auditor", redirige a login antes de pintar la página -->
+  <script>
+    (function () {
+      try {
+        var s = JSON.parse(localStorage.getItem('vitalis_session'));
+        var us = JSON.parse(localStorage.getItem('vitalis_users') || '[]');
+        var u = s && us.find(function (x) { return x.id === s.userId; });
+        if (!u || u.role !== 'auditor') {
+          location.replace('login.html?next=auditoria.html');
+        } else {
+          document.documentElement.dataset.auth = 'user';
+        }
+      } catch (e) { location.replace('login.html?next=auditoria.html'); }
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/auditoria.css" />
+</head>
+
+<body data-requires-auth="true" data-requires-role="auditor">
+
+<!-- ═══════════════ CABECERA DE PANEL (no es el navbar público) ═══════════════ -->
+<header class="au-header d-print-none">
+  <div class="container-xl au-header-inner">
+    <div class="au-brand">
+      <img src="assets/image-Photoroom.png" alt="Logo Vitalis" class="au-logo" />
+      <div class="au-brand-text">
+        <span class="au-brand-title">Panel de auditoría · Vitalis RIBAS</span>
+        <a href="index.html" class="au-back-link"><i data-lucide="arrow-left"></i> Volver al sitio público</a>
+      </div>
+    </div>
+
+    <div class="au-user-block">
+      <div class="au-user-id">
+        <span class="nav-user-avatar" data-auth-initials>··</span>
+        <div>
+          <div class="au-user-name" data-auth-firstname>Auditor</div>
+          <div class="au-user-sub">Acceso transversal · red RIBAS</div>
+        </div>
+      </div>
+      <span class="au-role-tag"><i data-lucide="shield-check"></i> Auditor Regulatorio · INVIMA</span>
+      <span class="au-readonly-badge"><i data-lucide="eye"></i> Solo lectura</span>
+      <button class="btn btn-outline-soft btn-sm" data-auth-logout type="button"><i data-lucide="log-out"></i> Salir</button>
+    </div>
+  </div>
+</header>
+
+<main class="container-xl">
+
+  <header class="dash-welcome">
+    <h1>Hola, <span data-auth-firstname>Auditor</span> 👋</h1>
+    <p>Consulta centralizada y de solo lectura sobre todas las instituciones de la red RIBAS.</p>
+    <p class="readonly-note">
+      <i data-lucide="lock"></i>
+      Modo de auditoría: solo lectura. Este panel no permite crear, editar ni eliminar registros;
+      es una consulta transversal entre instituciones conforme al SRS.
+    </p>
+  </header>
+
+  <!-- ─── 1. Resumen ────────────────────────────────────────────────────────── -->
+  <section class="dash-section">
+    <h2 class="block-title mb-3">Resumen de la red</h2>
+    <div class="row g-3" id="au-summary"><!-- Se rellena desde js/auditoria.js --></div>
+  </section>
+
+  <!-- ─── 2. Instituciones de la red ────────────────────────────────────────── -->
+  <section class="dash-section">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <h2 class="block-title mb-0">Instituciones de la red</h2>
+      <span class="text-muted-soft small" id="au-institutions-count">—</span>
+    </div>
+    <div class="card-soft overflow-hidden" id="au-institutions-table"><!-- Se rellena desde js/auditoria.js --></div>
+  </section>
+
+  <!-- ─── 3. Trazabilidad de unidades ───────────────────────────────────────── -->
+  <section class="dash-section">
+    <h2 class="block-title mb-3">Trazabilidad de unidades</h2>
+    <div class="card-soft p-4">
+      <form id="trace-form" class="trace-search d-print-none" novalidate>
+        <input type="text" class="form-control" id="trace-input" placeholder="Ej. RB-1001" aria-label="Número de unidad" />
+        <button type="submit" class="btn btn-outline-soft"><i data-lucide="search"></i> Buscar</button>
+      </form>
+      <p class="trace-hint d-print-none">Prueba con <code>RB-1001</code>, <code>RB-1006</code> o <code>RB-1010</code>.</p>
+      <div id="trace-result" class="mt-3"><!-- Se rellena desde js/auditoria.js --></div>
+    </div>
+  </section>
+
+  <!-- ─── 4. Informes de desecho biológico / cuarentena ─────────────────────── -->
+  <section class="dash-section pb-section">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <h2 class="block-title mb-0">Informe de desecho biológico</h2>
+      <button class="btn btn-brand btn-sm d-print-none" id="export-report-btn" type="button" onclick="window.print()">
+        <i data-lucide="download"></i> Exportar reporte
+      </button>
+    </div>
+    <div class="card-soft overflow-hidden" id="au-discard-table"><!-- Se rellena desde js/auditoria.js --></div>
+  </section>
+</main>
+
+<!-- ═══════════════ FOOTER (una sola línea) ═══════════════ -->
+<footer class="au-footer d-print-none">
+  <span>© 2026 Vitalis · RIBAS · Panel de auditoría · Datos y tamizaje confidenciales · Decreto 1571 de 1993</span>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/auditoria.js"></script>
+</body>
+</html>

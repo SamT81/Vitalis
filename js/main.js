@@ -734,6 +734,84 @@
 
 
   /* ==========================================================================
+     7b. LOGIN — selector de rol (login.html)
+     ========================================================================== */
+
+  const ROLE_CONTENT = {
+    donante: {
+      title: "Iniciar sesión",
+      subtitle: "Accede a tu panel de donante para ver tus puntos, medallas y campañas.",
+      demoLabel: "Entrar con la cuenta de demostración",
+      showRegister: true,
+    },
+    operativo: {
+      title: "Acceso operativo",
+      subtitle: "Accede al panel operativo de tu banco de sangre o centro de salud.",
+      demoLabel: "Entrar con la cuenta demo de Personal Operativo",
+      showRegister: false,
+    },
+    admin_institucional: {
+      title: "Acceso institucional",
+      subtitle: "Administra la sede y el personal de tu institución en la red RIBAS.",
+      demoLabel: "Entrar con la cuenta demo de Admin. Institucional",
+      showRegister: false,
+    },
+    auditor: {
+      title: "Acceso de auditoría",
+      subtitle: "Consulta en modo de solo lectura la trazabilidad regulatoria de la red RIBAS.",
+      demoLabel: "Entrar con la cuenta demo de Auditor INVIMA",
+      showRegister: false,
+    },
+    admin_general: {
+      title: "Acceso de superadministrador",
+      subtitle: "Administra la plataforma Vitalis y todas las instituciones de la red RIBAS.",
+      demoLabel: "Entrar con la cuenta demo de Admin. General",
+      showRegister: false,
+    },
+  };
+
+  function initRoleSelector() {
+    const pills = $$(".role-pill");
+    if (!pills.length) return;
+
+    const titleEl    = $("#auth-title");
+    const subtitleEl = $("#auth-subtitle");
+    const demoBtn    = $("#login-demo");
+    const demoEmail  = $("#demo-email");
+    const demoPass   = $("#demo-password");
+    const staffNote  = $("#auth-staff-note");
+    const switchEl   = $("#auth-switch");
+
+    function applyRole(role) {
+      const content = ROLE_CONTENT[role];
+      if (!content) return;
+
+      pills.forEach((p) => {
+        const active = p.dataset.role === role;
+        p.classList.toggle("active", active);
+        p.setAttribute("aria-selected", String(active));
+      });
+
+      if (titleEl) titleEl.textContent = content.title;
+      if (subtitleEl) subtitleEl.textContent = content.subtitle;
+      if (demoBtn) { demoBtn.textContent = content.demoLabel; demoBtn.dataset.role = role; }
+      if (switchEl) switchEl.hidden = !content.showRegister;
+      if (staffNote) staffNote.hidden = content.showRegister;
+
+      const demo = auth && auth.DEMOS && auth.DEMOS[role];
+      if (demo) {
+        if (demoEmail) demoEmail.textContent = demo.email;
+        if (demoPass) demoPass.textContent = demo.password;
+      }
+    }
+
+    pills.forEach((p) => p.addEventListener("click", () => applyRole(p.dataset.role)));
+
+    applyRole("donante");
+  }
+
+
+  /* ==========================================================================
      8. NAVEGACIÓN — menú móvil y scroll suave para anclas de la misma página
      ========================================================================== */
 
@@ -775,6 +853,8 @@
     renderMyths();
     renderFaq();
     initQuestionForm();
+
+    initRoleSelector();
 
     initNav();
     refreshIcons();
