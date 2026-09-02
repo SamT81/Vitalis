@@ -392,6 +392,78 @@ html[data-auth="user"]  [data-auth="guest"] { display: none !important; }
 .btn-row:hover { border-color: var(--rose-300); color: var(--rose-600); }
 .btn-row svg { width: 13px; height: 13px; }
 
+/* ─── 8c. Primitivas de panel (perfil + paneles de personal) ──────────────
+   Compartidas por perfil.html y por los paneles de personal operativo,
+   institucional, auditoría INVIMA y administración general, para que todos
+   hablen el mismo lenguaje visual sin depender de css/perfil.css. */
+.dash-welcome { padding-top: 2.5rem; padding-bottom: .5rem; }
+.dash-welcome h1 { font-size: clamp(1.6rem, 3.5vw, 2.1rem); color: var(--slate-900); }
+.dash-welcome p  { color: var(--slate-500); margin: .4rem 0 0; font-size: .92rem; }
+
+.dash-section { margin-top: 1.75rem; }
+.dash-section > .block-title { margin-bottom: 1rem; }
+
+/* Conmutador de vistas (lista/mapa, enviadas/recibidas…) */
+.view-switch { display: inline-flex; background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: .5rem; padding: 2px; }
+.view-btn {
+  border: 0; background: none; padding: .4rem .8rem; border-radius: .4rem;
+  font-size: .8rem; font-weight: 600; color: var(--slate-500);
+  display: inline-flex; align-items: center; gap: .35rem;
+}
+.view-btn svg { width: 14px; height: 14px; }
+.view-btn.is-active { background: #fff; color: var(--slate-900); box-shadow: 0 1px 2px rgba(15,23,42,.1); }
+
+/* ─── 8d. Menú del avatar en la navbar (identidad + selector de rol + Dev) ── */
+.nav-role-menu { position: relative; }
+.nav-role-menu .nav-user { border: 0; background: none; font: inherit; cursor: pointer; }
+.nav-role-menu .nav-user::after { display: none; }   /* sin caret de Bootstrap */
+.nav-user-caret { width: 14px; height: 14px; color: var(--slate-400); }
+
+.nav-role-dropdown {
+  border: 1px solid var(--slate-100); border-radius: var(--r-lg);
+  box-shadow: var(--shadow-card); padding: .5rem; min-width: 260px;
+}
+.nav-role-dropdown .dropdown-item {
+  display: flex; align-items: center; gap: .55rem;
+  font-size: .85rem; color: var(--slate-600); border-radius: .5rem; padding: .5rem .6rem;
+}
+.nav-role-dropdown .dropdown-item:hover { background: var(--slate-50); color: var(--slate-900); }
+.nav-role-dropdown .dropdown-item svg { width: 15px; height: 15px; }
+.nav-role-dropdown .dropdown-divider { margin: .4rem .2rem; border-color: var(--slate-100); }
+
+.nrd-head {
+  display: flex; align-items: center; gap: .6rem;
+  padding: .5rem .6rem .7rem; border-bottom: 1px solid var(--slate-100); margin-bottom: .35rem;
+}
+.nrd-name { font-size: .88rem; font-weight: 700; color: var(--slate-900); line-height: 1.2; }
+.nrd-role { font-size: .72rem; color: var(--slate-400); }
+
+.nrd-section-title {
+  display: flex; align-items: center; gap: .4rem;
+  font-size: .68rem; text-transform: uppercase; letter-spacing: .05em;
+  color: var(--slate-400); font-weight: 700; padding: .5rem .6rem .3rem;
+}
+.nrd-section-title svg { width: 12px; height: 12px; }
+
+.nrd-role {
+  /* usado también como botón de la lista de simulación */
+}
+.nrd-roles { display: flex; flex-direction: column; gap: 2px; }
+button.nrd-role {
+  display: flex; align-items: center; gap: .55rem; width: 100%;
+  border: 0; background: none; text-align: left;
+  font-size: .84rem; font-weight: 600; color: var(--slate-600);
+  border-radius: .5rem; padding: .5rem .6rem;
+}
+button.nrd-role:hover { background: var(--slate-50); color: var(--slate-900); }
+button.nrd-role svg { width: 15px; height: 15px; color: var(--slate-400); }
+button.nrd-role.is-current { background: var(--rose-50); color: var(--rose-600); }
+button.nrd-role.is-current svg { color: var(--rose-600); }
+button.nrd-role .nrd-role-check { margin-left: auto; }
+
+/* Elementos exclusivos del modo desarrollo: ocultos hasta que JS confirme. */
+html:not([data-dev-mode="on"]) [data-dev-only] { display: none !important; }
+
 /* ─── 9. Barra de confianza + footer ──────────────────────────────────────── */
 .trust-bar { border-top: 1px solid var(--slate-100); background: rgba(248, 250, 252, .5); padding-block: 2rem; }
 .trust-bar svg { width: 16px; height: 16px; color: var(--slate-400); flex-shrink: 0; }

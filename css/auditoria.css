@@ -1,0 +1,109 @@
+/* =============================================================================
+   Vitalis · RIBAS — PANEL DE AUDITOR REGULATORIO · INVIMA (auditoria.html)
+   Depende de: css/global.css (usa card-soft, stat-tile, tag, form-control…)
+   Cabecera y estructura calcadas de css/operativo.css / css/admin-institucional.css
+   (mismo lenguaje visual, clases con prefijo "au-" para mantener el panel
+   autocontenido). Rol de SOLO LECTURA: no define ningún estilo de botón de
+   creación/edición/eliminación.
+   ============================================================================= */
+
+/* ─── Cabecera de panel (no es el navbar público) ─────────────────────────── */
+.au-header {
+  background: #fff; border-bottom: 1px solid var(--slate-100);
+  position: sticky; top: 0; z-index: 1030;
+}
+.au-header-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem; padding-block: .85rem;
+}
+.au-brand { display: flex; align-items: center; gap: .85rem; }
+.au-logo { height: 42px; width: auto; object-fit: contain; flex-shrink: 0; }
+.au-brand-text { display: flex; flex-direction: column; gap: .15rem; }
+.au-brand-title { font-weight: 700; color: var(--slate-900); font-size: .95rem; line-height: 1; }
+.au-back-link {
+  display: inline-flex; align-items: center; gap: .3rem;
+  font-size: .74rem; color: var(--slate-400); text-decoration: none;
+}
+.au-back-link:hover { color: var(--rose-600); }
+.au-back-link svg { width: 12px; height: 12px; }
+
+.au-user-block { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+.au-role-tag {
+  display: inline-flex; align-items: center; gap: .35rem;
+  background: var(--rose-50); border: 1px solid var(--rose-100); color: var(--rose-700);
+  font-size: .7rem; font-weight: 600; padding: .25rem .65rem; border-radius: 999px;
+}
+.au-role-tag svg { width: 12px; height: 12px; }
+
+/* Insignia "Solo lectura": deliberadamente neutra (slate), no rose, para no
+   leerse como una acción disponible sino como una restricción del rol. */
+.au-readonly-badge {
+  display: inline-flex; align-items: center; gap: .35rem;
+  background: var(--slate-100); border: 1px solid var(--slate-200); color: var(--slate-600);
+  font-size: .7rem; font-weight: 600; padding: .25rem .65rem; border-radius: 999px;
+}
+.au-readonly-badge svg { width: 12px; height: 12px; }
+
+.au-user-id { display: flex; align-items: center; gap: .55rem; }
+.au-user-name { font-size: .85rem; font-weight: 600; color: var(--slate-900); line-height: 1.2; }
+.au-user-sub { font-size: .72rem; color: var(--slate-400); line-height: 1.3; }
+
+/* ─── Aviso de modo solo lectura (banner bajo el saludo) ───────────────────── */
+.readonly-note {
+  display: flex; align-items: center; gap: .5rem;
+  font-size: .78rem; color: var(--slate-600);
+  background: var(--slate-50); border: 1px solid var(--slate-200);
+  border-radius: var(--r-lg); padding: .7rem .95rem; margin-top: 1rem;
+}
+.readonly-note svg { width: 15px; height: 15px; color: var(--slate-400); flex-shrink: 0; }
+
+/* ─── Tabla genérica del panel (instituciones + desechos) ──────────────────── */
+.panel-table { width: 100%; border-collapse: collapse; font-size: .84rem; }
+.panel-table thead th {
+  text-align: left; font-size: .68rem; text-transform: uppercase; letter-spacing: .05em;
+  color: var(--slate-400); font-weight: 600; padding: .75rem 1rem; border-bottom: 1px solid var(--slate-100);
+  white-space: nowrap;
+}
+.panel-table tbody td { padding: .8rem 1rem; border-bottom: 1px solid var(--slate-100); color: var(--slate-600); vertical-align: middle; }
+.panel-table tbody tr:last-child td { border-bottom: 0; }
+.panel-table .pt-primary { color: var(--slate-900); font-weight: 500; }
+.panel-table .pt-scroll { overflow-x: auto; }
+
+/* Etiqueta adicional (suspendida / no apto) siguiendo la paleta rose existente */
+.tag-rose { background: var(--rose-50); color: var(--rose-700); border-color: var(--rose-100); }
+
+/* ─── Buscador de trazabilidad ──────────────────────────────────────────────── */
+.trace-search { display: flex; gap: .6rem; flex-wrap: wrap; }
+.trace-search .form-control { max-width: 260px; }
+.trace-hint { font-size: .72rem; color: var(--slate-400); margin-top: .5rem; }
+
+.trace-timeline { display: flex; flex-direction: column; }
+.trace-event {
+  display: flex; gap: .9rem; padding: .9rem 1.25rem;
+}
+.trace-event + .trace-event { border-top: 1px solid var(--slate-100); }
+.trace-event .te-dot {
+  width: 30px; height: 30px; border-radius: 999px; flex-shrink: 0;
+  background: var(--rose-50); color: var(--rose-600);
+  display: flex; align-items: center; justify-content: center;
+}
+.trace-event .te-dot svg { width: 14px; height: 14px; }
+.trace-event .te-title { font-size: .85rem; font-weight: 600; color: var(--slate-900); }
+.trace-event .te-meta { font-size: .74rem; color: var(--slate-400); margin-top: .2rem; }
+
+/* ─── Footer del panel (una sola línea) ────────────────────────────────────── */
+.au-footer {
+  border-top: 1px solid var(--slate-100); background: #fff;
+  padding-block: 1.25rem; text-align: center;
+  font-size: .74rem; color: var(--slate-400);
+}
+
+@media (max-width: 767.98px) {
+  .au-header-inner { align-items: flex-start; }
+}
+
+/* ─── Exportar / imprimir reporte ───────────────────────────────────────────── */
+@media print {
+  .au-header, .au-footer, .readonly-note, .d-print-none { display: none !important; }
+  main { padding-top: 0 !important; }
+}

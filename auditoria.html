@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel de Auditoría INVIMA · Vitalis RIBAS</title>
+  <meta name="description" content="Acceso transversal de solo lectura para auditoría regulatoria INVIMA: instituciones de la red, trazabilidad de unidades e informes de desecho biológico." />
+  <meta name="theme-color" content="#e11d48" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <!-- Guardián de sesión y rol (modo desarrollo: no redirige). Ver js/auth-guard.js + js/auth.js -->
+  <script src="js/auth-guard.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/auditoria.css" />
+</head>
+
+<body data-requires-auth="true" data-requires-role="auditor,admin_general">
+
+<!-- ═══════════════ CABECERA DE PANEL (no es el navbar público) ═══════════════ -->
+<header class="au-header d-print-none">
+  <div class="container-xl au-header-inner">
+    <div class="au-brand">
+      <img src="assets/image-Photoroom.png" alt="Logo Vitalis" class="au-logo" />
+      <div class="au-brand-text">
+        <span class="au-brand-title">Panel de auditoría · Vitalis RIBAS</span>
+        <a href="index.html" class="au-back-link"><i data-lucide="arrow-left"></i> Volver al sitio público</a>
+      </div>
+    </div>
+
+    <div class="au-user-block">
+      <div class="au-user-id">
+        <span class="nav-user-avatar" data-auth-initials>··</span>
+        <div>
+          <div class="au-user-name" data-auth-firstname>Auditor</div>
+          <div class="au-user-sub">Acceso transversal · red RIBAS</div>
+        </div>
+      </div>
+      <span class="au-role-tag"><i data-lucide="shield-check"></i> Auditor Regulatorio · INVIMA</span>
+      <span class="au-readonly-badge"><i data-lucide="eye"></i> Solo lectura</span>
+      <button class="btn btn-outline-soft btn-sm" data-auth-logout type="button"><i data-lucide="log-out"></i> Salir</button>
+    </div>
+  </div>
+</header>
+
+<main class="container-xl">
+
+  <header class="dash-welcome">
+    <h1>Hola, <span data-auth-firstname>Auditor</span> 👋</h1>
+    <p>Auditoría regulatoria INVIMA: auditoría de muestras, trazabilidad de sangre, cadena de frío
+      y reporte de hallazgos de bioseguridad en toda la red RIBAS.</p>
+    <p class="readonly-note">
+      <i data-lucide="lock"></i>
+      Modo de auditoría: solo lectura. Este panel no permite crear, editar ni eliminar registros;
+      es una consulta transversal entre instituciones conforme al SRS.
+    </p>
+  </header>
+
+  <!-- ─── 1. Resumen ────────────────────────────────────────────────────────── -->
+  <section class="dash-section">
+    <h2 class="block-title mb-3">Resumen de la red</h2>
+    <div class="row g-3" id="au-summary"><!-- Se rellena desde js/auditoria.js --></div>
+  </section>
+
+  <!-- ─── 2. Instituciones de la red ────────────────────────────────────────── -->
+  <section class="dash-section">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <h2 class="block-title mb-0">Instituciones de la red</h2>
+      <span class="text-muted-soft small" id="au-institutions-count">—</span>
+    </div>
+    <div class="card-soft overflow-hidden" id="au-institutions-table"><!-- Se rellena desde js/auditoria.js --></div>
+  </section>
+
+  <!-- ─── 3. Auditoría de muestras y trazabilidad de sangre ─────────────────── -->
+  <section class="dash-section">
+    <h2 class="block-title mb-3">Auditoría de muestras · trazabilidad de sangre</h2>
+    <div class="card-soft p-4">
+      <form id="trace-form" class="trace-search d-print-none" novalidate>
+        <input type="text" class="form-control" id="trace-input" placeholder="Ej. RB-1001" aria-label="Número de unidad o muestra" />
+        <button type="submit" class="btn btn-outline-soft"><i data-lucide="search"></i> Auditar muestra</button>
+      </form>
+      <p class="trace-hint d-print-none">Prueba con <code>RB-1001</code>, <code>RB-1006</code> o <code>RB-1010</code>.</p>
+      <div id="trace-result" class="mt-3"><!-- Se rellena desde js/auditoria.js --></div>
+    </div>
+  </section>
+
+  <!-- ─── 4. Control de cadena de frío ──────────────────────────────────────── -->
+  <section class="dash-section">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <h2 class="block-title mb-0">Control de cadena de frío</h2>
+      <span class="text-muted-soft small" id="au-coldchain-count">—</span>
+    </div>
+    <p class="hint mb-3">Registros de temperatura de almacenamiento y traslado entre instituciones (rango recomendado 2 – 6 °C para hemocomponentes).</p>
+    <div class="card-soft overflow-hidden" id="au-coldchain-table"><!-- Se rellena desde js/auditoria.js --></div>
+  </section>
+
+  <!-- ─── 5. Hallazgos y bioseguridad ───────────────────────────────────────── -->
+  <section class="dash-section">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <h2 class="block-title mb-0">Reporte de hallazgos · bioseguridad</h2>
+      <span class="text-muted-soft small" id="au-findings-count">—</span>
+    </div>
+    <div class="card-soft overflow-hidden" id="au-findings-table"><!-- Se rellena desde js/auditoria.js --></div>
+  </section>
+
+  <!-- ─── 6. Informe de desecho biológico / cuarentena ──────────────────────── -->
+  <section class="dash-section pb-section">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <h2 class="block-title mb-0">Informe de desecho biológico</h2>
+      <button class="btn btn-brand btn-sm d-print-none" id="export-report-btn" type="button" onclick="window.print()">
+        <i data-lucide="download"></i> Exportar reporte
+      </button>
+    </div>
+    <div class="card-soft overflow-hidden" id="au-discard-table"><!-- Se rellena desde js/auditoria.js --></div>
+  </section>
+</main>
+
+<!-- ═══════════════ FOOTER (una sola línea) ═══════════════ -->
+<footer class="au-footer d-print-none">
+  <span>© 2026 Vitalis · RIBAS · Panel de auditoría · Datos y tamizaje confidenciales · Decreto 1571 de 1993</span>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/auditoria.js"></script>
+</body>
+</html>

@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="css/panel.css" />
 </head>
 
-<body data-requires-auth="true">
+<body data-requires-auth="true" data-requires-role="admin_institucional,admin_general">
 
 <!-- ═══════════════ NAVBAR (compartido) ═══════════════ -->
 <header class="site-header sticky-top">
@@ -39,6 +39,8 @@
           <li class="nav-item" data-auth="user"><a class="nav-link" href="perfil.html">Mi perfil</a></li>
           <li class="nav-item" data-role="institucion admin" hidden><a class="nav-link active" aria-current="page" href="panel-institucional.html">Panel institucional</a></li>
           <li class="nav-item" data-role="admin" hidden><a class="nav-link" href="admin-dashboard.html">Administración</a></li>
+          <li class="nav-item" data-role="operativo admin_institucional admin_general" hidden><a class="nav-link" href="operativo.html">Panel operativo</a></li>
+          <li class="nav-item" data-role="auditor admin_general" hidden><a class="nav-link" href="auditoria.html">Auditoría INVIMA</a></li>
         </ul>
         <div class="d-flex flex-column flex-lg-row gap-2 mt-3 mt-lg-0 align-items-lg-center">
           <div class="d-flex flex-column flex-lg-row gap-2" data-auth="guest">
@@ -46,11 +48,28 @@
             <a class="btn btn-brand" href="registro.html">Registrarme</a>
           </div>
           <div class="d-flex align-items-center gap-2" data-auth="user">
-            <a href="perfil.html" class="nav-user">
-              <span class="nav-user-avatar" data-auth-initials>··</span>
-              <span class="nav-user-name" data-auth-firstname>Donante</span>
-            </a>
-            <button class="btn btn-outline-soft btn-sm" data-auth-logout type="button">Salir</button>
+            <div class="dropdown nav-role-menu">
+              <button class="nav-user" type="button" id="navUserMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="nav-user-avatar" data-auth-initials>··</span>
+                <span class="nav-user-name" data-auth-firstname>Donante</span>
+                <i data-lucide="chevron-down" class="nav-user-caret"></i>
+              </button>
+              <div class="dropdown-menu dropdown-menu-end nav-role-dropdown" aria-labelledby="navUserMenu">
+                <div class="nrd-head">
+                  <span class="nav-user-avatar" data-auth-initials>··</span>
+                  <div class="min-w-0">
+                    <div class="nrd-name" data-auth-name>Donante</div>
+                    <div class="nrd-role" data-auth-role-label>Donante</div>
+                  </div>
+                </div>
+                <a class="dropdown-item" href="perfil.html"><i data-lucide="user-round"></i> Mi perfil</a>
+                <div class="nrd-section-title"><i data-lucide="users-round"></i> Cambiar / simular rol</div>
+                <div class="nrd-roles" data-role-switcher><!-- js/auth.js --></div>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#" data-dev-only data-dev-toggle><i data-lucide="terminal"></i> Modo Dev: <span data-dev-state>activo</span></a>
+                <button class="dropdown-item text-rose" type="button" data-auth-logout><i data-lucide="log-out"></i> Salir</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -64,6 +83,11 @@
     <span class="pill mb-3"><i data-lucide="building-2"></i> Vista institucional · B2B</span>
     <h1>Panel institucional</h1>
     <p style="margin-left:0;">Gestión de inventario, intercambio entre bancos de la red y creación de campañas.</p>
+    <p style="margin-left:0;" class="mt-2">
+      <a class="link-brand" href="operativo.html"><i data-lucide="clipboard-list" style="width:14px;height:14px;vertical-align:-2px"></i> Panel operativo</a>
+      &nbsp;·&nbsp;
+      <a class="link-brand" href="admin-institucional.html"><i data-lucide="building-2" style="width:14px;height:14px;vertical-align:-2px"></i> Gestión de personal, capacidad y solicitudes B2B</a>
+    </p>
   </header>
 
   <div class="role-banner" id="panel-role-banner" hidden>

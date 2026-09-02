@@ -1,0 +1,87 @@
+/* =============================================================================
+   Vitalis · RIBAS — PANEL DE ADMINISTRADOR INSTITUCIONAL (admin-institucional.html)
+   Depende de: css/global.css (usa card-soft, stat-tile, tag, form-control…)
+   Cabecera y estructura calcadas de css/operativo.css (mismo lenguaje visual,
+   clases con prefijo "ai-" para mantener cada panel autocontenido).
+   ============================================================================= */
+
+/* ─── Cabecera de panel (no es el navbar público) ─────────────────────────── */
+.ai-header {
+  background: #fff; border-bottom: 1px solid var(--slate-100);
+  position: sticky; top: 0; z-index: 1030;
+}
+.ai-header-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem; padding-block: .85rem;
+}
+.ai-brand { display: flex; align-items: center; gap: .85rem; }
+.ai-logo { height: 42px; width: auto; object-fit: contain; flex-shrink: 0; }
+.ai-brand-text { display: flex; flex-direction: column; gap: .15rem; }
+.ai-brand-title { font-weight: 700; color: var(--slate-900); font-size: .95rem; line-height: 1; }
+.ai-back-link {
+  display: inline-flex; align-items: center; gap: .3rem;
+  font-size: .74rem; color: var(--slate-400); text-decoration: none;
+}
+.ai-back-link:hover { color: var(--rose-600); }
+.ai-back-link svg { width: 12px; height: 12px; }
+
+.ai-user-block { display: flex; align-items: center; gap: .9rem; flex-wrap: wrap; }
+.ai-role-tag {
+  display: inline-flex; align-items: center; gap: .35rem;
+  background: var(--rose-50); border: 1px solid var(--rose-100); color: var(--rose-700);
+  font-size: .7rem; font-weight: 600; padding: .25rem .65rem; border-radius: 999px;
+}
+.ai-role-tag svg { width: 12px; height: 12px; }
+.ai-user-id { display: flex; align-items: center; gap: .55rem; }
+.ai-user-name { font-size: .85rem; font-weight: 600; color: var(--slate-900); line-height: 1.2; }
+.ai-user-inst { font-size: .72rem; color: var(--slate-400); line-height: 1.3; }
+
+/* ─── Tabla genérica del panel (personal + solicitudes B2B) ───────────────── */
+.panel-table { width: 100%; border-collapse: collapse; font-size: .84rem; }
+.panel-table thead th {
+  text-align: left; font-size: .68rem; text-transform: uppercase; letter-spacing: .05em;
+  color: var(--slate-400); font-weight: 600; padding: .75rem 1rem; border-bottom: 1px solid var(--slate-100);
+  white-space: nowrap;
+}
+.panel-table tbody td { padding: .8rem 1rem; border-bottom: 1px solid var(--slate-100); color: var(--slate-600); vertical-align: middle; }
+.panel-table tbody tr:last-child td { border-bottom: 0; }
+.panel-table .pt-primary { color: var(--slate-900); font-weight: 500; }
+.panel-table .pt-scroll { overflow-x: auto; }
+
+/* Etiqueta adicional (rechazada / no apto) siguiendo la paleta rose existente */
+.tag-rose { background: var(--rose-50); color: var(--rose-700); border-color: var(--rose-100); }
+
+/* Alternar estado activo/inactivo del personal */
+.btn-toggle-status {
+  background: none; border: 0; font-size: .74rem; font-weight: 600; color: var(--slate-400);
+}
+.btn-toggle-status:hover { color: var(--rose-600); }
+
+/* Botones aceptar / rechazar solicitudes B2B */
+.btn-decision {
+  display: inline-flex; align-items: center; gap: .3rem;
+  font-size: .74rem; font-weight: 600; border-radius: .5rem;
+  padding: .3rem .65rem; border: 1px solid transparent;
+}
+.btn-decision svg { width: 13px; height: 13px; }
+.btn-decision.is-accept { color: var(--emerald-700); background: var(--emerald-50); border-color: var(--emerald-100); }
+.btn-decision.is-accept:hover { background: var(--emerald-100); }
+.btn-decision.is-reject { color: var(--rose-700); background: var(--rose-50); border-color: var(--rose-100); }
+.btn-decision.is-reject:hover { background: var(--rose-100); }
+.btn-decision + .btn-decision { margin-left: .4rem; }
+.b2b-actions { display: flex; align-items: center; flex-wrap: wrap; }
+
+/* ─── Formularios de capacidad / estado / cobertura ────────────────────────── */
+.settings-form .form-success,
+.settings-form .form-error { margin-top: .85rem; }
+
+/* ─── Footer del panel (una sola línea) ────────────────────────────────────── */
+.ai-footer {
+  border-top: 1px solid var(--slate-100); background: #fff;
+  padding-block: 1.25rem; text-align: center;
+  font-size: .74rem; color: var(--slate-400);
+}
+
+@media (max-width: 767.98px) {
+  .ai-header-inner { align-items: flex-start; }
+}

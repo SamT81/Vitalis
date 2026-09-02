@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Operativo · Vitalis RIBAS</title>
+  <meta name="description" content="Panel operativo del personal de banco de sangre / centro de salud: inventario, trazabilidad de unidades e intercambios interinstitucionales." />
+  <meta name="theme-color" content="#e11d48" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <!-- Guardián de sesión y rol (modo desarrollo: no redirige). Ver js/auth-guard.js + js/auth.js -->
+  <script src="js/auth-guard.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/operativo.css" />
+</head>
+
+<body data-requires-auth="true" data-requires-role="operativo,admin_general">
+
+<!-- ═══════════════ CABECERA DE PANEL (no es el navbar público) ═══════════════ -->
+<header class="ops-header">
+  <div class="container-xl ops-header-inner">
+    <div class="ops-brand">
+      <img src="assets/image-Photoroom.png" alt="Logo Vitalis" class="ops-logo" />
+      <div class="ops-brand-text">
+        <span class="ops-brand-title">Panel operativo · Vitalis RIBAS</span>
+        <a href="index.html" class="ops-back-link"><i data-lucide="arrow-left"></i> Volver al sitio público</a>
+      </div>
+    </div>
+
+    <div class="ops-user-block">
+      <div class="ops-user-id">
+        <span class="nav-user-avatar" data-auth-initials>··</span>
+        <div>
+          <div class="ops-user-name" data-auth-firstname>Operativo</div>
+          <div class="ops-user-inst" id="ops-institution">—</div>
+        </div>
+      </div>
+      <span class="ops-role-tag"><i data-lucide="clipboard-list"></i> Personal Operativo</span>
+      <button class="btn btn-outline-soft btn-sm" data-auth-logout type="button"><i data-lucide="log-out"></i> Salir</button>
+    </div>
+  </div>
+</header>
+
+<main class="container-xl">
+
+  <header class="dash-welcome">
+    <h1>Hola, <span data-auth-firstname>Operativo</span> 👋</h1>
+    <p>Gestiona el inventario, la trazabilidad de unidades y las campañas de tu sede.</p>
+  </header>
+
+  <!-- ─── 1. Resumen de inventario ─────────────────────────────────────────── -->
+  <section class="dash-section">
+    <h2 class="block-title mb-3">Resumen de inventario</h2>
+    <div class="row g-3" id="ops-summary"><!-- Se rellena desde js/operativo.js --></div>
+
+    <div class="mt-3">
+      <div class="hint mb-2">Unidades disponibles por tipo de sangre</div>
+      <div class="bt-inventory-row" id="ops-inventory-by-type"><!-- Se rellena desde js/operativo.js --></div>
+    </div>
+  </section>
+
+  <!-- ─── 2. Registro de nueva unidad ──────────────────────────────────────── -->
+  <section class="dash-section">
+    <div class="card-soft p-4">
+      <h2 class="block-title mb-3">Registrar nueva unidad</h2>
+      <form id="unit-form" class="row g-3" novalidate>
+        <div class="col-sm-6 col-lg-3">
+          <label class="form-label" for="unit-blood">Tipo de sangre</label>
+          <select class="form-select" id="unit-blood" required>
+            <option value="" selected disabled>Selecciona…</option>
+          </select>
+          <div class="invalid-feedback">Selecciona un tipo de sangre.</div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <label class="form-label" for="unit-component">Componente</label>
+          <select class="form-select" id="unit-component" required>
+            <option value="" selected disabled>Selecciona…</option>
+            <option value="Glóbulos rojos">Glóbulos rojos</option>
+            <option value="Plasma">Plasma</option>
+            <option value="Plaquetas">Plaquetas</option>
+            <option value="Sangre total">Sangre total</option>
+          </select>
+          <div class="invalid-feedback">Selecciona un componente.</div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <label class="form-label" for="unit-date">Fecha de extracción</label>
+          <input type="date" class="form-control" id="unit-date" required />
+          <div class="invalid-feedback">Ingresa la fecha de extracción.</div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <label class="form-label" for="unit-donor">Donante (documento o nombre)</label>
+          <input type="text" class="form-control" id="unit-donor" placeholder="1032456789 o Ana García" required />
+          <div class="invalid-feedback">Identifica al donante asociado.</div>
+        </div>
+        <div class="col-12 d-flex align-items-center justify-content-between flex-wrap gap-2">
+          <div id="unit-form-success" class="form-success" hidden><i data-lucide="check-circle"></i> Unidad registrada correctamente.</div>
+          <button type="submit" class="btn btn-brand ms-auto"><i data-lucide="plus"></i> Registrar unidad</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ─── 3 + 4. Ciclo de vida de la unidad + tamizaje ─────────────────────── -->
+  <section class="dash-section">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <h2 class="block-title mb-0">Ciclo de vida de las unidades</h2>
+      <span class="text-muted-soft small" id="units-count">—</span>
+    </div>
+    <p class="screening-note">
+      <i data-lucide="lock"></i>
+      El resultado del tamizaje es un dato de acceso restringido por rol (SRS). Se muestra aquí porque tu
+      cuenta de Personal Operativo está autorizada para consultarlo.
+    </p>
+    <div class="card-soft overflow-hidden" id="units-table"><!-- Se rellena desde js/operativo.js --></div>
+  </section>
+
+  <!-- ─── 5. Solicitudes de intercambio interinstitucional ─────────────────── -->
+  <section class="dash-section">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <h2 class="block-title mb-0">Solicitudes de intercambio interinstitucional</h2>
+      <button class="btn btn-brand btn-sm" id="new-exchange-btn" type="button" data-bs-toggle="modal" data-bs-target="#exchangeModal">
+        <i data-lucide="plus"></i> Nueva solicitud
+      </button>
+    </div>
+    <div class="view-switch mb-3" role="tablist" aria-label="Ver solicitudes enviadas o recibidas">
+      <button class="view-btn is-active" data-exch-tab="enviadas" type="button"><i data-lucide="arrow-up-right"></i> Enviadas</button>
+      <button class="view-btn" data-exch-tab="recibidas" type="button"><i data-lucide="arrow-down-left"></i> Recibidas</button>
+    </div>
+    <div class="card-soft overflow-hidden" id="exchanges-table"><!-- Se rellena desde js/operativo.js --></div>
+  </section>
+
+  <!-- ─── 6. Campañas de la sede ────────────────────────────────────────────── -->
+  <section class="dash-section pb-section">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <h2 class="block-title mb-0">Campañas de tu sede</h2>
+      <span class="text-muted-soft small" id="ops-campaigns-count">—</span>
+    </div>
+    <div class="card-soft overflow-hidden" id="ops-campaigns"><!-- Se rellena desde js/operativo.js --></div>
+  </section>
+</main>
+
+<!-- ─── Modal: nueva solicitud de intercambio ──────────────────────────────── -->
+<div class="modal fade" id="exchangeModal" tabindex="-1" aria-labelledby="exchangeModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="exchangeModalTitle">Nueva solicitud de intercambio</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="exchange-form" novalidate>
+          <div id="exchange-error" class="form-error mb-3" role="alert"></div>
+          <div class="mb-3">
+            <label class="form-label" for="exch-institution">Institución destino</label>
+            <input type="text" class="form-control" id="exch-institution" placeholder="Ej. Banco de Sangre Distrital de Bogotá" required />
+            <div class="invalid-feedback">Indica la institución destino.</div>
+          </div>
+          <div class="row g-3">
+            <div class="col-6">
+              <label class="form-label" for="exch-blood">Tipo de sangre</label>
+              <select class="form-select" id="exch-blood" required>
+                <option value="" selected disabled>Selecciona…</option>
+              </select>
+              <div class="invalid-feedback">Selecciona un tipo de sangre.</div>
+            </div>
+            <div class="col-6">
+              <label class="form-label" for="exch-qty">Cantidad (unidades)</label>
+              <input type="number" class="form-control" id="exch-qty" min="1" step="1" required />
+              <div class="invalid-feedback">Indica cuántas unidades solicitas.</div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-outline-soft" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" form="exchange-form" class="btn btn-brand"><i data-lucide="send"></i> Enviar solicitud</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ FOOTER (una sola línea) ═══════════════ -->
+<footer class="ops-footer">
+  <span>© 2026 Vitalis · RIBAS · Panel operativo · Datos y tamizaje confidenciales · Decreto 1571 de 1993</span>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/operativo.js"></script>
+</body>
+</html>

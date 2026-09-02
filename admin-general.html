@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel de Administración General · Vitalis RIBAS</title>
+  <meta name="description" content="Panel del administrador general (superusuario): tenants de la red, roles y permisos, y monitoreo de seguridad de la plataforma Vitalis." />
+  <meta name="theme-color" content="#e11d48" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <!-- Guardián de sesión y rol (modo desarrollo: no redirige). Ver js/auth-guard.js + js/auth.js -->
+  <script src="js/auth-guard.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/admin-general.css" />
+</head>
+
+<body data-requires-auth="true" data-requires-role="admin_general">
+
+<!-- ═══════════════ CABECERA DE PANEL (no es el navbar público) ═══════════════ -->
+<header class="ag-header">
+  <div class="container-xl ag-header-inner">
+    <div class="ag-brand">
+      <img src="assets/image-Photoroom.png" alt="Logo Vitalis" class="ag-logo" />
+      <div class="ag-brand-text">
+        <span class="ag-brand-title">Panel de administración general · Vitalis RIBAS</span>
+        <a href="index.html" class="ag-back-link"><i data-lucide="arrow-left"></i> Volver al sitio público</a>
+      </div>
+    </div>
+
+    <div class="ag-user-block">
+      <div class="ag-user-id">
+        <span class="nav-user-avatar" data-auth-initials>··</span>
+        <div>
+          <div class="ag-user-name" data-auth-firstname>Superadmin</div>
+          <div class="ag-user-sub">Superusuario del sistema</div>
+        </div>
+      </div>
+      <span class="ag-role-tag"><i data-lucide="server-cog"></i> Administrador General · Superusuario</span>
+      <button class="btn btn-outline-soft btn-sm" data-auth-logout type="button"><i data-lucide="log-out"></i> Salir</button>
+    </div>
+  </div>
+</header>
+
+<main class="container-xl">
+
+  <header class="dash-welcome">
+    <h1>Hola, <span data-auth-firstname>Superadmin</span> 👋</h1>
+    <p>Administra los tenants de la red, los roles del sistema y la seguridad de toda la plataforma Vitalis.</p>
+  </header>
+
+  <!-- ─── 1. Resumen ────────────────────────────────────────────────────────── -->
+  <section class="dash-section">
+    <h2 class="block-title mb-3">Resumen del sistema</h2>
+    <div class="row g-3" id="ag-summary"><!-- Se rellena desde js/admin-general.js --></div>
+
+    <div class="mt-3">
+      <div class="hint mb-2">Usuarios totales por rol</div>
+      <div class="role-count-row" id="ag-role-counts"><!-- Se rellena desde js/admin-general.js --></div>
+    </div>
+  </section>
+
+  <!-- ─── 2. Gestión de tenants ─────────────────────────────────────────────── -->
+  <section class="dash-section">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <h2 class="block-title mb-0">Instituciones registradas en la red</h2>
+      <button class="btn btn-brand btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#tenantModal">
+        <i data-lucide="plus"></i> Agregar institución
+      </button>
+    </div>
+    <div class="card-soft overflow-hidden" id="ag-tenants-table"><!-- Se rellena desde js/admin-general.js --></div>
+  </section>
+
+  <!-- ─── 3. Roles y permisos del sistema ───────────────────────────────────── -->
+  <section class="dash-section">
+    <h2 class="block-title mb-3">Roles y permisos del sistema</h2>
+    <div class="row g-3" id="ag-roles"><!-- Se rellena desde js/admin-general.js --></div>
+  </section>
+
+  <!-- ─── 4. Monitoreo / auditoría de seguridad ─────────────────────────────── -->
+  <section class="dash-section pb-section">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <h2 class="block-title mb-0">Monitoreo de seguridad</h2>
+      <span class="text-muted-soft small" id="ag-events-count">—</span>
+    </div>
+    <div class="card-soft overflow-hidden" id="ag-events"><!-- Se rellena desde js/admin-general.js --></div>
+  </section>
+</main>
+
+<!-- ─── Modal: agregar institución ─────────────────────────────────────────── -->
+<div class="modal fade" id="tenantModal" tabindex="-1" aria-labelledby="tenantModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="tenantModalTitle">Agregar institución</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="tenant-form" novalidate>
+          <div id="tenant-error" class="form-error mb-3" role="alert"></div>
+          <div class="mb-3">
+            <label class="form-label" for="tenant-name">Nombre de la institución</label>
+            <input type="text" class="form-control" id="tenant-name" placeholder="Ej. Banco de Sangre del Eje Cafetero" required />
+            <div class="invalid-feedback">Ingresa el nombre de la institución.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="tenant-city">Ciudad</label>
+            <input type="text" class="form-control" id="tenant-city" placeholder="Ej. Pereira, Risaralda" required />
+            <div class="invalid-feedback">Ingresa la ciudad.</div>
+          </div>
+          <div class="mb-2">
+            <label class="form-label" for="tenant-type">Tipo de institución</label>
+            <select class="form-select" id="tenant-type" required>
+              <option value="" selected disabled>Selecciona…</option>
+              <option value="Banco de sangre">Banco de sangre</option>
+              <option value="Hospital">Hospital</option>
+              <option value="Cruz Roja">Cruz Roja</option>
+              <option value="Clínica">Clínica</option>
+              <option value="Centro de salud">Centro de salud</option>
+            </select>
+            <div class="invalid-feedback">Selecciona un tipo de institución.</div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-outline-soft" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" form="tenant-form" class="btn btn-brand"><i data-lucide="plus"></i> Agregar institución</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ FOOTER (una sola línea) ═══════════════ -->
+<footer class="ag-footer">
+  <span>© 2026 Vitalis · RIBAS · Panel de administración general · Datos y tamizaje confidenciales · Decreto 1571 de 1993</span>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/admin-general.js"></script>
+</body>
+</html>
