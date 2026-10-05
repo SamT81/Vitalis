@@ -203,3 +203,34 @@ paso. El mismo recorrido pasó sobre el build web de la app móvil a 360 px.
 > `Authorization` y `Content-Type`; y aceptar `Authorization: Bearer <token>`. Falta definir
 > `POST /api/v1/auth/forgot-password` y `GET /api/v1/donors/{userId}`. Detalle en
 > `REVISION-FRONT.md` y en el README de cada app.
+
+## 9. Commits y confirmación del push
+
+`git log --oneline -15` al momento del push:
+
+```
+9941e5f docs: informe de revision del front (REVISION-FRONT.md)
+8a77682 docs: README de cada app con la nueva estructura y el paquete compartido
+245acd3 test: pruebas en __tests__ (*.spec) y contrato del perfil de donante
+3c4406e chore: remove unused files (imagenes sin uso de las apps)
+92c37f4 refactor: paginas sin logica, constantes ROUTES centralizadas e imports por barrel
+11629b6 fix(web): oculta el boton nativo de mostrar contrasena de Edge (se veia duplicado)
+891cab3 refactor(profile): hooks useProfile/useBadges y componentes del perfil de donante
+6cb59f9 refactor(auth): servicios por factory, hooks useLogin/useForgotPassword/useSession y AuthProvider
+2bc5df1 refactor: add shared package (@ribas/shared) con npm workspaces
+ef04724 refactor: mueve archivos a estructura por feature y componentes a PascalCase
+2f0e774 docs(mobile): README con Expo Go, usuarios de prueba y conexion al backend
+43cbcac feat(mobile): pantallas de inicio, login, recuperar, cuenta y perfil
+9b39330 feat(mobile): componentes de interfaz con NativeWind
+d7955e4 feat(mobile): capa de autenticacion con mock y sesion en expo-secure-store
+16195e3 chore(mobile): scaffold de Expo + Expo Router + NativeWind
+```
+
+`git push -u origin front-react` creó la rama en `https://github.com/SamT81/Vitalis.git` sin
+errores. `git ls-remote --heads origin front-react` devolvió
+`9941e5f81d5b089445ebab7c8f57ebe804cc0661 refs/heads/front-react` y `git status` mostró la rama
+al día con `origin/front-react`. Esta sección se añadió en un commit posterior
+(`docs: confirma el push en el informe`), subido de la misma forma.
+
+No se subió ningún `node_modules/`, `dist/`, `.expo/`, `web-build/` ni `.env`. Los commits
+intermedios del refactor no compilan por separado; el estado verificado es el del último commit.
