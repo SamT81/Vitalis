@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "Vitalis",
+    "slug": "vitalis-ribas",
+    "scheme": "vitalis",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/logo-vitalis.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "config": {
+        "usesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#ffffff",
+        "foregroundImage": "./assets/logo-vitalis.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/logo-vitalis.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-status-bar",
+      "expo-secure-store",
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/logo-vitalis.png",
+          "imageWidth": 160,
+          "backgroundColor": "#ffffff"
+        }
+      ]
+    ]
+  }
+}
