@@ -8,6 +8,8 @@
    Claves de almacenamiento:
      vitalis_users    → cuentas registradas (incluye las cuentas demo por rol)
      vitalis_session  → { userId, remember } de la sesión activa
+     ribas_session    → { token, expiresAt, user } cuando el login pasa por
+                        js/auth-service.js (contrato POST /api/v1/auth/login)
 
    Roles del sistema (ver SRS), de menor a mayor alcance:
      donante              → auto-registro público · panel en perfil.html
@@ -27,11 +29,14 @@
 
   const USERS_KEY   = "vitalis_users";
   const SESSION_KEY = "vitalis_session";
+  const API_SESSION_KEY = "ribas_session";        // sesión del backend (js/auth-service.js)
 
   const read  = (k, fb) => { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? fb : v; } catch { return fb; } };
   const write = (k, v)  => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
 
   const guard = () => (window.Vitalis && window.Vitalis.guard) || null;
+  const authService = () => (window.Vitalis && window.Vitalis.authService) || null;
+  const clearApiSession = () => { try { localStorage.removeItem(API_SESSION_KEY); } catch {} };
 
   /* ─── Metadatos de roles ────────────────────────────────────────────────── */
   const ROLE_LABEL = {
@@ -220,6 +225,7 @@
     };
     users.push(user);
     saveUsers(users);
+    clearApiSession();
     write(SESSION_KEY, { userId: user.id, remember: true });
     return { ok: true, user };
   }
@@ -229,6 +235,7 @@
     if (!user || user.password !== password) {
       return { ok: false, error: "Correo o contraseña incorrectos." };
     }
+    clearApiSession();
     write(SESSION_KEY, { userId: user.id, remember: !!remember });
     return { ok: true, user };
   }
@@ -243,7 +250,7 @@
   /** Página de destino tras iniciar sesión, según el rol. */
   function roleHome(role) { return ROLE_HOME[role] || "perfil.html"; }
 
-  function logout() { try { localStorage.removeItem(SESSION_KEY); } catch {} }
+  function logout() { clearApiSession(); try { localStorage.removeItem(SESSION_KEY); } catch {} }
 
   /* ─── Selector / simulador de rol (navbar y login) ──────────────────────
      Cambiar de rol = iniciar sesión con la cuenta demo de ese rol. Así cada
@@ -296,7 +303,9 @@
     document.querySelectorAll("[data-auth-institution]").forEach((el) => { el.textContent = (u && u.institution) || ""; });
 
     // Bloques restringidos por rol: data-role="admin_institucional admin_general"
-    document.querySelectorAll("[data-role]").forEach((el) => {
+    // (se excluyen <html>, que guarda el rol de la sesión, y los controles del login,
+    //  que usan data-role como valor y no como restricción)
+    document.querySelectorAll("body [data-role]:not(.role-pill):not(#login-demo)").forEach((el) => {
       const need = el.dataset.role.split(/\s+/).filter(Boolean);
       const ok = need.some((n) => (g && g.roleCovers) ? g.roleCovers(n) : (role && n === role));
       el.hidden = !ok;
@@ -306,6 +315,10 @@
     const devOn = !!(g && g.DEV_MODE);
     document.querySelectorAll("[data-dev-only]").forEach((el) => { el.hidden = !devOn; });
     document.querySelectorAll("[data-dev-state]").forEach((el) => { el.textContent = devOn ? "activo" : "apagado"; });
+
+    // Atajos de demostración: sólo cuando la autenticación es simulada (js/env.js).
+    const env = window.Vitalis && window.Vitalis.env;
+    if (env && !env.USE_MOCK) document.querySelectorAll("[data-mock-only]").forEach((el) => { el.hidden = true; });
   }
 
   /* Rellena el menú "Simular rol" del avatar en la navbar. */
@@ -347,6 +360,7 @@
     "perfil.html", "campanas.html", "index.html", "gamificacion.html", "informacion.html",
     "panel-institucional.html", "admin-dashboard.html",
     "operativo.html", "admin-institucional.html", "auditoria.html", "admin-general.html",
+    "cuenta.html",
   ];
 
   /** Respeta ?next= si es una página conocida; si no, cae al home del rol dado. */
@@ -357,22 +371,73 @@
   }
   function showFormError(el, msg) { if (!el) return; el.textContent = msg; el.classList.add("show"); }
 
+  /** Marca un campo como válido / inválido con el mensaje dado (Bootstrap). */
+  function setFieldError(input, feedback, msg) {
+    if (!input) return;
+    input.setCustomValidity(msg || "");
+    if (feedback && msg) feedback.textContent = msg;
+  }
+
+  /** Estado de carga de un botón de envío: lo deshabilita y cambia su texto. */
+  function setSubmitting(btn, on, busyText) {
+    if (!btn) return;
+    if (on) {
+      btn.dataset.idleHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.setAttribute("aria-busy", "true");
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm" aria-hidden="true"></span> ' + busyText;
+    } else {
+      btn.disabled = false;
+      btn.removeAttribute("aria-busy");
+      if (btn.dataset.idleHtml) btn.innerHTML = btn.dataset.idleHtml;
+      if (window.lucide) window.lucide.createIcons();
+    }
+  }
+
   function initAuthForms() {
     const loginForm = document.getElementById("login-form");
     if (loginForm) {
       const err = document.getElementById("login-error");
-      loginForm.addEventListener("submit", (e) => {
+      const emailEl = document.getElementById("login-email");
+      const passEl  = document.getElementById("login-password");
+      const emailFb = document.getElementById("login-email-error");
+      const passFb  = document.getElementById("login-password-error");
+      const submitBtn = loginForm.querySelector('button[type="submit"]');
+
+      [emailEl, passEl].forEach((el) => el && el.addEventListener("input", () => el.setCustomValidity("")));
+
+      loginForm.addEventListener("submit", async (e) => {
         e.preventDefault();
+        if (submitBtn && submitBtn.disabled) return;
         err && err.classList.remove("show");
+        const remember = document.getElementById("login-remember") && document.getElementById("login-remember").checked;
+        const svc = authService();
+
+        // Sin js/auth-service.js cargado: login local heredado.
+        if (!svc) {
+          loginForm.classList.add("was-validated");
+          if (!loginForm.checkValidity()) return;
+          const res = login(emailEl.value, passEl.value, remember);
+          if (!res.ok) { showFormError(err, res.error); return; }
+          location.href = nextTarget(roleHome(res.user.role));
+          return;
+        }
+
+        const check = svc.validateLogin({ email: emailEl.value, password: passEl.value });
+        setFieldError(emailEl, emailFb, check.errors.email);
+        setFieldError(passEl, passFb, check.errors.password);
         loginForm.classList.add("was-validated");
-        if (!loginForm.checkValidity()) return;
-        const res = login(
-          document.getElementById("login-email").value,
-          document.getElementById("login-password").value,
-          document.getElementById("login-remember") && document.getElementById("login-remember").checked
-        );
-        if (!res.ok) { showFormError(err, res.error); return; }
-        location.href = nextTarget(roleHome(res.user.role));
+        if (!check.ok) { (check.errors.email ? emailEl : passEl).focus(); return; }
+
+        setSubmitting(submitBtn, true, "Ingresando…");
+        try {
+          const res = await svc.login(emailEl.value, passEl.value, remember);
+          location.href = nextTarget(roleHome(res.role));
+        } catch (error) {
+          setSubmitting(submitBtn, false);
+          loginForm.classList.remove("was-validated");
+          showFormError(err, svc.messageFor(error));
+        }
       });
 
       // Botón demo genérico (login.html) — el rol lo fija el selector de pills.

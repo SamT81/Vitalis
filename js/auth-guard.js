@@ -30,6 +30,7 @@
 
   var USERS_KEY    = "vitalis_users";
   var SESSION_KEY  = "vitalis_session";
+  var API_SESSION_KEY = "ribas_session";          // { token, expiresAt, user } (js/auth-service.js)
   var DEVMODE_KEY  = "vitalis_devmode";           // "on" | "off" (override de la navbar)
 
   /* Valor por defecto del modo desarrollo. Cambia a false para publicar. */
@@ -38,7 +39,8 @@
   var PROTECTED = [
     "perfil.html",
     "panel-institucional.html", "admin-dashboard.html",
-    "operativo.html", "admin-institucional.html", "auditoria.html", "admin-general.html"
+    "operativo.html", "admin-institucional.html", "auditoria.html", "admin-general.html",
+    "cuenta.html"
   ];
 
   /* Etiquetas legibles de cada rol (reutilizadas por la navbar). */
@@ -106,6 +108,22 @@
     write(SESSION_KEY, { userId: DEV_USER.id, remember: true });
     return DEV_USER;
   }
+
+  /* Sesión emitida por el backend: si ya venció (expiresAt), se cierra antes
+     de pintar la página; si quedó huérfana (sin sesión activa), se descarta. */
+  function expireApiSession() {
+    var api = read(API_SESSION_KEY, null);
+    if (!api) return;
+    try {
+      if (!(Date.parse(api.expiresAt) > Date.now())) {
+        localStorage.removeItem(API_SESSION_KEY);
+        localStorage.removeItem(SESSION_KEY);
+      } else if (!read(SESSION_KEY, null)) {
+        localStorage.removeItem(API_SESSION_KEY);
+      }
+    } catch (e) {}
+  }
+  expireApiSession();
 
   var user = currentUser();
   if (!user && DEV_MODE) user = ensureDevSession();

@@ -64,6 +64,7 @@
                   </div>
                 </div>
                 <a class="dropdown-item" href="perfil.html"><i data-lucide="user-round"></i> Mi perfil</a>
+                <a class="dropdown-item" href="cuenta.html"><i data-lucide="key-round"></i> Mi cuenta y sesión</a>
                 <div class="nrd-section-title"><i data-lucide="users-round"></i> Cambiar / simular rol</div>
                 <div class="nrd-roles" data-role-switcher><!-- js/auth.js --></div>
                 <div class="dropdown-divider"></div>
@@ -110,26 +111,30 @@
     <form id="login-form" novalidate>
       <div class="mb-3">
         <label class="form-label" for="login-email">Correo electrónico</label>
-        <input type="email" class="form-control" id="login-email" placeholder="tucorreo@ejemplo.com" required autocomplete="email" />
-        <div class="invalid-feedback">Ingresa un correo electrónico válido.</div>
+        <input type="email" class="form-control" id="login-email" placeholder="tucorreo@ejemplo.com" required autocomplete="email" aria-describedby="login-email-error" />
+        <div class="invalid-feedback" id="login-email-error">Ingresa un correo electrónico válido.</div>
       </div>
       <div class="mb-2">
         <label class="form-label" for="login-password">Contraseña</label>
-        <input type="password" class="form-control" id="login-password" placeholder="••••••••" required minlength="6" autocomplete="current-password" />
-        <div class="invalid-feedback">La contraseña debe tener al menos 6 caracteres.</div>
+        <div class="input-group has-validation">
+          <input type="password" class="form-control" id="login-password" placeholder="••••••••" required minlength="8" autocomplete="current-password" aria-describedby="login-password-error" />
+          <button type="button" class="btn btn-outline-soft password-toggle" data-toggle-password="login-password" aria-label="Mostrar contraseña" aria-pressed="false"><i data-lucide="eye"></i></button>
+          <div class="invalid-feedback" id="login-password-error">La contraseña debe tener al menos 8 caracteres.</div>
+        </div>
       </div>
       <div class="auth-remember">
         <label><input type="checkbox" id="login-remember" checked /> Recordarme</label>
-        <a href="#" class="link-brand" onclick="return false;">¿Olvidaste tu contraseña?</a>
+        <a href="recuperar.html" class="link-brand">¿Olvidaste tu contraseña?</a>
       </div>
       <button type="submit" class="btn btn-brand w-100 btn-lg mt-2"><i data-lucide="log-in"></i> Ingresar</button>
     </form>
 
-    <div class="auth-divider">o</div>
-    <button type="button" id="login-demo" class="btn btn-outline-soft w-100" data-role="donante">Entrar con la cuenta de demostración</button>
-    <div class="auth-demo mt-3">
+    <div class="auth-divider" data-mock-only>o</div>
+    <button type="button" id="login-demo" class="btn btn-outline-soft w-100" data-role="donante" data-mock-only>Entrar con la cuenta de demostración</button>
+    <div class="auth-demo mt-3" data-mock-only>
       <b>Cuenta demo:</b> correo <code id="demo-email">ana@vitalis.co</code> · contraseña <code id="demo-password">demo1234</code>
     </div>
+    <p class="text-muted-soft small mt-2" data-mock-only>Usuarios de prueba del backend simulado (p. ej. <code>personal@bancobogota.co</code> · <code>Ribas2026!</code>): ver README.</p>
     <p id="auth-staff-note" class="text-muted-soft small mt-2" hidden>Estas cuentas las crea un administrador: el personal de banco de sangre, los administradores institucionales, los auditores INVIMA y el administrador general no se auto-registran.</p>
 
     <p class="auth-switch" id="auth-switch">¿Primera vez donando? <a href="registro.html">Regístrate aquí</a></p>
@@ -171,8 +176,12 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script src="js/env.js"></script>
+<script src="js/http-client.js"></script>
 <script src="js/api-service.js"></script>
 <script src="js/auth.js"></script>
+<script src="js/auth-service.js"></script>
 <script src="js/main.js"></script>
+<script src="js/auth-ui.js"></script>
 </body>
 </html>

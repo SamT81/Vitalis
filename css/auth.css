@@ -85,3 +85,53 @@
 .optional-head { display: flex; flex-direction: column; gap: .15rem; }
 .optional-head span { font-size: .8rem; font-weight: 700; color: var(--slate-700); }
 .optional-head small { font-size: .72rem; color: var(--slate-400); }
+
+/* ─── Mostrar / ocultar contraseña ──────────────────────────────────────────── */
+.password-toggle { display: flex; align-items: center; padding: 0 .8rem; border-color: var(--bs-border-color); }
+.password-toggle svg { width: 16px; height: 16px; }
+.auth-card .btn:focus-visible,
+.account-card .btn:focus-visible { outline: 2px solid var(--rose-600); outline-offset: 2px; }
+.auth-card .btn .spinner-border { margin-right: .35rem; }
+
+/* ─── Confirmación de recuperar contraseña (recuperar.html) ─────────────────── */
+.auth-success {
+  display: flex; gap: .75rem; align-items: flex-start;
+  background: var(--emerald-50); border: 1px solid var(--emerald-100);
+  border-radius: var(--r-lg); padding: 1rem; color: var(--emerald-700); font-size: .85rem;
+}
+.auth-success[hidden] { display: none; }
+.auth-success svg { width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px; }
+.auth-success b { display: block; margin-bottom: .2rem; }
+.auth-success p { margin: 0; }
+
+/* ─── Mi cuenta y sesión (cuenta.html) ──────────────────────────────────────── */
+.account-wrap { max-width: 720px; padding-bottom: 4rem; }
+.account-card { padding: 1.75rem; margin-top: 1.25rem; }
+.account-identity { display: flex; align-items: center; gap: 1rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--slate-200); }
+.account-avatar { width: 52px; height: 52px; font-size: 1.05rem; flex-shrink: 0; }
+.account-name { font-size: 1.15rem; font-weight: 700; color: var(--slate-900); margin: 0; }
+.account-email { font-size: .85rem; color: var(--slate-500); overflow-wrap: anywhere; }
+
+.account-list { margin: 0; }
+.account-row {
+  display: grid; grid-template-columns: 11rem 1fr; gap: .75rem;
+  padding: 1rem 0; border-bottom: 1px solid var(--slate-100);
+}
+.account-row dt { display: flex; align-items: center; gap: .45rem; font-size: .8rem; font-weight: 600; color: var(--slate-500); }
+.account-row dt svg { width: 15px; height: 15px; }
+.account-row dd { margin: 0; font-size: .9rem; color: var(--slate-900); overflow-wrap: anywhere; }
+.account-roles { display: flex; flex-wrap: wrap; gap: .4rem; }
+.account-hint { display: block; font-size: .75rem; color: var(--slate-500); margin-top: .15rem; }
+.account-hint code { color: var(--slate-700); }
+.account-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .6rem; padding-top: 1.25rem; }
+.account-privacy { margin-top: 1rem; }
+.tag-rose { background: var(--rose-50); color: var(--rose-700); border-color: var(--rose-100); }
+
+@media (max-width: 575.98px) {
+  .account-card { padding: 1.25rem; }
+  .account-row { grid-template-columns: 1fr; gap: .3rem; }
+  .account-actions .btn { flex: 1 1 100%; }
+}
+
+.auth-remember { gap: .75rem; }
+.auth-remember a { text-align: right; }
