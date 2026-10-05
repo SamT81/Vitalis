@@ -1,13 +1,16 @@
+import { ROUTES } from '@ribas/shared';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useAuth } from '@/features/auth/AuthContext';
+import { useSession } from '../hooks/useSession';
+import type { LoginLocationState } from '../types';
 
 /** Guardián de rutas: sin sesión vigente no hay excepción ni "modo dev". */
 export function ProtectedRoute() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useSession();
   const location = useLocation();
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+    const state: LoginLocationState = { from: location.pathname };
+    return <Navigate to={ROUTES.LOGIN} replace state={state} />;
   }
   return <Outlet />;
 }

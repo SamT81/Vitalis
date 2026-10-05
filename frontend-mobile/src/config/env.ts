@@ -14,5 +14,4 @@ export const env = {
   /** Mock activo salvo que se apague explícitamente con "false". */
   USE_MOCK: process.env.EXPO_PUBLIC_USE_MOCK !== 'false',
   REQUEST_TIMEOUT_MS: 10_000,
-  MOCK_DELAY_MS: 800,
 } as const;

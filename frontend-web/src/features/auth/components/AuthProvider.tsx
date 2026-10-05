@@ -1,21 +1,12 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { ROUTES } from '@ribas/shared';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { setUnauthorizedHandler } from '@/api/httpClient';
-import { authService } from './index';
-import { clearSession, loadSession, saveSession } from './sessionStore';
-import type { AuthUser, LoginRequest, Session } from './types';
-
-interface AuthContextValue {
-  user: AuthUser | null;
-  token: string | null;
-  expiresAt: string | null;
-  isAuthenticated: boolean;
-  login: (credentials: LoginRequest) => Promise<Session>;
-  logout: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextValue | null>(null);
+import { clearSession, loadSession, saveSession } from '@/lib/sessionStore';
+import { SessionContext } from '../context';
+import { authService } from '../services/authService';
+import type { LoginLocationState, LoginRequest, Session, SessionContextValue } from '../types';
 
 /** setTimeout no admite esperas mayores a ~24,8 días. */
 const MAX_TIMEOUT_MS = 2 ** 31 - 1;
@@ -54,12 +45,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setUnauthorizedHandler(() => {
       dropSession();
-      navigate('/login', { replace: true, state: { reason: 'expired' } });
+      const state: LoginLocationState = { reason: 'expired' };
+      navigate(ROUTES.LOGIN, { replace: true, state });
     });
     return () => setUnauthorizedHandler(null);
   }, [dropSession, navigate]);
 
-  const value = useMemo<AuthContextValue>(
+  const value = useMemo<SessionContextValue>(
     () => ({
       user: session?.user ?? null,
       token: session?.token ?? null,
@@ -71,11 +63,5 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [session, login, logout],
   );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth(): AuthContextValue {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth debe usarse dentro de <AuthProvider>.');
-  return context;
+  return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 }

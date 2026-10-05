@@ -1,25 +1,11 @@
-import { isExpired } from './session';
-import type { Session } from './types';
+import { parseStoredSession, STORAGE_KEYS } from '@ribas/shared';
+import type { Session } from '@ribas/shared';
 
-export const SESSION_KEY = 'ribas_session';
-
-export function isSession(value: unknown): value is Session {
-  if (typeof value !== 'object' || value === null) return false;
-  const candidate = value as Partial<Session>;
-  return (
-    typeof candidate.token === 'string' &&
-    candidate.token.length > 0 &&
-    typeof candidate.expiresAt === 'string' &&
-    typeof candidate.user === 'object' &&
-    candidate.user !== null &&
-    typeof candidate.user.email === 'string' &&
-    Array.isArray(candidate.user.roles)
-  );
-}
+/** Persistencia de la sesión en localStorage (clave `ribas_session`). */
 
 export function clearSession(): void {
   try {
-    localStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem(STORAGE_KEYS.SESSION);
   } catch {
     // almacenamiento no disponible: no hay nada que limpiar
   }
@@ -27,25 +13,20 @@ export function clearSession(): void {
 
 /** Sesión vigente o null. Si venció o está corrupta, la elimina. */
 export function loadSession(): Session | null {
-  let parsed: unknown;
+  let raw: string | null;
   try {
-    const raw = localStorage.getItem(SESSION_KEY);
-    if (!raw) return null;
-    parsed = JSON.parse(raw);
+    raw = localStorage.getItem(STORAGE_KEYS.SESSION);
   } catch {
-    clearSession();
     return null;
   }
-  if (!isSession(parsed) || isExpired(parsed.expiresAt)) {
-    clearSession();
-    return null;
-  }
-  return parsed;
+  const session = parseStoredSession(raw);
+  if (raw && !session) clearSession();
+  return session;
 }
 
 export function saveSession(session: Session): void {
   try {
-    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    localStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(session));
   } catch {
     // sin almacenamiento la sesión vive solo en memoria
   }
