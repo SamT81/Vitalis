@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply min-w-[320px] overflow-x-hidden bg-slate-50 font-sans tracking-[-0.01em] text-slate-900;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-semibold tracking-tight;
+  }
+
+  /* Foco visible por teclado en enlaces y controles sin estilo propio. */
+  a:focus-visible,
+  summary:focus-visible {
+    @apply rounded outline outline-2 outline-offset-2 outline-primary-600;
+  }
+}
