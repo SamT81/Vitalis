@@ -1,5 +1,12 @@
 # Vitalis · RIBAS — Red Interinstitucional de Bancos de Sangre
 
+> **Frontend en React (rama `front-react`).** El frontend nuevo vive en
+> [`frontend-web/`](frontend-web/README.md) (React + Vite + Tailwind + shadcn/ui),
+> [`frontend-mobile/`](frontend-mobile/README.md) (Expo + NativeWind) y
+> [`packages/shared/`](packages/shared/README.md) (código común). Se instala una sola vez con
+> `npm install` en la raíz. El resto de este documento describe el sitio HTML original, que se
+> conserva como referencia; sus pruebas se corren con `npm run test:html`.
+
 Frontend **multipágina** de la plataforma RIBAS, con autenticación y roles simulados y una
 capa de servicios API con datos *mock* de respaldo. HTML5 + CSS3/Bootstrap 5 + JavaScript
 (ES6+), sin framework ni proceso de build. Cubre las tres capas del sistema (B2C, B2B y SaaS).
