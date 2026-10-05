@@ -24,25 +24,25 @@ cp .env.example .env    # en Windows (PowerShell): Copy-Item .env.example .env
 npm run dev             # http://localhost:5173
 ```
 
-| Comando | Qué hace |
-|---|---|
-| `npm run dev` | Servidor de desarrollo |
-| `npm run build` | Revisa tipos (`tsc`) y genera `dist/` |
-| `npm run preview` | Sirve el build de producción |
-| `npm test` | Pruebas con Vitest + Testing Library |
-| `npm run lint` | ESLint |
-| `npm run format` | Prettier |
+| Comando           | Qué hace                              |
+| ----------------- | ------------------------------------- |
+| `npm run dev`     | Servidor de desarrollo                |
+| `npm run build`   | Revisa tipos (`tsc`) y genera `dist/` |
+| `npm run preview` | Sirve el build de producción          |
+| `npm test`        | Pruebas con Vitest + Testing Library  |
+| `npm run lint`    | ESLint                                |
+| `npm run format`  | Prettier                              |
 
 ## Pantallas
 
-| Ruta | Pantalla | Acceso |
-|---|---|---|
-| `/` | Inicio (landing) | Pública |
-| `/login` | Iniciar sesión | Pública |
-| `/recuperar` | Recuperar contraseña (confirmación simulada) | Pública |
-| `/registro` | Registro de donantes — "Próximamente" | Pública |
-| `/cuenta` | Mi cuenta: nombre, correo, roles, institución, vencimiento de la sesión | Protegida |
-| `/perfil` | Mi perfil de donante: puntos, tipo de sangre, donaciones, medallas | Protegida |
+| Ruta         | Pantalla                                                                | Acceso    |
+| ------------ | ----------------------------------------------------------------------- | --------- |
+| `/`          | Inicio (landing)                                                        | Pública   |
+| `/login`     | Iniciar sesión                                                          | Pública   |
+| `/recuperar` | Recuperar contraseña (confirmación simulada)                            | Pública   |
+| `/registro`  | Registro de donantes — "Próximamente"                                   | Pública   |
+| `/cuenta`    | Mi cuenta: nombre, correo, roles, institución, vencimiento de la sesión | Protegida |
+| `/perfil`    | Mi perfil de donante: puntos, tipo de sangre, donaciones, medallas      | Protegida |
 
 Las rutas protegidas **siempre** redirigen a `/login` si no hay una sesión vigente. No existe
 ningún "modo dev" ni inicio de sesión automático.
@@ -51,16 +51,16 @@ ningún "modo dev" ni inicio de sesión automático.
 
 Contraseña de todos: `Ribas2026!`
 
-| Correo | Rol del backend | Notas |
-|---|---|---|
-| `superadmin@vitalis.co` | `superusuario` | |
-| `admin.nacional@ribas.co` | `administrador_nacional` | |
-| `admin@bancobogota.co` | `administrador_institucional` | |
-| `personal@bancobogota.co` | `personal_banco_sangre` | |
-| `logistica@bancobogota.co` | `personal_logistica` | |
-| `auditor@invima.gov.co` | `auditor_invima` | |
-| `donante@gmail.com` | `donante` | Única cuenta con datos de perfil de donante |
-| `inactivo@bancobogota.co` | — | Cuenta deshabilitada → error `USER_DISABLED` |
+| Correo                     | Rol del backend               | Notas                                        |
+| -------------------------- | ----------------------------- | -------------------------------------------- |
+| `superadmin@vitalis.co`    | `superusuario`                |                                              |
+| `admin.nacional@ribas.co`  | `administrador_nacional`      |                                              |
+| `admin@bancobogota.co`     | `administrador_institucional` |                                              |
+| `personal@bancobogota.co`  | `personal_banco_sangre`       |                                              |
+| `logistica@bancobogota.co` | `personal_logistica`          |                                              |
+| `auditor@invima.gov.co`    | `auditor_invima`              |                                              |
+| `donante@gmail.com`        | `donante`                     | Única cuenta con datos de perfil de donante  |
+| `inactivo@bancobogota.co`  | —                             | Cuenta deshabilitada → error `USER_DISABLED` |
 
 Cinco intentos fallidos en un minuto bloquean la cuenta dos minutos (`ACCOUNT_LOCKED`). El
 contador vive en memoria: se reinicia al recargar la página.
@@ -127,13 +127,13 @@ No hay que tocar código. Lo que el backend debe cumplir:
 { "code": "INVALID_CREDENTIALS", "message": "...", "timestamp": "..." }
 ```
 
-| `code` | HTTP | Mensaje que ve el usuario |
-|---|---|---|
-| `INVALID_CREDENTIALS` | 401 | El correo o la contraseña son incorrectos. |
-| `ACCOUNT_LOCKED` | 429 | Demasiados intentos. Intenta de nuevo en unos minutos. |
-| `USER_DISABLED` | 403 | Tu cuenta está deshabilitada. Contacta al administrador de tu institución. |
-| (sin respuesta) | — | No hay conexión con el servidor. |
-| cualquier otro | — | Ocurrió un error inesperado. Intenta de nuevo. |
+| `code`                | HTTP | Mensaje que ve el usuario                                                  |
+| --------------------- | ---- | -------------------------------------------------------------------------- |
+| `INVALID_CREDENTIALS` | 401  | El correo o la contraseña son incorrectos.                                 |
+| `ACCOUNT_LOCKED`      | 429  | Demasiados intentos. Intenta de nuevo en unos minutos.                     |
+| `USER_DISABLED`       | 403  | Tu cuenta está deshabilitada. Contacta al administrador de tu institución. |
+| (sin respuesta)       | —    | No hay conexión con el servidor.                                           |
+| cualquier otro        | —    | Ocurrió un error inesperado. Intenta de nuevo.                             |
 
 **CORS** — permitir el origen del frontend (`http://localhost:5173` en desarrollo), los métodos
 `GET, POST, PUT, PATCH, OPTIONS` y las cabeceras `Authorization` y `Content-Type`.
