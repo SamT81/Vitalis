@@ -4,11 +4,14 @@ import type { UserEvent } from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 import App from '@/App';
-import { ERROR_MESSAGES } from '@/api/errors';
-import { MOCK_PASSWORD, mockAuthService } from '@/features/auth/authService.mock';
-import { loginSchema } from '@/features/auth/schemas';
-import { SESSION_KEY } from '@/features/auth/sessionStore';
-import type { Session } from '@/features/auth/types';
+import {
+  ERROR_MESSAGES,
+  loginSchema,
+  MOCK_PASSWORD,
+  mockAuthService,
+  STORAGE_KEYS,
+} from '@ribas/shared';
+import type { Session } from '@ribas/shared';
 
 function renderApp(route: string) {
   return render(
@@ -28,7 +31,7 @@ async function submitLogin(user: UserEvent, email: string, password: string) {
   await user.click(screen.getByRole('button', { name: 'Ingresar' }));
 }
 
-const storedSession = () => localStorage.getItem(SESSION_KEY);
+const storedSession = () => localStorage.getItem(STORAGE_KEYS.SESSION);
 
 function seedSession(expiresAt: string): void {
   const session: Session = {
@@ -43,7 +46,7 @@ function seedSession(expiresAt: string): void {
       institutionName: 'Banco de Sangre Bogotá',
     },
   };
-  localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+  localStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(session));
 }
 
 describe('validación del formulario de login', () => {
@@ -109,7 +112,7 @@ describe('inicio de sesión', () => {
     renderApp('/login');
     await submitLogin(user, 'donante@gmail.com', 'ClaveErrada1!');
 
-    expect(await screen.findByRole('alert')).toHaveTextContent(ERROR_MESSAGES.INVALID_CREDENTIALS!);
+    expect(await screen.findByRole('alert')).toHaveTextContent(ERROR_MESSAGES.INVALID_CREDENTIALS);
     expect(screen.getByRole('heading', { name: 'Iniciar sesión' })).toBeInTheDocument();
     expect(storedSession()).toBeNull();
   });
@@ -131,7 +134,7 @@ describe('inicio de sesión', () => {
     renderApp('/login');
     await submitLogin(user, email, MOCK_PASSWORD);
 
-    expect(await screen.findByRole('alert')).toHaveTextContent(ERROR_MESSAGES.ACCOUNT_LOCKED!);
+    expect(await screen.findByRole('alert')).toHaveTextContent(ERROR_MESSAGES.ACCOUNT_LOCKED);
     expect(storedSession()).toBeNull();
   });
 
@@ -140,7 +143,7 @@ describe('inicio de sesión', () => {
     renderApp('/login');
     await submitLogin(user, 'inactivo@bancobogota.co', MOCK_PASSWORD);
 
-    expect(await screen.findByRole('alert')).toHaveTextContent(ERROR_MESSAGES.USER_DISABLED!);
+    expect(await screen.findByRole('alert')).toHaveTextContent(ERROR_MESSAGES.USER_DISABLED);
     expect(storedSession()).toBeNull();
   });
 

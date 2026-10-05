@@ -1,10 +1,16 @@
 import { AxiosError } from 'axios';
 import type { AxiosAdapter, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { messageFor, GENERIC_ERROR_MESSAGE, ERROR_MESSAGES } from '@/api/errors';
-import { httpClient, setUnauthorizedHandler } from '@/api/httpClient';
-import { httpAuthService } from '@/features/auth/authService.http';
-import { saveSession } from '@/features/auth/sessionStore';
+import {
+  createHttpAuthService,
+  createProfileService,
+  ERROR_MESSAGES,
+  messageFor,
+} from '@ribas/shared';
+import { http, setUnauthorizedHandler } from '@/api/httpClient';
+import { saveSession } from '@/lib/sessionStore';
+
+const httpAuthService = createHttpAuthService(http);
 
 const reply =
   (
@@ -36,18 +42,18 @@ function seedSession(): void {
 
 afterEach(() => {
   setUnauthorizedHandler(null);
-  httpClient.defaults.adapter = undefined;
+  http.defaults.adapter = undefined;
 });
 
 describe('httpClient', () => {
   it('agrega Authorization: Bearer cuando hay sesión', async () => {
     seedSession();
     let header: unknown;
-    httpClient.defaults.adapter = reply(200, {}, (config) => {
+    http.defaults.adapter = reply(200, {}, (config) => {
       header = config.headers.get('Authorization');
     });
 
-    await httpClient.get('/api/v1/donors/u1');
+    await http.get('/api/v1/donors/u1');
     expect(header).toBe('Bearer tok-123');
   });
 
@@ -55,13 +61,13 @@ describe('httpClient', () => {
     seedSession();
     const onUnauthorized = vi.fn();
     setUnauthorizedHandler(onUnauthorized);
-    httpClient.defaults.adapter = reply(401, {
+    http.defaults.adapter = reply(401, {
       code: 'TOKEN_EXPIRED',
       message: 'x',
       timestamp: 't',
     });
 
-    await expect(httpClient.get('/api/v1/donors/u1')).rejects.toMatchObject({
+    await expect(http.get('/api/v1/donors/u1')).rejects.toMatchObject({
       status: 401,
       code: 'TOKEN_EXPIRED',
     });
@@ -71,7 +77,7 @@ describe('httpClient', () => {
   it('un 401 del login (sin token) no cierra sesión y se traduce al español', async () => {
     const onUnauthorized = vi.fn();
     setUnauthorizedHandler(onUnauthorized);
-    httpClient.defaults.adapter = reply(401, {
+    http.defaults.adapter = reply(401, {
       code: 'INVALID_CREDENTIALS',
       message: 'bad',
       timestamp: '2026-01-01T00:00:00Z',
@@ -87,7 +93,7 @@ describe('httpClient', () => {
 
   it('convierte la respuesta del contrato en una sesión', async () => {
     let body: unknown;
-    httpClient.defaults.adapter = reply(
+    http.defaults.adapter = reply(
       200,
       {
         valid: true,
@@ -122,16 +128,42 @@ describe('httpClient', () => {
   });
 
   it('normaliza la caída de red y los códigos desconocidos', async () => {
-    httpClient.defaults.adapter = async (config) => {
+    http.defaults.adapter = async (config) => {
       throw new AxiosError('Network Error', 'ERR_NETWORK', config);
     };
-    const networkError: unknown = await httpClient.get('/x').catch((cause: unknown) => cause);
+    const networkError: unknown = await http.get('/x').catch((cause: unknown) => cause);
     expect(networkError).toMatchObject({ status: 0, code: 'NETWORK_ERROR' });
     expect(messageFor(networkError)).toBe(ERROR_MESSAGES.NETWORK_ERROR);
 
-    httpClient.defaults.adapter = reply(500, '<html>');
-    const serverError: unknown = await httpClient.get('/x').catch((cause: unknown) => cause);
+    http.defaults.adapter = reply(500, '<html>');
+    const serverError: unknown = await http.get('/x').catch((cause: unknown) => cause);
     expect(serverError).toMatchObject({ status: 500, code: 'UNKNOWN_ERROR' });
-    expect(messageFor(serverError)).toBe(GENERIC_ERROR_MESSAGE);
+    expect(messageFor(serverError)).toBe(ERROR_MESSAGES.GENERIC);
+  });
+});
+
+describe('perfil de donante contra el backend', () => {
+  const profileService = createProfileService({ useMock: false, http });
+
+  it('deja en null los datos ausentes o inválidos', async () => {
+    http.defaults.adapter = reply(200, { bloodType: ' ', donations: 'muchas', points: 10 });
+
+    await expect(profileService.getProfile('u1')).resolves.toEqual({
+      bloodType: null,
+      city: null,
+      donations: null,
+      points: 10,
+    });
+  });
+
+  it('devuelve un perfil vacío si la respuesta no es un objeto', async () => {
+    http.defaults.adapter = reply(200, null);
+
+    await expect(profileService.getProfile('u1')).resolves.toEqual({
+      bloodType: null,
+      city: null,
+      donations: null,
+      points: null,
+    });
   });
 });
