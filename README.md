@@ -85,6 +85,66 @@ enlaces *Panel institucional* / *Administración* según el rol (atributo `data-
 
 Los 3 botones de la pantalla de login entran directamente con cada cuenta.
 
+## Módulo de autenticación (listo para el backend)
+
+El login ya habla el contrato del DD (Servicio de Identidad y Acceso). Mientras no haya
+backend funciona con un mock que devuelve la misma forma de respuesta.
+
+| Archivo | Responsabilidad |
+|---|---|
+| `js/env.js` | `API_BASE_URL`, `USE_MOCK`, timeout. **Único archivo que se toca para conectar el backend.** |
+| `js/http-client.js` | `fetch` con base URL, timeout de 10 s, `Authorization: Bearer <token>`, cierre de sesión ante 401 y errores normalizados `{ status, code, message, timestamp }`. |
+| `js/auth-service.js` | `login`, `logout`, `forgotPassword`; implementación real y simulada; validación; mapa `code → mensaje`; sesión `ribas_session`. |
+| `js/auth-ui.js` | Mostrar/ocultar contraseña, `recuperar.html` y `cuenta.html`. |
+| `recuperar.html` | Recuperar contraseña (confirmación simulada). |
+| `cuenta.html` | Mi cuenta: nombre, correo, rol(es), institución (`institutionId`), vencimiento de la sesión y cerrar sesión. Protegida para cualquier rol. |
+
+La sesión del backend se guarda en `ribas_session` (`{ token, expiresAt, user }`) y se refleja
+en `vitalis_session` para que el guardián y los paneles existentes sigan funcionando. Al
+cargar cualquier página se valida `expiresAt`; si venció, la sesión se cierra.
+
+### Usuarios de prueba del mock (contraseña `Ribas2026!`)
+
+| Correo | Rol del backend | Entra a |
+|---|---|---|
+| `superadmin@vitalis.co` | `superusuario` | `admin-dashboard.html` |
+| `admin.nacional@ribas.co` | `administrador_nacional` | `admin-dashboard.html` |
+| `admin@bancobogota.co` | `administrador_institucional` | `panel-institucional.html` |
+| `personal@bancobogota.co` | `personal_banco_sangre` | `operativo.html` |
+| `logistica@bancobogota.co` | `personal_logistica` | `operativo.html` |
+| `auditor@invima.gov.co` | `auditor_invima` | `auditoria.html` |
+| `donante@gmail.com` | `donante` | `perfil.html` |
+| `inactivo@bancobogota.co` | (cuenta deshabilitada) | error `USER_DISABLED` |
+
+Las cuentas demo anteriores (`demo1234`) y las registradas en `registro.html` siguen entrando.
+Cinco intentos fallidos en un minuto bloquean la cuenta dos minutos (`ACCOUNT_LOCKED`, 429).
+
+Para probar el guardián real (redirección a login), apaga el **Modo Dev** desde el menú del
+avatar.
+
+### Cómo conectar con el backend
+
+En `js/env.js`:
+
+```js
+API_BASE_URL: "http://localhost:8000",   // URL del API Gateway (Kong)
+USE_MOCK: false,
+```
+
+El backend debe exponer `POST /api/v1/auth/login` con el contrato del DD, permitir en CORS el
+origen del frontend con las cabeceras `Authorization` y `Content-Type`, y responder los errores
+como `{ code, message, timestamp }` (`INVALID_CREDENTIALS` 401, `ACCOUNT_LOCKED` 429,
+`USER_DISABLED` 403).
+
+### Pruebas
+
+```bash
+node --test
+```
+
+Cubren validación del formulario, login con mock, credenciales incorrectas, bloqueo por
+intentos, vencimiento de sesión, redirección de ruta protegida y el contrato HTTP real.
+
 ## Cobertura de alcances (resumen)
 
 - **OA-01/02** registro con datos mínimos + opcionales · **OA-03/04** gamificación e impacto ·
