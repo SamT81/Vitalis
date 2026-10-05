@@ -1,7 +1,7 @@
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import type { InputHTMLAttributes, Ref } from 'react';
-import { Input } from '@/components/ui/input';
+import { Input } from '@/components/ui/Input';
 
 interface PasswordInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
   ref?: Ref<HTMLInputElement>;
@@ -13,7 +13,11 @@ export function PasswordInput(props: PasswordInputProps) {
 
   return (
     <div className="relative">
-      <Input type={visible ? 'text' : 'password'} className="pr-12" {...props} />
+      <Input
+        type={visible ? 'text' : 'password'}
+        className="pr-12 [&::-ms-reveal]:hidden"
+        {...props}
+      />
       <button
         type="button"
         onClick={() => setVisible((value) => !value)}
