@@ -31,9 +31,25 @@
     }
   }
 
+  /* Con js/env.js cargado: USE_MOCK = true responde directo con el mock;
+     USE_MOCK = false llama al gateway (API_BASE_URL) con el token de sesión. */
+  function bearerToken() {
+    try {
+      const s = JSON.parse(localStorage.getItem("ribas_session"));
+      return (s && s.token) || null;
+    } catch (_) { return null; }
+  }
+
   async function request(path, mock, options = {}) {
     const body = options.body;
+    const env = (window.Vitalis && window.Vitalis.env) || null;
+    if (env && env.USE_MOCK) return toMock(mock, body);
     if (typeof fetch !== "function") return toMock(mock, body);
+
+    const headers = { "Accept": "application/json" };
+    if (body) headers["Content-Type"] = "application/json";
+    const token = env ? bearerToken() : null;
+    if (token) headers["Authorization"] = "Bearer " + token;
 
     let signal;
     try {
@@ -46,9 +62,9 @@
 
     let res;
     try {
-      res = await fetch(path, {
+      res = await fetch(((env && env.API_BASE_URL) || "") + path, {
         method: options.method || "GET",
-        headers: { "Accept": "application/json" },
+        headers: headers,
         body: body ? JSON.stringify(body) : undefined,
         signal: signal,
       });
