@@ -1,0 +1,19 @@
+# dependencias
+node_modules/
+
+# builds y cachés
+dist/
+web-build/
+coverage/
+.expo/
+*.tsbuildinfo
+
+# variables de entorno reales (solo se suben los .env.example)
+.env
+.env.*
+!.env.example
+
+# sistema
+.DS_Store
+Thumbs.db
+npm-debug.*

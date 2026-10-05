@@ -1,0 +1,20 @@
+{
+  "name": "vitalis-ribas",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Vitalis · RIBAS — frontend web (React + Vite), app móvil (Expo) y código compartido.",
+  "workspaces": [
+    "packages/*",
+    "frontend-web",
+    "frontend-mobile"
+  ],
+  "scripts": {
+    "web": "npm run dev -w frontend-web",
+    "mobile": "npm run start -w frontend-mobile",
+    "lint": "npm run lint -w frontend-web -w frontend-mobile",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm test -w frontend-web",
+    "build:web": "npm run build -w frontend-web",
+    "test:html": "node --test \"tests/*.test.mjs\""
+  }
+}
