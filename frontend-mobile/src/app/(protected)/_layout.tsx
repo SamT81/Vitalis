@@ -1,7 +1,8 @@
 import { Feather } from '@expo/vector-icons';
+import { ROUTES } from '@ribas/shared';
 import { Redirect, Tabs } from 'expo-router';
 import { ActivityIndicator, View } from 'react-native';
-import { useAuth } from '@/features/auth/AuthContext';
+import { useSession } from '@/features/auth';
 import { colors, fonts } from '@/lib/theme';
 
 /**
@@ -9,7 +10,7 @@ import { colors, fonts } from '@/lib/theme';
  * No hay excepción ni "modo dev".
  */
 export default function ProtectedLayout() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useSession();
 
   if (isLoading) {
     return (
@@ -19,7 +20,7 @@ export default function ProtectedLayout() {
     );
   }
 
-  if (!isAuthenticated) return <Redirect href="/login" />;
+  if (!isAuthenticated) return <Redirect href={ROUTES.LOGIN} />;
 
   return (
     <Tabs

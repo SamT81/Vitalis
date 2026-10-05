@@ -1,8 +1,8 @@
 import { Feather } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Pressable, View } from 'react-native';
-import { Input } from '@/components/ui/input';
-import type { InputProps } from '@/components/ui/input';
+import { Input } from '@/components/ui/Input';
+import type { InputProps } from '@/components/ui/Input';
 import { colors } from '@/lib/theme';
 
 /** Campo de contraseña con botón para mostrarla u ocultarla. */

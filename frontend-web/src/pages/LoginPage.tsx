@@ -1,52 +1,17 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { CircleAlert, Clock, LoaderCircle, LogIn } from 'lucide-react';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { Link, Navigate, useLocation } from 'react-router-dom';
-import { messageFor } from '@/api/errors';
-import { AuthCard } from '@/components/AuthCard';
-import { FieldError } from '@/components/FieldError';
-import { PasswordInput } from '@/components/PasswordInput';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { ROUTES } from '@ribas/shared';
+import { LogIn } from 'lucide-react';
+import { Navigate, useLocation } from 'react-router-dom';
+import { AuthCard } from '@/components/layout/AuthCard';
 import { env } from '@/config/env';
-import { useAuth } from '@/features/auth/AuthContext';
-import { loginSchema } from '@/features/auth/schemas';
-import type { LoginFormValues } from '@/features/auth/schemas';
-
-interface LoginLocationState {
-  from?: string;
-  reason?: 'expired';
-}
+import { LoginForm, useSession } from '@/features/auth';
+import type { LoginLocationState } from '@/features/auth';
 
 export function LoginPage() {
-  const { isAuthenticated, login } = useAuth();
-  const location = useLocation();
-  const state = (location.state ?? {}) as LoginLocationState;
-  const [formError, setFormError] = useState('');
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: { email: '', password: '' },
-  });
+  const { isAuthenticated } = useSession();
+  const state = (useLocation().state ?? {}) as LoginLocationState;
 
   // Con sesión vigente (o recién iniciada) se sale de Login hacia Mi cuenta.
-  if (isAuthenticated) return <Navigate to={state.from ?? '/cuenta'} replace />;
-
-  const onSubmit = async (values: LoginFormValues) => {
-    setFormError('');
-    try {
-      await login({ email: values.email.toLowerCase(), password: values.password });
-    } catch (error) {
-      setFormError(messageFor(error));
-    }
-  };
+  if (isAuthenticated) return <Navigate to={state.from ?? ROUTES.ACCOUNT} replace />;
 
   return (
     <AuthCard
@@ -54,85 +19,7 @@ export function LoginPage() {
       title="Iniciar sesión"
       description="Accede a tu cuenta de la red RIBAS para ver tus datos, puntos y medallas."
     >
-      {state.reason === 'expired' && !formError && (
-        <Alert variant="warning" role="status" className="mb-4">
-          <Clock aria-hidden />
-          <AlertDescription>Tu sesión venció. Inicia sesión de nuevo.</AlertDescription>
-        </Alert>
-      )}
-
-      {formError && (
-        <Alert variant="destructive" className="mb-4">
-          <CircleAlert aria-hidden />
-          <AlertDescription>{formError}</AlertDescription>
-        </Alert>
-      )}
-
-      <form onSubmit={handleSubmit(onSubmit)} noValidate>
-        <div className="mb-4">
-          <Label htmlFor="login-email">Correo electrónico</Label>
-          <Input
-            id="login-email"
-            type="email"
-            inputMode="email"
-            autoComplete="email"
-            placeholder="tucorreo@ejemplo.com"
-            aria-invalid={Boolean(errors.email)}
-            aria-describedby={errors.email ? 'login-email-error' : undefined}
-            {...register('email')}
-          />
-          <FieldError id="login-email-error" message={errors.email?.message} />
-        </div>
-
-        <div className="mb-2">
-          <Label htmlFor="login-password">Contraseña</Label>
-          <PasswordInput
-            id="login-password"
-            autoComplete="current-password"
-            placeholder="••••••••"
-            aria-invalid={Boolean(errors.password)}
-            aria-describedby={errors.password ? 'login-password-error' : undefined}
-            {...register('password')}
-          />
-          <FieldError id="login-password-error" message={errors.password?.message} />
-        </div>
-
-        <div className="mb-4 text-right">
-          <Link
-            to="/recuperar"
-            className="text-sm font-medium text-primary-700 hover:text-primary-800 hover:underline"
-          >
-            ¿Olvidaste tu contraseña?
-          </Link>
-        </div>
-
-        <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? (
-            <>
-              <LoaderCircle className="animate-spin" aria-hidden /> Ingresando…
-            </>
-          ) : (
-            <>
-              <LogIn aria-hidden /> Ingresar
-            </>
-          )}
-        </Button>
-      </form>
-
-      {env.USE_MOCK && (
-        <p className="mt-5 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs leading-relaxed text-slate-600">
-          <b className="text-slate-800">Modo simulado (sin backend).</b> Usuario de prueba:{' '}
-          <code className="break-all text-primary-700">donante@gmail.com</code> · contraseña{' '}
-          <code className="text-primary-700">Ribas2026!</code>. Más usuarios en el README.
-        </p>
-      )}
-
-      <p className="mt-5 text-center text-sm text-slate-600">
-        ¿Primera vez donando?{' '}
-        <Link to="/registro" className="font-semibold text-primary-700 hover:underline">
-          Regístrate aquí
-        </Link>
-      </p>
+      <LoginForm sessionExpired={state.reason === 'expired'} showMockHint={env.USE_MOCK} />
     </AuthCard>
   );
 }

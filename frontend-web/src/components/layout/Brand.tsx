@@ -1,3 +1,4 @@
+import { ROUTES } from '@ribas/shared';
 import { Link } from 'react-router-dom';
 import logo from '@/assets/logo-vitalis.png';
 import { cn } from '@/lib/utils';
@@ -5,7 +6,7 @@ import { cn } from '@/lib/utils';
 export function Brand({ className }: { className?: string }) {
   return (
     <Link
-      to="/"
+      to={ROUTES.HOME}
       aria-label="Vitalis · Ir al inicio"
       className={cn('inline-flex items-center gap-2', className)}
     >

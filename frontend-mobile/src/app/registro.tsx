@@ -1,10 +1,11 @@
+import { ROUTES } from '@ribas/shared';
 import { router } from 'expo-router';
 import { View } from 'react-native';
-import { AuthCard } from '@/components/AuthCard';
-import { Screen } from '@/components/Screen';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Text } from '@/components/ui/text';
+import { AuthCard } from '@/components/layout/AuthCard';
+import { Screen } from '@/components/layout/Screen';
+import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
+import { Text } from '@/components/ui/Text';
 
 export default function ComingSoonScreen() {
   return (
@@ -26,14 +27,14 @@ export default function ComingSoonScreen() {
             size="lg"
             title="Iniciar sesión"
             icon="log-in"
-            onPress={() => router.replace('/login')}
+            onPress={() => router.replace(ROUTES.LOGIN)}
           />
           <Button
             size="lg"
             variant="outline"
             title="Volver al inicio"
             icon="arrow-left"
-            onPress={() => router.dismissTo('/')}
+            onPress={() => router.dismissTo(ROUTES.HOME)}
           />
         </View>
       </AuthCard>

@@ -1,3 +1,4 @@
+import { ROUTES } from '@ribas/shared';
 import { Link } from 'react-router-dom';
 import { Brand } from './Brand';
 
@@ -19,10 +20,10 @@ export function SiteFooter() {
               <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
                 Plataforma
               </h2>
-              <Link to="/" className={footerLink}>
+              <Link to={ROUTES.HOME} className={footerLink}>
                 Inicio
               </Link>
-              <Link to="/registro" className={footerLink}>
+              <Link to={ROUTES.REGISTER} className={footerLink}>
                 Registrarme
               </Link>
             </div>
@@ -30,13 +31,13 @@ export function SiteFooter() {
               <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
                 Cuenta
               </h2>
-              <Link to="/login" className={footerLink}>
+              <Link to={ROUTES.LOGIN} className={footerLink}>
                 Iniciar sesión
               </Link>
-              <Link to="/cuenta" className={footerLink}>
+              <Link to={ROUTES.ACCOUNT} className={footerLink}>
                 Mi cuenta
               </Link>
-              <Link to="/perfil" className={footerLink}>
+              <Link to={ROUTES.PROFILE} className={footerLink}>
                 Mi perfil
               </Link>
             </div>

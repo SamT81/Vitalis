@@ -1,7 +1,7 @@
+import { ROUTES } from '@ribas/shared';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { ProtectedRoute } from '@/components/ProtectedRoute';
-import { AuthProvider } from '@/features/auth/AuthContext';
+import { AuthProvider, ProtectedRoute } from '@/features/auth';
 import { AccountPage } from '@/pages/AccountPage';
 import { ComingSoonPage } from '@/pages/ComingSoonPage';
 import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage';
@@ -15,18 +15,18 @@ export default function App() {
     <AuthProvider>
       <Routes>
         <Route element={<AppLayout />}>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/recuperar" element={<ForgotPasswordPage />} />
-          <Route path="/registro" element={<ComingSoonPage />} />
+          <Route path={ROUTES.HOME} element={<HomePage />} />
+          <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+          <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPasswordPage />} />
+          <Route path={ROUTES.REGISTER} element={<ComingSoonPage />} />
 
           {/* Rutas protegidas: sin sesión válida siempre redirigen a Login. */}
           <Route element={<ProtectedRoute />}>
-            <Route path="/cuenta" element={<AccountPage />} />
-            <Route path="/perfil" element={<ProfilePage />} />
+            <Route path={ROUTES.ACCOUNT} element={<AccountPage />} />
+            <Route path={ROUTES.PROFILE} element={<ProfilePage />} />
           </Route>
 
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
         </Route>
       </Routes>
     </AuthProvider>

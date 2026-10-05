@@ -10,6 +10,15 @@ module.exports = defineConfig([
     rules: {
       // Ley 1581 de 2012: nada de credenciales ni tokens en consola.
       'no-console': 'error',
+      // Cada feature se importa solo por su index.ts (barrel).
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            { group: ['@/features/*/*'], message: 'Importa la feature desde su index.ts.' },
+          ],
+        },
+      ],
       // axios.create / axios.isAxiosError son el uso documentado de axios.
       'import/no-named-as-default-member': 'off',
     },

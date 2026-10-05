@@ -17,11 +17,15 @@ export default tseslint.config(
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       // Ley 1581 de 2012: nada de credenciales ni tokens en consola.
       'no-console': 'error',
+      // Cada feature se importa solo por su index.ts (barrel).
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            { group: ['@/features/*/*'], message: 'Importa la feature desde su index.ts.' },
+          ],
+        },
+      ],
     },
-  },
-  {
-    // Componentes shadcn/ui y el contexto exportan variantes/hooks junto al componente.
-    files: ['src/components/ui/**', 'src/features/auth/AuthContext.tsx'],
-    rules: { 'react-refresh/only-export-components': 'off' },
   },
 );

@@ -1,4 +1,4 @@
-import { Text } from '@/components/ui/text';
+import { Text } from '@/components/ui/Text';
 
 /** Mensaje de validación debajo de un campo. */
 export function FieldError({ message }: { message?: string }) {

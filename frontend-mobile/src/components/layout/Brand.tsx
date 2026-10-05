@@ -1,7 +1,7 @@
 import { Image, View } from 'react-native';
-import { Text } from '@/components/ui/text';
+import { Text } from '@/components/ui/Text';
 
-const logo = require('../../assets/logo-vitalis.png');
+const logo = require('../../../assets/logo-vitalis.png');
 
 export function Brand() {
   return (

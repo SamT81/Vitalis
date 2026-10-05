@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 import { cn } from '@/lib/utils';
-import { Text } from './text';
+import { Text } from './Text';
 
 type Variant = 'default' | 'success' | 'muted';
 
