@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 const optionalText = z.string().trim().min(1).nullable().catch(null).default(null);
 
-const optionalCount = z.number().finite().nonnegative().nullable().catch(null).default(null);
+const optionalCount = z.number().int().nonnegative().nullable().catch(null).default(null);
 
 /**
  * Resumen del donante. Cualquier dato ausente o inválido queda en null

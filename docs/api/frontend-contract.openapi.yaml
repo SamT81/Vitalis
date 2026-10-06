@@ -1,0 +1,277 @@
+openapi: 3.1.0
+info:
+  title: Vitalis · RIBAS — Contrato que consume el frontend
+  version: 0.1.0
+  summary: Endpoints del API Gateway (Kong) que usan frontend-web y frontend-mobile.
+  description: |
+    Fuente de verdad del contrato entre el frontend y el backend.
+
+    - `POST /api/v1/auth/login` reproduce el contrato del DD (Servicio de Identidad y Acceso).
+    - Las operaciones marcadas con `x-status: propuesta` **no están en el DD todavía**: son lo
+      que el frontend necesita y están pendientes de aprobación del equipo de backend.
+
+    Los tipos de `packages/shared/src/auth/types.ts` y `packages/shared/src/profile/schemas.ts`
+    deben coincidir con este archivo. Todo PR que cambie el contrato actualiza este YAML.
+  contact:
+    name: Equipo de frontend de Vitalis
+    url: https://github.com/SamT81/Vitalis
+  license:
+    name: Uso académico interno
+    identifier: LicenseRef-Proprietary
+
+servers:
+  - url: '{gatewayUrl}'
+    description: API Gateway (Kong). Es el valor de VITE_API_BASE_URL / EXPO_PUBLIC_API_BASE_URL.
+    variables:
+      gatewayUrl:
+        default: http://localhost:8000
+        description: URL base del gateway, sin barra final.
+
+tags:
+  - name: Autenticación
+    description: Inicio de sesión y recuperación de contraseña.
+  - name: Donantes
+    description: Datos del perfil de donante.
+
+security:
+  - bearerAuth: []
+
+paths:
+  /api/v1/auth/login:
+    post:
+      operationId: login
+      tags: [Autenticación]
+      summary: Iniciar sesión
+      description: Contrato del DD. No requiere token.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              email: personal@bancobogota.co
+              password: Ribas2026!
+      responses:
+        '200':
+          description: Credenciales válidas.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Correo o contraseña incorrectos (`INVALID_CREDENTIALS`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: INVALID_CREDENTIALS
+                message: El correo o la contraseña son incorrectos
+                timestamp: '2026-10-06T15:04:05Z'
+        '403':
+          description: La cuenta está deshabilitada (`USER_DISABLED`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: USER_DISABLED
+                message: La cuenta está deshabilitada
+                timestamp: '2026-10-06T15:04:05Z'
+        '429':
+          description: >-
+            Cuenta bloqueada tras 5 intentos fallidos en 1 minuto (`ACCOUNT_LOCKED`, QA-26).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: ACCOUNT_LOCKED
+                message: Demasiados intentos fallidos
+                timestamp: '2026-10-06T15:04:05Z'
+
+  /api/v1/auth/forgot-password:
+    post:
+      operationId: forgotPassword
+      tags: [Autenticación]
+      summary: Solicitar el restablecimiento de la contraseña (propuesta)
+      description: |
+        **Propuesta pendiente de aprobación del backend: no está en el DD.**
+        Debe responder igual exista o no el correo, para no revelar qué cuentas existen.
+      x-status: propuesta
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+      responses:
+        '204':
+          description: Solicitud recibida. Si el correo existe, se envían las instrucciones.
+        '400':
+          description: El correo no tiene un formato válido (`VALIDATION_ERROR`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Demasiadas solicitudes (`ACCOUNT_LOCKED`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/donors/{userId}:
+    get:
+      operationId: getDonorProfile
+      tags: [Donantes]
+      summary: Consultar el perfil de donante (propuesta)
+      description: |
+        **Propuesta pendiente de aprobación del backend: no está en el DD.**
+        Cualquier campo ausente o `null` se muestra en la interfaz como "Sin registrar".
+      x-status: propuesta
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Identificador del usuario (el `userId` que devuelve el login).
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Perfil del donante.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DonorProfile'
+              example:
+                bloodType: O+
+                city: Bogotá D.C.
+                donations: 6
+                points: 3150
+        '401':
+          description: Token ausente, inválido o vencido. El frontend cierra la sesión.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: El token no pertenece al dueño del perfil.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: El usuario no tiene perfil de donante.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'Token devuelto por el login, enviado como `Authorization: Bearer <token>`.'
+
+  schemas:
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+          minLength: 8
+
+    LoginResponse:
+      type: object
+      required: [valid, userId, institutionId, roles, token, expiresAt]
+      properties:
+        valid:
+          type: boolean
+          description: '`true` cuando las credenciales son correctas.'
+        userId:
+          type: string
+        institutionId:
+          type: [string, 'null']
+          description: >-
+            Institución del usuario. El frontend acepta `null` (un donante no pertenece a una
+            institución); confirmar con backend qué envía en ese caso.
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+        token:
+          type: string
+          description: JWT de la sesión.
+        expiresAt:
+          type: string
+          format: date-time
+          description: Fecha de vencimiento del token en ISO-8601.
+
+    Role:
+      type: string
+      description: >-
+        Rol del Servicio de Identidad y Acceso. El frontend muestra tal cual un rol que no
+        reconozca.
+      examples:
+        - superusuario
+        - administrador_nacional
+        - administrador_institucional
+        - banco_sangre_admin
+        - personal_banco_sangre
+        - personal_logistica
+        - auditor_invima
+        - donante
+
+    ForgotPasswordRequest:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+          format: email
+
+    DonorProfile:
+      type: object
+      description: Todos los campos pueden venir en `null` si el donante no los ha registrado.
+      properties:
+        bloodType:
+          type: [string, 'null']
+          examples: ['O+', 'O−', 'A+', 'A−', 'B+', 'B−', 'AB+', 'AB−']
+        city:
+          type: [string, 'null']
+        donations:
+          type: [integer, 'null']
+          minimum: 0
+        points:
+          type: [integer, 'null']
+          minimum: 0
+
+    ErrorResponse:
+      type: object
+      description: Formato único de error del API.
+      required: [code, message, timestamp]
+      properties:
+        code:
+          type: string
+          description: Código estable que el frontend traduce a un mensaje en español.
+          examples:
+            - INVALID_CREDENTIALS
+            - ACCOUNT_LOCKED
+            - USER_DISABLED
+        message:
+          type: string
+          description: Mensaje técnico. El frontend no lo muestra al usuario.
+        timestamp:
+          type: string
+          format: date-time
