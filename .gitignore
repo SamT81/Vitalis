@@ -1,0 +1,16 @@
+# secrets / local config
+.env
+
+# build output
+bin/
+obj/
+build/
+.gradle/
+out/
+
+# IDE
+.idea/
+.vs/
+.vscode/*
+!.vscode/extensions.json
+*.iml
