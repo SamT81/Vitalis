@@ -15,6 +15,10 @@ estructura existente, nunca desde cero ni en carpetas nuevas en la raíz.
 | HTTP         | Axios                                                    | Interceptores para el token Bearer y el cierre de sesión ante un 401 |
 | Código común | npm workspaces + `@ribas/shared` y `@ribas/shared-react` | Una sola copia de tipos, esquemas, constantes, servicios y hooks     |
 
+Las decisiones del frontend con trade-offs están registradas en [`docs/adr/`](adr/README.md)
+(ADR-011 a ADR-015). **Toda decisión de arquitectura nueva necesita su ADR antes de
+implementarse.**
+
 Estas elecciones siguen el Tech Radar y los ADR del proyecto (documentación de arquitectura del
 curso). No se agregan frameworks ni librerías de interfaz sin un ADR nuevo. Tailwind se mantiene
 en la versión 3 en ambas apps porque NativeWind 4 la exige.
@@ -154,6 +158,12 @@ features/<modulo>/
   `test: ...`, `docs: ...`, `chore: ...`.
 - **Revisión**: el PR lo aprueba un compañero distinto del autor y debe tener el CI en verde
   (`.github/workflows/frontend-ci.yml`).
+- **Contrato del API**: [`docs/api/frontend-contract.openapi.yaml`](api/frontend-contract.openapi.yaml)
+  es la fuente de verdad; todo PR que cambie el contrato lo actualiza (`npm run lint:api`).
+- **Pruebas E2E**: los flujos críticos (hoy, el de autenticación) tienen pruebas de Playwright
+  en `frontend-web/e2e/` que corren en el CI sobre el build de producción.
+- **Despliegue**: la web se empaqueta con `frontend-web/Dockerfile` (nginx) para Docker Swarm;
+  las variables `VITE_*` se fijan al construir la imagen.
 - **Con asistentes de IA**: las reglas están en [`CLAUDE.md`](../CLAUDE.md). Se le piden
   borradores dentro de esta estructura; lo que genera pasa por la misma revisión y el mismo CI.
 

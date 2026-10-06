@@ -14,7 +14,8 @@ Vitalis/
 ├── packages/shared-react/  Hooks de React comunes (@ribas/shared-react)
 ├── legacy-html/         Prototipo HTML original (solo referencia)
 ├── docs/                Arquitectura, convenciones e informes
-├── .github/workflows/   Integración continua
+├── .github/             CI, Dependabot, plantilla de PR y CODEOWNERS  Integración continua
+├── docker-compose.yml   Web de producción en local con Docker
 ├── package.json         npm workspaces y comandos de la raíz
 └── CLAUDE.md            Reglas del proyecto para trabajar con asistentes de IA
 ```
@@ -48,14 +49,34 @@ npm run mobile   # Expo: escanea el código QR con Expo Go
 
 Sin configurar nada, ambas apps funcionan en **modo simulado** (sin backend).
 
-| Comando                | Qué hace                                        |
-| ---------------------- | ----------------------------------------------- |
-| `npm run lint`         | ESLint en web, móvil y los paquetes             |
-| `npm run format:check` | Prettier (`npm run format` corrige)             |
-| `npm run typecheck`    | Revisión de tipos en todas las partes           |
-| `npm test`             | Pruebas: Vitest (web y paquetes) y Jest (móvil) |
-| `npm run build:web`    | Build de producción de la web                   |
-| `npm run test:html`    | Pruebas del prototipo en `legacy-html/`         |
+| Comando                | Qué hace                                            |
+| ---------------------- | --------------------------------------------------- |
+| `npm run lint`         | ESLint en web, móvil y los paquetes                 |
+| `npm run format:check` | Prettier (`npm run format` corrige)                 |
+| `npm run typecheck`    | Revisión de tipos en todas las partes               |
+| `npm test`             | Pruebas: Vitest (web y paquetes) y Jest (móvil)     |
+| `npm run build:web`    | Build de producción de la web                       |
+| `npm run test:e2e`     | Pruebas E2E con Playwright (flujo de autenticación) |
+| `npm run lint:api`     | Valida el contrato OpenAPI                          |
+| `npm run test:html`    | Pruebas del prototipo en `legacy-html/`             |
+
+## Con Docker
+
+```bash
+docker compose up --build   # http://localhost:5173 (nginx sirviendo el build de producción)
+```
+
+Por defecto usa el modo simulado. Para construir la imagen de QA contra el backend, las
+variables se pasan al construir (quedan dentro del bundle):
+
+```bash
+docker build -f frontend-web/Dockerfile -t vitalis-web:qa \
+  --build-arg VITE_USE_MOCK=false \
+  --build-arg VITE_API_BASE_URL=https://<url-de-kong> .
+```
+
+El contexto de build es la raíz del repositorio. Más detalle en
+[`frontend-web/README.md`](frontend-web/README.md#docker).
 
 ## Pantallas disponibles
 
@@ -106,6 +127,10 @@ detalle está en el README de cada app.
 
 - [`docs/ARQUITECTURA-FRONTEND.md`](docs/ARQUITECTURA-FRONTEND.md) — stack, estructura, patrones
   y cómo agregar un módulo.
+- [`docs/adr/`](docs/adr/README.md) — decisiones de arquitectura del frontend (ADR-011 a
+  ADR-015).
+- [`docs/api/frontend-contract.openapi.yaml`](docs/api/frontend-contract.openapi.yaml) —
+  contrato OpenAPI que consume el frontend.
 - [`docs/DECISIONES-Y-PENDIENTES.md`](docs/DECISIONES-Y-PENDIENTES.md) — decisiones
   justificadas, contratos pendientes con el backend y pendientes del grupo.
 - [`docs/REVISION-FRONT.md`](docs/REVISION-FRONT.md) — informes de revisión y auditoría.

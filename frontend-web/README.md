@@ -17,14 +17,15 @@ cp .env.example .env    # en Windows (PowerShell): Copy-Item .env.example .env
 npm run dev             # http://localhost:5173
 ```
 
-| Comando (en `frontend-web`) | Qué hace                              |
-| --------------------------- | ------------------------------------- |
-| `npm run dev`               | Servidor de desarrollo                |
-| `npm run build`             | Revisa tipos (`tsc`) y genera `dist/` |
-| `npm test`                  | Pruebas con Vitest + Testing Library  |
-| `npm run lint`              | ESLint                                |
-| `npm run format`            | Prettier (`format:check` solo revisa) |
-| `npm run typecheck`         | Revisión de tipos                     |
+| Comando (en `frontend-web`) | Qué hace                                           |
+| --------------------------- | -------------------------------------------------- |
+| `npm run dev`               | Servidor de desarrollo                             |
+| `npm run build`             | Revisa tipos (`tsc`) y genera `dist/`              |
+| `npm test`                  | Pruebas con Vitest + Testing Library               |
+| `npm run test:e2e`          | Pruebas E2E con Playwright sobre el build (`e2e/`) |
+| `npm run lint`              | ESLint                                             |
+| `npm run format`            | Prettier (`format:check` solo revisa)              |
+| `npm run typecheck`         | Revisión de tipos                                  |
 
 Requiere Node.js 22.12 o superior (la versión recomendada está en `.nvmrc`, en la raíz).
 
@@ -99,6 +100,44 @@ La estructura y los patrones están explicados en
   `frontend-mobile`. Los hooks comunes están en
   [`packages/shared-react`](../packages/shared-react) (`@ribas/shared-react`).
 - Los colores de marca están en `tailwind.config.js` como tokens `primary` (iguales en móvil).
+
+## Pruebas E2E
+
+`e2e/auth.spec.ts` cubre el flujo de autenticación en un navegador real: login con error,
+bloqueo al quinto intento, login correcto, Mi cuenta y Mi perfil sin `null`, sesión restaurada
+al recargar, cerrar sesión, rutas protegidas y ausencia de scroll horizontal a 360 px.
+
+```bash
+npx playwright install chromium   # solo la primera vez
+npm run test:e2e
+```
+
+Si no se puede descargar Chromium, se puede usar el navegador instalado:
+`PW_CHANNEL=msedge npm run test:e2e` (en PowerShell: `$env:PW_CHANNEL="msedge"`).
+
+## Docker
+
+La imagen se construye en dos etapas: Node compila el workspace y `nginx:alpine` sirve
+`dist/`. `nginx.conf` hace el fallback a `index.html` (React Router), pone caché larga a
+`/assets/` y agrega cabeceras de seguridad (CSP, `X-Frame-Options`, `nosniff`).
+
+```bash
+# desde la raíz del repositorio (el contexto debe incluir packages/)
+docker build -f frontend-web/Dockerfile -t vitalis-web .
+docker run --rm -p 5173:80 vitalis-web        # http://localhost:5173
+```
+
+Las variables `VITE_*` se fijan **al construir** y no se pueden cambiar al arrancar el
+contenedor. Para QA:
+
+```bash
+docker build -f frontend-web/Dockerfile -t vitalis-web:qa \
+  --build-arg VITE_USE_MOCK=false \
+  --build-arg VITE_API_BASE_URL=https://<url-de-kong> .
+```
+
+En Docker Swarm: publicar esa imagen en el registro y usarla en el servicio; `/healthz`
+responde `200` para el healthcheck.
 
 ## Sesión y privacidad
 

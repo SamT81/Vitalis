@@ -21,17 +21,21 @@ gestor de estado, etc.) sin un ADR aprobado por el grupo. Tailwind se queda en l
 
 ## Dónde va cada cosa
 
-| Qué                                                     | Dónde                                                    |
-| ------------------------------------------------------- | -------------------------------------------------------- |
-| Tipos del contrato, esquemas Zod, constantes, servicios | `packages/shared/src/<modulo>/` + `src/index.ts`         |
-| Hooks idénticos en web y móvil (solo React)             | `packages/shared-react/src/`                             |
-| Un módulo de negocio (componentes, hooks, servicio)     | `src/features/<modulo>/` en cada app                     |
-| Pantallas                                               | web: `src/pages/` + ruta en `App.tsx`; móvil: `src/app/` |
-| Componentes genéricos de interfaz                       | `src/components/ui/`                                     |
-| Cabecera, pie y contenedores                            | `src/components/layout/`                                 |
-| Variables de entorno                                    | `src/config/env.ts` y `.env.example`                     |
-| Pruebas                                                 | `src/__tests__/*.spec.ts[x]` de cada parte               |
-| Documentación e informes                                | `docs/`                                                  |
+| Qué                                                     | Dónde                                                                      |
+| ------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Tipos del contrato, esquemas Zod, constantes, servicios | `packages/shared/src/<modulo>/` + `src/index.ts`                           |
+| Hooks idénticos en web y móvil (solo React)             | `packages/shared-react/src/`                                               |
+| Un módulo de negocio (componentes, hooks, servicio)     | `src/features/<modulo>/` en cada app                                       |
+| Pantallas                                               | web: `src/pages/` + ruta en `App.tsx`; móvil: `src/app/`                   |
+| Componentes genéricos de interfaz                       | `src/components/ui/`                                                       |
+| Cabecera, pie y contenedores                            | `src/components/layout/`                                                   |
+| Variables de entorno                                    | `src/config/env.ts` y `.env.example`                                       |
+| Pruebas                                                 | `src/__tests__/*.spec.ts[x]` de cada parte                                 |
+| Pruebas E2E de flujos críticos (Playwright)             | `frontend-web/e2e/`                                                        |
+| Contrato del API que consume el front                   | `docs/api/frontend-contract.openapi.yaml`                                  |
+| Decisiones de arquitectura (ADR)                        | `docs/adr/`                                                                |
+| Imagen Docker de la web                                 | `frontend-web/Dockerfile`, `frontend-web/nginx.conf`, `docker-compose.yml` |
+| Documentación e informes                                | `docs/`                                                                    |
 
 **Todo módulo nuevo va en `features/<modulo>` siguiendo `docs/ARQUITECTURA-FRONTEND.md`**
 (sección "Cómo agregar un módulo nuevo").
@@ -47,6 +51,8 @@ npm run format:check   # Prettier (npm run format para corregir)
 npm run typecheck      # tsc --noEmit en todas las partes
 npm test               # Vitest (web y paquetes) y Jest (móvil)
 npm run build:web      # build de producción de la web
+npm run test:e2e       # Playwright sobre el build de la web (flujo de autenticación)
+npm run lint:api       # valida el contrato OpenAPI con Redocly
 npm run test:html      # pruebas del prototipo en legacy-html/
 ```
 
@@ -71,6 +77,18 @@ Antes de dar una tarea por terminada deben pasar `lint`, `format:check`, `typech
 - ESLint y Prettier se configuran una sola vez en la raíz (`eslint.base.cjs`,
   `.prettierrc.json`); cada parte solo extiende.
 
+## Decisiones, contrato y pruebas
+
+- **Toda decisión de arquitectura nueva necesita un ADR antes de implementarse**
+  (`docs/adr/`, plantilla en su README). Sin ADR aprobado no se cambia el stack, la estructura
+  ni una convención.
+- Si un cambio toca el contrato con el backend, se actualiza primero
+  `docs/api/frontend-contract.openapi.yaml` y los tipos de `packages/shared` deben coincidir.
+- Toda lógica nueva lleva pruebas unitarias; un flujo crítico de usuario lleva además una
+  prueba E2E en `frontend-web/e2e/`.
+- No se dejan `TODO` ni parches: lo que se pospone se anota en
+  `docs/DECISIONES-Y-PENDIENTES.md` y se crea la tarea en el backlog.
+
 ## Lo que no se toca
 
 - **El contrato del backend definido en el DD**: `POST /api/v1/auth/login`, la forma de su
@@ -83,5 +101,5 @@ Antes de dar una tarea por terminada deben pasar `lint`, `format:check`, `typech
 
 ## Commits
 
-Conventional Commits, pequeños y por tipo de cambio: `feat(web): ...`, `fix(mobile): ...`,
+Conventional Commits **en inglés** (política del Tech Radar), pequeños y por tipo de cambio: `feat(web): ...`, `fix(mobile): ...`,
 `refactor(auth): ...`, `test(shared): ...`, `docs: ...`, `chore: ...`, `ci: ...`.
