@@ -1,0 +1,19 @@
+# Contexto de build de frontend-web/Dockerfile (la raíz del repositorio).
+.git
+.github
+**/node_modules
+**/dist
+**/coverage
+**/.expo
+**/playwright-report
+**/test-results
+**/.env
+**/.env.*
+!**/.env.example
+
+# No hacen falta para construir la web
+docs
+legacy-html
+frontend-web/e2e
+frontend-mobile/*
+!frontend-mobile/package.json
