@@ -15,6 +15,6 @@
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm test -w frontend-web",
     "build:web": "npm run build -w frontend-web",
-    "test:html": "node --test \"tests/*.test.mjs\""
+    "test:html": "node --test \"legacy-html/tests/*.test.mjs\""
   }
 }
