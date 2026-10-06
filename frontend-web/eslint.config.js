@@ -2,39 +2,25 @@ import js from '@eslint/js';
 import prettier from 'eslint-config-prettier';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
-import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
+import base from '../eslint.base.cjs';
+
 export default tseslint.config(
-  { ignores: ['dist', 'coverage'] },
+  { ignores: ['dist', 'coverage', 'playwright-report', 'test-results'] },
   {
     files: ['**/*.{ts,tsx}'],
-    extends: [js.configs.recommended, ...tseslint.configs.recommended, prettier],
+    extends: [js.configs.recommended, ...tseslint.configs.recommended, prettier, base.common],
     languageOptions: { ecmaVersion: 2022, globals: globals.browser },
-    plugins: {
-      'react-hooks': reactHooks,
-      'react-refresh': reactRefresh,
-      'simple-import-sort': simpleImportSort,
-    },
+    plugins: { 'react-hooks': reactHooks, 'react-refresh': reactRefresh },
     rules: {
       ...reactHooks.configs.recommended.rules,
+      ...base.typescriptRules,
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
-      'simple-import-sort/imports': 'error',
-      'simple-import-sort/exports': 'error',
-      '@typescript-eslint/no-explicit-any': 'error',
-      '@typescript-eslint/ban-ts-comment': 'error',
-      // Ley 1581 de 2012: nada de credenciales ni tokens en consola.
-      'no-console': 'error',
-      // Cada feature se importa solo por su index.ts (barrel).
       'no-restricted-imports': [
         'error',
-        {
-          patterns: [
-            { group: ['@/features/*/*'], message: 'Importa la feature desde su index.ts.' },
-            { group: ['../../*'], message: 'Usa el alias @/ en lugar de rutas relativas largas.' },
-          ],
-        },
+        { patterns: [base.importPatterns.featureBarrel, base.importPatterns.longRelative] },
       ],
     },
   },

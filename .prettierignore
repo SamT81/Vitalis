@@ -1,6 +1,7 @@
-# Cada app se formatea con su propia configuración (plugin de Tailwind): npm run format -w <app>
+# Cada workspace se formatea con su propio script (npm run format --workspaces).
 frontend-web/
 frontend-mobile/
+packages/
 
 # El prototipo original se conserva tal cual
 legacy-html/

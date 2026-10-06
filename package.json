@@ -15,14 +15,15 @@
     "web": "npm run dev -w frontend-web",
     "mobile": "npm run start -w frontend-mobile",
     "lint": "npm run lint --workspaces",
-    "format": "npm run format --workspaces --if-present && prettier --write .",
-    "format:check": "npm run format:check --workspaces --if-present && prettier --check .",
+    "format": "npm run format --workspaces && prettier --write .",
+    "format:check": "npm run format:check --workspaces && prettier --check .",
     "typecheck": "npm run typecheck --workspaces",
     "test": "npm test --workspaces",
     "build:web": "npm run build -w frontend-web",
     "test:html": "node --test \"legacy-html/tests/*.test.mjs\""
   },
   "devDependencies": {
+    "eslint-plugin-simple-import-sort": "^14.0.0",
     "prettier": "^3.9.9"
   },
   "overrides": {
@@ -57,6 +58,11 @@
       "packages/shared": {
         "entry": [
           "src/__tests__/*.ts"
+        ]
+      },
+      "packages/shared-react": {
+        "entry": [
+          "src/__tests__/*.{ts,tsx}"
         ]
       }
     }
