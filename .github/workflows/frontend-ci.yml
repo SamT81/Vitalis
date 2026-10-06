@@ -3,7 +3,7 @@ name: Frontend CI
 on:
   push:
   pull_request:
-    branches: [develop]
+    branches: [develop, main]
 
 concurrency:
   group: frontend-ci-${{ github.ref }}
@@ -32,10 +32,13 @@ jobs:
       - name: Formato
         run: npm run format:check
 
+      - name: Contrato OpenAPI
+        run: npm run lint:api
+
       - name: Tipos
         run: npm run typecheck
 
-      - name: Pruebas (web, móvil y shared)
+      - name: Pruebas unitarias (web, móvil y paquetes)
         run: npm test
 
       - name: Build de la web
@@ -43,3 +46,54 @@ jobs:
 
       - name: Pruebas del prototipo HTML
         run: npm run test:html
+
+  e2e:
+    name: E2E con Playwright (Chromium)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Instalar Chromium
+        run: npx playwright install --with-deps chromium
+        working-directory: frontend-web
+
+      - name: Pruebas E2E
+        run: npm run test:e2e
+
+      - name: Guardar el reporte si falla
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: frontend-web/playwright-report
+          retention-days: 7
+
+  docker:
+    name: Imagen Docker de la web
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Construir la imagen
+        run: docker build -f frontend-web/Dockerfile -t vitalis-web:ci .
+
+      - name: Comprobar que sirve la app y el fallback de rutas
+        run: |
+          docker run -d --rm --name web -p 8080:80 vitalis-web:ci
+          for i in $(seq 1 20); do curl -fs http://localhost:8080/healthz && break; sleep 1; done
+          curl -fs http://localhost:8080/ | grep -q '<div id="root">'
+          curl -fs http://localhost:8080/cuenta | grep -q '<div id="root">'
+          curl -fsI http://localhost:8080/ | grep -qi 'content-security-policy'
+          docker stop web

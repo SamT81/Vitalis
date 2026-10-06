@@ -1,0 +1,14 @@
+# Revisores obligatorios por ruta. GitHub los solicita automáticamente en cada pull request.
+#
+# Está vacío a propósito: el grupo debe poner aquí los usuarios de GitHub.
+# Ejemplo (quitar el "#" y cambiar los usuarios):
+#
+#   # Todo el repositorio: equipo de frontend
+#   *                       @usuario-front-1 @usuario-front-2
+#
+#   # Autenticación y contrato del API: además, alguien de backend (código sensible)
+#   /packages/shared/src/auth/   @usuario-back-1
+#   /docs/api/                   @usuario-back-1
+#
+#   # Decisiones de arquitectura
+#   /docs/adr/                   @usuario-arquitectura

@@ -1,0 +1,38 @@
+# Escaneo semanal de dependencias (Tech Radar: los hallazgos se revisan cada semana;
+# uno crítico o alto bloquea la fusión hasta actualizar o aceptar la excepción).
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+    ignore:
+      # Fijadas a propósito: ver docs/adr/ADR-011 y ADR-012.
+      - dependency-name: react
+      - dependency-name: react-dom
+      - dependency-name: react-test-renderer
+      - dependency-name: tailwindcss
+        update-types: [version-update:semver-major]
+      # Las versiones de Expo y React Native se suben juntas con `npx expo install --fix`.
+      - dependency-name: expo
+        update-types: [version-update:semver-major]
+      - dependency-name: react-native
+      - dependency-name: 'expo-*'
+        update-types: [version-update:semver-major]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: chore
+      include: scope
