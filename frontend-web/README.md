@@ -74,12 +74,13 @@ src/
   features/
     auth/
       components/            AuthProvider, LoginForm, ForgotPasswordForm, AccountCard, ProtectedRoute
-      hooks/                 useSession, useLogin, useForgotPassword, useLogout, useSessionCountdown
+      hooks/                 useLogin, useForgotPassword, useLogout
       services/authService.ts
-      context.ts, types.ts, schemas.ts, index.ts
+      context.ts             SessionContext y useSession (creados con @ribas/shared-react)
+      types.ts, schemas.ts, index.ts
     profile/
       components/            DonorProfile, DonorIdentityCard, ProfileSummary, BadgeGallery
-      hooks/                 useProfile, useBadges
+      hooks/                 useProfile
       services/profileService.ts
       types.ts, index.ts
   pages/                     Una pantalla por archivo; solo arman la interfaz
@@ -95,7 +96,8 @@ La estructura y los patrones están explicados en
 - `components/ui` no sabe nada de autenticación ni de la API.
 - Tipos, esquemas Zod, mensajes de error, roles, rutas, servicios mock/http y utilidades de
   formato viven en [`packages/shared`](../packages/shared) (`@ribas/shared`), compartido con
-  `frontend-mobile`.
+  `frontend-mobile`. Los hooks comunes están en
+  [`packages/shared-react`](../packages/shared-react) (`@ribas/shared-react`).
 - Los colores de marca están en `tailwind.config.js` como tokens `primary` (iguales en móvil).
 
 ## Sesión y privacidad

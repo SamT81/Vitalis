@@ -11,6 +11,7 @@ Vitalis/
 ├── frontend-web/        React + Vite + TypeScript + Tailwind + shadcn/ui
 ├── frontend-mobile/     Expo + Expo Router + NativeWind
 ├── packages/shared/     Código común (@ribas/shared): tipos, esquemas, servicios, constantes
+├── packages/shared-react/  Hooks de React comunes (@ribas/shared-react)
 ├── legacy-html/         Prototipo HTML original (solo referencia)
 ├── docs/                Arquitectura, convenciones e informes
 ├── .github/workflows/   Integración continua
@@ -47,14 +48,14 @@ npm run mobile   # Expo: escanea el código QR con Expo Go
 
 Sin configurar nada, ambas apps funcionan en **modo simulado** (sin backend).
 
-| Comando                | Qué hace                                      |
-| ---------------------- | --------------------------------------------- |
-| `npm run lint`         | ESLint en web, móvil y shared                 |
-| `npm run format:check` | Prettier (`npm run format` corrige)           |
-| `npm run typecheck`    | Revisión de tipos en las tres partes          |
-| `npm test`             | Pruebas: Vitest (web y shared) y Jest (móvil) |
-| `npm run build:web`    | Build de producción de la web                 |
-| `npm run test:html`    | Pruebas del prototipo en `legacy-html/`       |
+| Comando                | Qué hace                                        |
+| ---------------------- | ----------------------------------------------- |
+| `npm run lint`         | ESLint en web, móvil y los paquetes             |
+| `npm run format:check` | Prettier (`npm run format` corrige)             |
+| `npm run typecheck`    | Revisión de tipos en todas las partes           |
+| `npm test`             | Pruebas: Vitest (web y paquetes) y Jest (móvil) |
+| `npm run build:web`    | Build de producción de la web                   |
+| `npm run test:html`    | Pruebas del prototipo en `legacy-html/`         |
 
 ## Pantallas disponibles
 
@@ -105,10 +106,15 @@ detalle está en el README de cada app.
 
 - [`docs/ARQUITECTURA-FRONTEND.md`](docs/ARQUITECTURA-FRONTEND.md) — stack, estructura, patrones
   y cómo agregar un módulo.
+- [`docs/DECISIONES-Y-PENDIENTES.md`](docs/DECISIONES-Y-PENDIENTES.md) — decisiones
+  justificadas, contratos pendientes con el backend y pendientes del grupo.
 - [`docs/REVISION-FRONT.md`](docs/REVISION-FRONT.md) — informes de revisión y auditoría.
 - [`CLAUDE.md`](CLAUDE.md) — reglas del proyecto.
 - [`frontend-web/README.md`](frontend-web/README.md) ·
   [`frontend-mobile/README.md`](frontend-mobile/README.md) ·
-  [`packages/shared/README.md`](packages/shared/README.md)
+  [`packages/shared/README.md`](packages/shared/README.md) ·
+  [`packages/shared-react/README.md`](packages/shared-react/README.md)
+- [`frontend-mobile/PRUEBA-EN-CELULAR.md`](frontend-mobile/PRUEBA-EN-CELULAR.md) — checklist
+  para probar la app en un celular con Expo Go.
 - [`legacy-html/README.md`](legacy-html/README.md) — prototipo original y pantallas pendientes
   de migrar.

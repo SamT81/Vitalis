@@ -6,14 +6,14 @@ estructura existente, nunca desde cero ni en carpetas nuevas en la raíz.
 
 ## 1. Stack y por qué
 
-| Parte        | Tecnología                                           | Motivo                                                               |
-| ------------ | ---------------------------------------------------- | -------------------------------------------------------------------- |
-| Web          | React 19 + Vite + TypeScript estricto                | ADR del grupo que fija React como framework de frontend              |
-| Estilos web  | Tailwind CSS 3 + componentes shadcn/ui               | ADR del grupo que fija Tailwind; shadcn/ui evita otra librería de UI |
-| Móvil        | Expo (React Native) + Expo Router + NativeWind       | Mismo lenguaje, mismos tokens de Tailwind y misma lógica que la web  |
-| Formularios  | React Hook Form + Zod                                | Validación declarativa y tipos derivados del esquema                 |
-| HTTP         | Axios                                                | Interceptores para el token Bearer y el cierre de sesión ante un 401 |
-| Código común | npm workspaces + `packages/shared` (`@ribas/shared`) | Una sola copia de tipos, esquemas, constantes y servicios            |
+| Parte        | Tecnología                                               | Motivo                                                               |
+| ------------ | -------------------------------------------------------- | -------------------------------------------------------------------- |
+| Web          | React 19 + Vite + TypeScript estricto                    | ADR del grupo que fija React como framework de frontend              |
+| Estilos web  | Tailwind CSS 3 + componentes shadcn/ui                   | ADR del grupo que fija Tailwind; shadcn/ui evita otra librería de UI |
+| Móvil        | Expo (React Native) + Expo Router + NativeWind           | Mismo lenguaje, mismos tokens de Tailwind y misma lógica que la web  |
+| Formularios  | React Hook Form + Zod                                    | Validación declarativa y tipos derivados del esquema                 |
+| HTTP         | Axios                                                    | Interceptores para el token Bearer y el cierre de sesión ante un 401 |
+| Código común | npm workspaces + `@ribas/shared` y `@ribas/shared-react` | Una sola copia de tipos, esquemas, constantes, servicios y hooks     |
 
 Estas elecciones siguen el Tech Radar y los ADR del proyecto (documentación de arquitectura del
 curso). No se agregan frameworks ni librerías de interfaz sin un ADR nuevo. Tailwind se mantiene
@@ -53,7 +53,9 @@ Para agregar uno nuevo: `npx shadcn@latest add <componente>` dentro de `frontend
 - Tailwind (`tailwind.config.js` con los tokens `primary`, idénticos en web y móvil).
 - NativeWind en móvil (`babel.config.js`, `metro.config.js`, `global.css`).
 - Alias `@/` → `src/` en ambas apps.
-- npm workspaces en el `package.json` raíz, con `packages/shared`.
+- npm workspaces en el `package.json` raíz, con `packages/shared` y `packages/shared-react`.
+- Una sola configuración de Prettier (`.prettierrc.json`) y una base de ESLint
+  (`eslint.base.cjs`) en la raíz; cada parte las extiende.
 - ESLint, Prettier, Vitest (web y shared) y Jest con `jest-expo` (móvil).
 
 ## 3. Estructura de carpetas
@@ -97,6 +99,11 @@ packages/shared/
   src/content/          Textos compartidos de la pantalla de inicio
   src/lib/              format, mock
   src/__tests__/        Pruebas unitarias
+
+packages/shared-react/
+  src/index.ts          Único punto de entrada (@ribas/shared-react)
+  src/                  createSessionContext, useSessionCountdown, useBadges
+  src/__tests__/        Pruebas de los hooks
 ```
 
 Cada módulo de `features/` tiene la misma forma:
@@ -195,6 +202,8 @@ leerlo. Para producción conviene que el backend entregue el token en una cookie
 `api/httpClient.ts`. En móvil el token ya se guarda cifrado con `expo-secure-store` (Keystore en
 Android, Keychain en iOS).
 
+`createSessionContext`, `useSessionCountdown`, `useBadges`). Lo que queda en las dos apps es lo
+que sí depende de cada una:
 **Código que sigue duplicado entre web y móvil.** `@ribas/shared` es TypeScript puro, sin React,
 para que no dependa de la plataforma. Por eso estos archivos existen en las dos apps:
 

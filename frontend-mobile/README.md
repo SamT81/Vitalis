@@ -84,12 +84,13 @@ src/
   features/
     auth/
       components/            AuthProvider, LoginForm, ForgotPasswordForm, AccountCard
-      hooks/                 useSession, useLogin, useForgotPassword, useSessionCountdown
+      hooks/                 useLogin, useForgotPassword
       services/authService.ts
-      context.ts, types.ts, schemas.ts, index.ts
+      context.ts             SessionContext y useSession (creados con @ribas/shared-react)
+      types.ts, schemas.ts, index.ts
     profile/
       components/            DonorProfile, DonorIdentityCard, ProfileSummary, BadgeGallery
-      hooks/                 useProfile, useBadges
+      hooks/                 useProfile
       services/profileService.ts
       types.ts, index.ts
   __tests__/                 Pruebas (*.spec.tsx): validación del login y guardián de sesión
@@ -104,7 +105,8 @@ La estructura y los patrones están explicados en
 - `components/ui` no sabe nada de autenticación ni de la API.
 - Tipos, esquemas Zod, mensajes de error, roles, rutas, servicios mock/http y utilidades de
   formato viven en [`packages/shared`](../packages/shared) (`@ribas/shared`), compartido con
-  `frontend-web`.
+  `frontend-web`. Los hooks comunes están en
+  [`packages/shared-react`](../packages/shared-react) (`@ribas/shared-react`).
 - Los colores de marca están en `tailwind.config.js` como tokens `primary` (iguales en web). La
   tipografía es Inter (`@expo-google-fonts/inter`).
 
@@ -118,6 +120,8 @@ La estructura y los patrones están explicados en
   con la regla `no-console`.
 - `expo-secure-store` no existe en navegador: el build web usa `localStorage` solo como respaldo
   para poder verificar la app.
+
+Para probarla en un dispositivo real sigue [`PRUEBA-EN-CELULAR.md`](PRUEBA-EN-CELULAR.md).
 
 ## Cómo conectar con el backend
 
