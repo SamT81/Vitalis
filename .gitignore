@@ -19,3 +19,7 @@ expo-env.d.ts
 .DS_Store
 Thumbs.db
 npm-debug.*
+
+# Playwright
+playwright-report/
+test-results/
