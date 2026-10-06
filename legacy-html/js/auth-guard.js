@@ -33,8 +33,8 @@
   var API_SESSION_KEY = "ribas_session";          // { token, expiresAt, user } (js/auth-service.js)
   var DEVMODE_KEY  = "vitalis_devmode";           // "on" | "off" (override de la navbar)
 
-  /* Valor por defecto del modo desarrollo. Cambia a false para publicar. */
-  var DEV_MODE_DEFAULT = true;
+  /* Valor por defecto del modo desarrollo. En false: las páginas protegidas exigen sesión. */
+  var DEV_MODE_DEFAULT = false;
 
   var PROTECTED = [
     "perfil.html",
