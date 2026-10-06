@@ -3,9 +3,9 @@ import { messageFor } from '@ribas/shared';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { useSession } from '../context';
 import type { LoginFormValues } from '../schemas';
 import { loginSchema } from '../schemas';
-import { useSession } from './useSession';
 
 /** Formulario de login: validación con Zod, envío y error del servidor en español. */
 export function useLogin() {

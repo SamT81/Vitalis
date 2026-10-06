@@ -1,4 +1,5 @@
 import { initials, NOT_REGISTERED, orNotRegistered, roleLabel, ROUTES } from '@ribas/shared';
+import { useSessionCountdown } from '@ribas/shared-react';
 import { Building2, Clock, LogOut, ShieldCheck, UserRound } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
@@ -7,9 +8,8 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 
+import { useSession } from '../context';
 import { useLogout } from '../hooks/useLogout';
-import { useSession } from '../hooks/useSession';
-import { useSessionCountdown } from '../hooks/useSessionCountdown';
 
 function Row({ icon, label, children }: { icon: ReactNode; label: string; children: ReactNode }) {
   return (
@@ -24,8 +24,8 @@ function Row({ icon, label, children }: { icon: ReactNode; label: string; childr
 
 /** Datos de la cuenta y de la sesión activa, con el botón "Cerrar sesión". */
 export function AccountCard() {
-  const { user } = useSession();
-  const { expiresLabel, remainingLabel } = useSessionCountdown();
+  const { user, expiresAt } = useSession();
+  const { expiresLabel, remainingLabel } = useSessionCountdown(expiresAt);
   const logout = useLogout();
 
   if (!user) return null;

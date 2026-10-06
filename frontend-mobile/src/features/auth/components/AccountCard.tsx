@@ -1,5 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { initials, NOT_REGISTERED, orNotRegistered, roleLabel, ROUTES } from '@ribas/shared';
+import { useSessionCountdown } from '@ribas/shared-react';
 import { router } from 'expo-router';
 import type { ReactNode } from 'react';
 import { View } from 'react-native';
@@ -11,8 +12,7 @@ import { Card } from '@/components/ui/Card';
 import { Text } from '@/components/ui/Text';
 import { colors } from '@/lib/theme';
 
-import { useSession } from '../hooks/useSession';
-import { useSessionCountdown } from '../hooks/useSessionCountdown';
+import { useSession } from '../context';
 
 function Row({ icon, label, children }: { icon: IconName; label: string; children: ReactNode }) {
   return (
@@ -30,8 +30,8 @@ function Row({ icon, label, children }: { icon: IconName; label: string; childre
 
 /** Datos de la cuenta y de la sesión activa, con el botón "Cerrar sesión". */
 export function AccountCard() {
-  const { user, logout } = useSession();
-  const { expiresLabel, remainingLabel } = useSessionCountdown();
+  const { user, expiresAt, logout } = useSession();
+  const { expiresLabel, remainingLabel } = useSessionCountdown(expiresAt);
 
   if (!user) return null;
 

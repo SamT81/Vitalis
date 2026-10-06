@@ -4,6 +4,6 @@ export { AuthProvider } from './components/AuthProvider';
 export { ForgotPasswordForm } from './components/ForgotPasswordForm';
 export { LoginForm } from './components/LoginForm';
 export { ProtectedRoute } from './components/ProtectedRoute';
+export { useSession } from './context';
 export { useLogout } from './hooks/useLogout';
-export { useSession } from './hooks/useSession';
 export type { LoginLocationState } from './types';

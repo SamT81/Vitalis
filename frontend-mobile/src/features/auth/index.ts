@@ -3,5 +3,5 @@ export { AccountCard } from './components/AccountCard';
 export { AuthProvider } from './components/AuthProvider';
 export { ForgotPasswordForm } from './components/ForgotPasswordForm';
 export { LoginForm } from './components/LoginForm';
-export { useSession } from './hooks/useSession';
+export { useSession } from './context';
 export type { LoginRouteParams } from './types';

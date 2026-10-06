@@ -1,7 +1,7 @@
 import { ROUTES } from '@ribas/shared';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
-import { useSession } from '../hooks/useSession';
+import { useSession } from '../context';
 import type { LoginLocationState } from '../types';
 
 /** Guardián de rutas: sin sesión vigente no hay excepción ni "modo dev". */

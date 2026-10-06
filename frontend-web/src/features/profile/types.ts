@@ -1,1 +1,1 @@
-export type { Badge, DonorProfile } from '@ribas/shared';
+export type { DonorProfile } from '@ribas/shared';

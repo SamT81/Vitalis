@@ -1,7 +1,6 @@
+import type { Badge, DonorProfile } from '@ribas/shared';
 import { BADGES, unlockedBadges } from '@ribas/shared';
 import { useMemo, useState } from 'react';
-
-import type { Badge, DonorProfile } from '../types';
 
 /** Medallas del donante y la que está seleccionada en la galería. */
 export function useBadges(profile: DonorProfile) {
