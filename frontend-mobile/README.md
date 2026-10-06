@@ -26,12 +26,13 @@ la red local, usa `npx expo start --tunnel`.
 | -------------------------------- | -------------------------------- |
 | `npx expo start`                 | Servidor de desarrollo (Expo Go) |
 | `npx expo start --web`           | La misma app en el navegador     |
+| `npm test`                       | Pruebas con Jest (`jest-expo`)   |
 | `npx tsc --noEmit`               | Revisión de tipos                |
 | `npm run lint`                   | ESLint                           |
 | `npm run format`                 | Prettier                         |
 | `npx expo export --platform web` | Build web estático en `dist/`    |
 
-Requiere Node.js 20 o superior.
+Requiere Node.js 22.12 o superior (la versión recomendada está en `.nvmrc`, en la raíz).
 
 ## Pantallas
 
@@ -91,9 +92,11 @@ src/
       hooks/                 useProfile, useBadges
       services/profileService.ts
       types.ts, index.ts
+  __tests__/                 Pruebas (*.spec.tsx): validación del login y guardián de sesión
 ```
 
-Reglas del código:
+La estructura y los patrones están explicados en
+[`docs/ARQUITECTURA-FRONTEND.md`](../docs/ARQUITECTURA-FRONTEND.md). Reglas del código:
 
 - Cada feature se importa **solo** por su `index.ts` (`@/features/auth`, `@/features/profile`).
   ESLint lo exige con `no-restricted-imports`.

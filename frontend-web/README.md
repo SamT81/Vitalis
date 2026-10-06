@@ -23,9 +23,10 @@ npm run dev             # http://localhost:5173
 | `npm run build`             | Revisa tipos (`tsc`) y genera `dist/` |
 | `npm test`                  | Pruebas con Vitest + Testing Library  |
 | `npm run lint`              | ESLint                                |
-| `npm run format`            | Prettier                              |
+| `npm run format`            | Prettier (`format:check` solo revisa) |
+| `npm run typecheck`         | Revisión de tipos                     |
 
-Requiere Node.js 20 o superior.
+Requiere Node.js 22.12 o superior (la versión recomendada está en `.nvmrc`, en la raíz).
 
 ## Pantallas
 
@@ -85,7 +86,8 @@ src/
   __tests__/                 Pruebas (*.spec.ts[x])
 ```
 
-Reglas del código:
+La estructura y los patrones están explicados en
+[`docs/ARQUITECTURA-FRONTEND.md`](../docs/ARQUITECTURA-FRONTEND.md). Reglas del código:
 
 - Cada feature se importa **solo** por su `index.ts` (`@/features/auth`, `@/features/profile`).
   ESLint lo exige con `no-restricted-imports`.
@@ -103,6 +105,8 @@ Reglas del código:
   momento en que vence.
 - Nunca se escribe el token ni la contraseña en consola (Ley 1581 de 2012). ESLint lo refuerza
   con la regla `no-console`.
+- `localStorage` es una decisión para el piloto; para producción conviene una cookie `httpOnly`
+  (ver "Decisiones conocidas" en el documento de arquitectura).
 
 ## Cómo conectar con el backend
 
