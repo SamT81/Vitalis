@@ -20,9 +20,12 @@
     "typecheck": "npm run typecheck --workspaces",
     "test": "npm test --workspaces",
     "build:web": "npm run build -w frontend-web",
-    "test:html": "node --test \"legacy-html/tests/*.test.mjs\""
+    "test:html": "node --test \"legacy-html/tests/*.test.mjs\"",
+    "test:e2e": "npm run test:e2e -w frontend-web",
+    "lint:api": "redocly lint docs/api/frontend-contract.openapi.yaml"
   },
   "devDependencies": {
+    "@redocly/cli": "^2.58.1",
     "eslint-plugin-simple-import-sort": "^14.0.0",
     "prettier": "^3.9.9"
   },
