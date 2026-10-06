@@ -1,10 +1,12 @@
 import { Feather } from '@expo/vector-icons';
 import { formatNumber, LIVES_PER_DONATION, orNotRegistered } from '@ribas/shared';
 import { View } from 'react-native';
+
 import type { IconName } from '@/components/ui/Button';
 import { Text } from '@/components/ui/Text';
 import { colors } from '@/lib/theme';
 import { cn } from '@/lib/utils';
+
 import type { DonorProfile } from '../types';
 
 interface StatTileProps {

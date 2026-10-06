@@ -1,9 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import type { UserEvent } from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it } from 'vitest';
-import App from '@/App';
+import type { Session } from '@ribas/shared';
 import {
   ERROR_MESSAGES,
   loginSchema,
@@ -11,7 +6,13 @@ import {
   mockAuthService,
   STORAGE_KEYS,
 } from '@ribas/shared';
-import type { Session } from '@ribas/shared';
+import { render, screen, within } from '@testing-library/react';
+import type { UserEvent } from '@testing-library/user-event';
+import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
+import { describe, expect, it } from 'vitest';
+
+import App from '@/App';
 
 function renderApp(route: string) {
   return render(

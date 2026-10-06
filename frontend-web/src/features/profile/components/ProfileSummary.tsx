@@ -1,7 +1,9 @@
 import { formatNumber, LIVES_PER_DONATION, orNotRegistered } from '@ribas/shared';
 import { Activity, Droplets, Heart, Zap } from 'lucide-react';
 import type { ReactNode } from 'react';
+
 import { cn } from '@/lib/utils';
+
 import type { DonorProfile } from '../types';
 
 interface StatTileProps {

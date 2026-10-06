@@ -1,4 +1,5 @@
 import type { AxiosInstance } from 'axios';
+
 import { ApiError } from '../api/ApiError';
 import { ERROR_CODES } from '../constants/errorMessages';
 import { API_ENDPOINTS } from '../constants/routes';

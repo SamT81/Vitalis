@@ -1,6 +1,8 @@
 import { donorLevel, initials, orNotRegistered } from '@ribas/shared';
 import { Droplets, MapPin } from 'lucide-react';
+
 import { Card } from '@/components/ui/Card';
+
 import type { DonorProfile } from '../types';
 
 interface DonorIdentityCardProps {

@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils';
-import { Text } from './Text';
+
 import type { TextProps } from './Text';
+import { Text } from './Text';
 
 /** Etiqueta visible del campo; el TextInput repite el texto en accessibilityLabel. */
 function Label({ className, ...props }: TextProps) {

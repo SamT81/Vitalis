@@ -1,4 +1,5 @@
 import type { AxiosInstance } from 'axios';
+
 import { createHttpAuthService } from './authService.http';
 import { mockAuthService } from './authService.mock';
 import type { AuthService } from './types';

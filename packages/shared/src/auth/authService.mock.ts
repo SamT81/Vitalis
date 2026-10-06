@@ -11,6 +11,7 @@ import type { AuthService, LoginResponse } from './types';
  */
 export const MOCK_PASSWORD = 'Ribas2026!';
 
+const MS_PER_HOUR = 60 * 60 * 1000;
 const SESSION_HOURS = 8;
 const LOCK_MAX_FAILS = 5;
 const LOCK_WINDOW_MS = 60 * 1000;
@@ -88,7 +89,7 @@ export const mockAuthService: AuthService = {
     }
 
     attempts.delete(email);
-    const expiresAt = new Date(now + SESSION_HOURS * 3600 * 1000).toISOString();
+    const expiresAt = new Date(now + SESSION_HOURS * MS_PER_HOUR).toISOString();
     const response: LoginResponse = {
       valid: true,
       userId: account.userId,

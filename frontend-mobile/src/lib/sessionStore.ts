@@ -1,5 +1,5 @@
-import { parseStoredSession, STORAGE_KEYS } from '@ribas/shared';
 import type { Session } from '@ribas/shared';
+import { parseStoredSession, STORAGE_KEYS } from '@ribas/shared';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 
@@ -35,6 +35,7 @@ export async function loadSession(): Promise<Session | null> {
   try {
     raw = await storage.get(STORAGE_KEYS.SESSION);
   } catch {
+    // sin acceso al almacenamiento no hay sesión que restaurar
     return null;
   }
   const session = parseStoredSession(raw);

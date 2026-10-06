@@ -1,5 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { View } from 'react-native';
+
 import { Screen } from '@/components/layout/Screen';
 import { Text } from '@/components/ui/Text';
 import { AccountCard } from '@/features/auth';

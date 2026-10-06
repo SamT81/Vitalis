@@ -2,6 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { ROUTES } from '@ribas/shared';
 import { Redirect, Tabs } from 'expo-router';
 import { ActivityIndicator, View } from 'react-native';
+
 import { useSession } from '@/features/auth';
 import { colors, fonts } from '@/lib/theme';
 

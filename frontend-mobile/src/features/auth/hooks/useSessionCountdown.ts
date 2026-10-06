@@ -1,5 +1,6 @@
 import { formatDateTime, formatRemaining } from '@ribas/shared';
 import { useEffect, useState } from 'react';
+
 import { useSession } from './useSession';
 
 const REFRESH_MS = 30_000;

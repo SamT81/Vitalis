@@ -1,6 +1,7 @@
 import { ROUTES } from '@ribas/shared';
 import { router } from 'expo-router';
 import { View } from 'react-native';
+
 import { AuthCard } from '@/components/layout/AuthCard';
 import { Screen } from '@/components/layout/Screen';
 import { Badge } from '@/components/ui/Badge';

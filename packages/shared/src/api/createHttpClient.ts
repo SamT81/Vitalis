@@ -1,5 +1,6 @@
-import axios from 'axios';
 import type { AxiosInstance } from 'axios';
+import axios from 'axios';
+
 import { ERROR_CODES } from '../constants/errorMessages';
 import { ApiError } from './ApiError';
 
@@ -54,6 +55,7 @@ export function createHttpClient({ baseURL, timeoutMs, getToken }: HttpClientOpt
     (error: unknown) => {
       if (axios.isAxiosError(error) && error.response) {
         const { status } = error.response;
+        // El cuerpo del error viene sin tipo; cada campo se valida con asString.
         const body = (error.response.data ?? {}) as ErrorBody;
         const wasAuthenticated = Boolean(error.config?.headers?.has('Authorization'));
         // 401 con token enviado = sesión inválida o vencida en el backend.

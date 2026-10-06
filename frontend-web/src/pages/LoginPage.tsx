@@ -1,13 +1,15 @@
-import { ROUTES } from '@ribas/shared';
+import { LOGIN_REASONS, ROUTES } from '@ribas/shared';
 import { LogIn } from 'lucide-react';
 import { Navigate, useLocation } from 'react-router-dom';
+
 import { AuthCard } from '@/components/layout/AuthCard';
 import { env } from '@/config/env';
-import { LoginForm, useSession } from '@/features/auth';
 import type { LoginLocationState } from '@/features/auth';
+import { LoginForm, useSession } from '@/features/auth';
 
 export function LoginPage() {
   const { isAuthenticated } = useSession();
+  // React Router tipa `state` como unknown: aquí siempre lo escriben ProtectedRoute o AuthProvider.
   const state = (useLocation().state ?? {}) as LoginLocationState;
 
   // Con sesión vigente (o recién iniciada) se sale de Login hacia Mi cuenta.
@@ -19,7 +21,10 @@ export function LoginPage() {
       title="Iniciar sesión"
       description="Accede a tu cuenta de la red RIBAS para ver tus datos, puntos y medallas."
     >
-      <LoginForm sessionExpired={state.reason === 'expired'} showMockHint={env.USE_MOCK} />
+      <LoginForm
+        sessionExpired={state.reason === LOGIN_REASONS.SESSION_EXPIRED}
+        showMockHint={env.USE_MOCK}
+      />
     </AuthCard>
   );
 }

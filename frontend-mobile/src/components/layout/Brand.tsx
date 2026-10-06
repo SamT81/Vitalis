@@ -1,4 +1,5 @@
 import { Image, View } from 'react-native';
+
 import { Text } from '@/components/ui/Text';
 
 const logo = require('../../../assets/logo-vitalis.png');

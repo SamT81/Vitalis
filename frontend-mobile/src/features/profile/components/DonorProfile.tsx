@@ -1,9 +1,11 @@
 import { firstName } from '@ribas/shared';
 import { ActivityIndicator } from 'react-native';
+
 import { Alert } from '@/components/ui/Alert';
 import { Text } from '@/components/ui/Text';
 import { useSession } from '@/features/auth';
 import { colors } from '@/lib/theme';
+
 import { useProfile } from '../hooks/useProfile';
 import { BadgeGallery } from './BadgeGallery';
 import { DonorIdentityCard } from './DonorIdentityCard';

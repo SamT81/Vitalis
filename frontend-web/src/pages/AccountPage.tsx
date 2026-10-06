@@ -1,4 +1,5 @@
 import { Lock } from 'lucide-react';
+
 import { AccountCard } from '@/features/auth';
 
 export function AccountPage() {

@@ -1,5 +1,6 @@
 import { ROUTES } from '@ribas/shared';
 import { Link } from 'react-router-dom';
+
 import { Brand } from './Brand';
 
 const footerLink = 'block py-1 text-sm text-slate-600 hover:text-primary-700';

@@ -16,5 +16,5 @@ export interface SessionContextValue {
 export interface LoginLocationState {
   /** Ruta protegida que se intentó abrir sin sesión. */
   from?: string;
-  reason?: 'expired';
+  reason?: string;
 }

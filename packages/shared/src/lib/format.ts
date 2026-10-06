@@ -21,6 +21,9 @@ export function firstName(name: string): string {
   return name.trim().split(/\s+/)[0] ?? '';
 }
 
+const MS_PER_MINUTE = 60_000;
+const MINUTES_PER_HOUR = 60;
+
 const dateTimeFormat = new Intl.DateTimeFormat('es-CO', { dateStyle: 'long', timeStyle: 'short' });
 const numberFormat = new Intl.NumberFormat('es-CO');
 
@@ -35,10 +38,10 @@ export const formatNumber = (value: number): string => numberFormat.format(value
 export function formatRemaining(iso: string | null, now: number = Date.now()): string {
   const time = iso ? Date.parse(iso) : NaN;
   if (Number.isNaN(time)) return '';
-  const minutes = Math.floor((time - now) / 60000);
+  const minutes = Math.floor((time - now) / MS_PER_MINUTE);
   if (minutes <= 0) return 'La sesión está por vencer.';
-  const hours = Math.floor(minutes / 60);
-  const rest = minutes % 60;
+  const hours = Math.floor(minutes / MINUTES_PER_HOUR);
+  const rest = minutes % MINUTES_PER_HOUR;
   if (hours === 0) return `Quedan ${rest} min`;
   return `Quedan ${hours} h ${rest} min`;
 }

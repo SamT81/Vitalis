@@ -8,6 +8,11 @@ export const ROUTES = {
   PROFILE: '/perfil',
 } as const;
 
+/** Motivos con los que se llega a Login (estado de navegación o parámetro de ruta). */
+export const LOGIN_REASONS = {
+  SESSION_EXPIRED: 'expired',
+} as const;
+
 /** Endpoints del API Gateway. */
 export const API_ENDPOINTS = {
   LOGIN: '/api/v1/auth/login',

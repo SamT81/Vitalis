@@ -1,10 +1,11 @@
-import { ROUTES } from '@ribas/shared';
+import { LOGIN_REASONS, ROUTES } from '@ribas/shared';
 import { Redirect, useLocalSearchParams } from 'expo-router';
+
 import { AuthCard } from '@/components/layout/AuthCard';
 import { Screen } from '@/components/layout/Screen';
 import { env } from '@/config/env';
-import { LoginForm, useSession } from '@/features/auth';
 import type { LoginRouteParams } from '@/features/auth';
+import { LoginForm, useSession } from '@/features/auth';
 
 export default function LoginScreen() {
   const { isAuthenticated, isLoading } = useSession();
@@ -20,7 +21,10 @@ export default function LoginScreen() {
         title="Iniciar sesión"
         description="Accede a tu cuenta de la red RIBAS para ver tus datos, puntos y medallas."
       >
-        <LoginForm sessionExpired={reason === 'expired'} showMockHint={env.USE_MOCK} />
+        <LoginForm
+          sessionExpired={reason === LOGIN_REASONS.SESSION_EXPIRED}
+          showMockHint={env.USE_MOCK}
+        />
       </AuthCard>
     </Screen>
   );

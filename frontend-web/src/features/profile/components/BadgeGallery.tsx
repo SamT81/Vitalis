@@ -1,6 +1,7 @@
 import { Badge } from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
 import { cn } from '@/lib/utils';
+
 import { useBadges } from '../hooks/useBadges';
 import type { DonorProfile } from '../types';
 

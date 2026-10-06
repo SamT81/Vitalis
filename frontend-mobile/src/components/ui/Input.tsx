@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { TextInput } from 'react-native';
 import type { TextInputProps } from 'react-native';
+import { TextInput } from 'react-native';
+
 import { colors, fonts } from '@/lib/theme';
 import { cn } from '@/lib/utils';
 

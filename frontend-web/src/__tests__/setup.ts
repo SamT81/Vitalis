@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom/vitest';
+
 import { mockSettings, resetMockAuth } from '@ribas/shared';
 import { beforeEach } from 'vitest';
 

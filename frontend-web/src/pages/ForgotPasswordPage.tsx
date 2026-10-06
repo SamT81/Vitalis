@@ -1,4 +1,5 @@
 import { KeyRound } from 'lucide-react';
+
 import { AuthCard } from '@/components/layout/AuthCard';
 import { ForgotPasswordForm } from '@/features/auth';
 

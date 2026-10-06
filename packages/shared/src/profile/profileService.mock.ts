@@ -1,7 +1,7 @@
 import { MOCK_DONOR_USER_ID } from '../auth/authService.mock';
 import { mockSettings, wait } from '../lib/mock';
-import { EMPTY_PROFILE } from './types';
 import type { DonorProfile, ProfileService } from './types';
+import { EMPTY_PROFILE } from './types';
 
 /* Solo la donante de prueba tiene datos; el resto de cuentas no ha registrado nada. */
 const MOCK_PROFILES: Readonly<Record<string, DonorProfile>> = {

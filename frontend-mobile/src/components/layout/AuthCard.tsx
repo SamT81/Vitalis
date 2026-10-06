@@ -1,6 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import type { ReactNode } from 'react';
 import { View } from 'react-native';
+
 import type { IconName } from '@/components/ui/Button';
 import { Text } from '@/components/ui/Text';
 import { colors } from '@/lib/theme';

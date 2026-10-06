@@ -1,6 +1,7 @@
 import { ROUTES } from '@ribas/shared';
 import { ArrowLeft, LogIn, UserPlus } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
 import { AuthCard } from '@/components/layout/AuthCard';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';

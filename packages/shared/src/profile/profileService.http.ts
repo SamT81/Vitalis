@@ -1,8 +1,9 @@
 import type { AxiosInstance } from 'axios';
+
 import { API_ENDPOINTS } from '../constants/routes';
 import { donorProfileSchema } from './schemas';
-import { EMPTY_PROFILE } from './types';
 import type { ProfileService } from './types';
+import { EMPTY_PROFILE } from './types';
 
 /** Implementación real contra el API Gateway. */
 export function createHttpProfileService(http: AxiosInstance): ProfileService {

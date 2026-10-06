@@ -1,9 +1,11 @@
 import { Feather } from '@expo/vector-icons';
 import { donorLevel, initials, orNotRegistered } from '@ribas/shared';
 import { View } from 'react-native';
+
 import { Card } from '@/components/ui/Card';
 import { Text } from '@/components/ui/Text';
 import { colors } from '@/lib/theme';
+
 import type { DonorProfile } from '../types';
 
 interface DonorIdentityCardProps {

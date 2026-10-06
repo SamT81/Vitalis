@@ -1,10 +1,12 @@
-import { isExpired, ROUTES } from '@ribas/shared';
+import { isExpired, LOGIN_REASONS, ROUTES } from '@ribas/shared';
 import { router } from 'expo-router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AppState } from 'react-native';
+
 import { setUnauthorizedHandler } from '@/api/httpClient';
 import { clearSession, loadSession, saveSession } from '@/lib/sessionStore';
+
 import { SessionContext } from '../context';
 import { authService } from '../services/authService';
 import type { LoginRequest, LoginRouteParams, Session, SessionContextValue } from '../types';
@@ -65,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setUnauthorizedHandler(() => {
       dropSession();
-      const params: LoginRouteParams = { reason: 'expired' };
+      const params: LoginRouteParams = { reason: LOGIN_REASONS.SESSION_EXPIRED };
       router.replace({ pathname: ROUTES.LOGIN, params });
     });
     return () => setUnauthorizedHandler(null);

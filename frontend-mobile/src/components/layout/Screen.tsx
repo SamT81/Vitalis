@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import type { Edge } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 import { cn } from '@/lib/utils';
 
 interface ScreenProps {

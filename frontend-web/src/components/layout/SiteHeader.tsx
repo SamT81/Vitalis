@@ -2,9 +2,11 @@ import { firstName, initials, ROUTES } from '@ribas/shared';
 import { LogOut, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
+
 import { Button } from '@/components/ui/Button';
 import { useLogout, useSession } from '@/features/auth';
 import { cn } from '@/lib/utils';
+
 import { Brand } from './Brand';
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>

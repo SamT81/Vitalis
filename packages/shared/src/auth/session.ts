@@ -7,6 +7,7 @@ export function isExpired(expiresAt: string, now: number = Date.now()): boolean 
 
 function isSession(value: unknown): value is Session {
   if (typeof value !== 'object' || value === null) return false;
+  // Dato externo sin tipo: se inspecciona campo por campo antes de confiar en él.
   const candidate = value as Partial<Session>;
   return (
     typeof candidate.token === 'string' &&
@@ -26,6 +27,7 @@ export function parseStoredSession(raw: string | null | undefined): Session | nu
   try {
     parsed = JSON.parse(raw);
   } catch {
+    // JSON corrupto: se trata como si no hubiera sesión
     return null;
   }
   return isSession(parsed) && !isExpired(parsed.expiresAt) ? parsed : null;

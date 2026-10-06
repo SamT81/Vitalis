@@ -1,9 +1,11 @@
-import { ROUTES } from '@ribas/shared';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { LOGIN_REASONS, ROUTES } from '@ribas/shared';
 import type { ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import { setUnauthorizedHandler } from '@/api/httpClient';
 import { clearSession, loadSession, saveSession } from '@/lib/sessionStore';
+
 import { SessionContext } from '../context';
 import { authService } from '../services/authService';
 import type { LoginLocationState, LoginRequest, Session, SessionContextValue } from '../types';
@@ -45,7 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setUnauthorizedHandler(() => {
       dropSession();
-      const state: LoginLocationState = { reason: 'expired' };
+      const state: LoginLocationState = { reason: LOGIN_REASONS.SESSION_EXPIRED };
       navigate(ROUTES.LOGIN, { replace: true, state });
     });
     return () => setUnauthorizedHandler(null);

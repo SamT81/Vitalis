@@ -1,4 +1,5 @@
 import '../../global.css';
+
 import {
   Inter_400Regular,
   Inter_500Medium,
@@ -10,6 +11,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+
 import { AuthProvider } from '@/features/auth';
 import { colors, fonts } from '@/lib/theme';
 

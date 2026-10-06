@@ -1,12 +1,13 @@
-import { AxiosError } from 'axios';
-import type { AxiosAdapter, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
-import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   createHttpAuthService,
   createProfileService,
   ERROR_MESSAGES,
   messageFor,
 } from '@ribas/shared';
+import type { AxiosAdapter, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import { AxiosError } from 'axios';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
 import { http, setUnauthorizedHandler } from '@/api/httpClient';
 import { saveSession } from '@/lib/sessionStore';
 

@@ -14,5 +14,5 @@ export interface SessionContextValue {
   logout: () => Promise<void>;
 }
 
-/** Parámetros con los que se llega a la pantalla de Login (reason: 'expired' = sesión vencida). */
+/** Parámetros con los que se llega a la pantalla de Login (ver LOGIN_REASONS). */
 export type LoginRouteParams = { reason?: string };

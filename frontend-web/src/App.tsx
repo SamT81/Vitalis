@@ -1,5 +1,6 @@
 import { ROUTES } from '@ribas/shared';
 import { Navigate, Route, Routes } from 'react-router-dom';
+
 import { AppLayout } from '@/components/layout/AppLayout';
 import { AuthProvider, ProtectedRoute } from '@/features/auth';
 import { AccountPage } from '@/pages/AccountPage';

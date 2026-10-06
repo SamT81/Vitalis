@@ -2,8 +2,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { messageFor } from '@ribas/shared';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { forgotPasswordSchema } from '../schemas';
+
 import type { ForgotPasswordFormValues } from '../schemas';
+import { forgotPasswordSchema } from '../schemas';
 import { authService } from '../services/authService';
 
 /** Formulario de recuperar contraseña: validación, envío y confirmación. */

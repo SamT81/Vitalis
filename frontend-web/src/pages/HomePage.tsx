@@ -1,5 +1,6 @@
-import { HOME_BENEFITS, HOME_CONTENT, HOME_STATS, HOME_STEPS, ROUTES } from '@ribas/shared';
 import type { HomeBenefitId } from '@ribas/shared';
+import { HOME_BENEFITS, HOME_CONTENT, HOME_STATS, HOME_STEPS, ROUTES } from '@ribas/shared';
+import type { LucideIcon } from 'lucide-react';
 import {
   ArrowRight,
   Heart,
@@ -11,8 +12,8 @@ import {
   Target,
   UserPlus,
 } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { useSession } from '@/features/auth';

@@ -1,5 +1,5 @@
-import { parseStoredSession, STORAGE_KEYS } from '@ribas/shared';
 import type { Session } from '@ribas/shared';
+import { parseStoredSession, STORAGE_KEYS } from '@ribas/shared';
 
 /** Persistencia de la sesión en localStorage (clave `ribas_session`). */
 
@@ -17,6 +17,7 @@ export function loadSession(): Session | null {
   try {
     raw = localStorage.getItem(STORAGE_KEYS.SESSION);
   } catch {
+    // sin acceso al almacenamiento no hay sesión que restaurar
     return null;
   }
   const session = parseStoredSession(raw);

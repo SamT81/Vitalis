@@ -1,12 +1,13 @@
 import { Feather } from '@expo/vector-icons';
-import { HOME_BENEFITS, HOME_CONTENT, HOME_STATS, HOME_STEPS, ROUTES } from '@ribas/shared';
 import type { HomeBenefitId } from '@ribas/shared';
+import { HOME_BENEFITS, HOME_CONTENT, HOME_STATS, HOME_STEPS, ROUTES } from '@ribas/shared';
 import { router } from 'expo-router';
 import { View } from 'react-native';
+
 import { Brand } from '@/components/layout/Brand';
 import { Screen } from '@/components/layout/Screen';
-import { Button } from '@/components/ui/Button';
 import type { IconName } from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import { Text } from '@/components/ui/Text';
 import { useSession } from '@/features/auth';
 import { colors } from '@/lib/theme';

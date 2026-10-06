@@ -3,12 +3,14 @@ import { initials, NOT_REGISTERED, orNotRegistered, roleLabel, ROUTES } from '@r
 import { router } from 'expo-router';
 import type { ReactNode } from 'react';
 import { View } from 'react-native';
+
 import { Badge } from '@/components/ui/Badge';
-import { Button } from '@/components/ui/Button';
 import type { IconName } from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Text } from '@/components/ui/Text';
 import { colors } from '@/lib/theme';
+
 import { useSession } from '../hooks/useSession';
 import { useSessionCountdown } from '../hooks/useSessionCountdown';
 

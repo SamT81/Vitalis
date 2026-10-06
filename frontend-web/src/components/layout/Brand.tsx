@@ -1,5 +1,6 @@
 import { ROUTES } from '@ribas/shared';
 import { Link } from 'react-router-dom';
+
 import logo from '@/assets/logo-vitalis.png';
 import { cn } from '@/lib/utils';
 

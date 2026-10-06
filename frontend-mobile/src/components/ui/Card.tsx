@@ -1,5 +1,6 @@
-import { View } from 'react-native';
 import type { ViewProps } from 'react-native';
+import { View } from 'react-native';
+
 import { cn } from '@/lib/utils';
 
 function Card({ className, ...props }: ViewProps) {

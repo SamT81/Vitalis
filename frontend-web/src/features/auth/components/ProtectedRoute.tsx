@@ -1,5 +1,6 @@
 import { ROUTES } from '@ribas/shared';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
+
 import { useSession } from '../hooks/useSession';
 import type { LoginLocationState } from '../types';
 

@@ -2,9 +2,11 @@ import { initials, NOT_REGISTERED, orNotRegistered, roleLabel, ROUTES } from '@r
 import { Building2, Clock, LogOut, ShieldCheck, UserRound } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+
 import { useLogout } from '../hooks/useLogout';
 import { useSession } from '../hooks/useSession';
 import { useSessionCountdown } from '../hooks/useSessionCountdown';
