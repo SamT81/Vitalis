@@ -1,0 +1,11 @@
+# Cada app se formatea con su propia configuración (plugin de Tailwind): npm run format -w <app>
+frontend-web/
+frontend-mobile/
+
+# El prototipo original se conserva tal cual
+legacy-html/
+
+node_modules/
+package-lock.json
+dist/
+coverage/

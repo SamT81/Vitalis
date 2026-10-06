@@ -7,13 +7,15 @@ web-build/
 coverage/
 .expo/
 *.tsbuildinfo
+expo-env.d.ts
 
 # variables de entorno reales (solo se suben los .env.example)
 .env
 .env.*
 !.env.example
+*.local
 
-# sistema
+# sistema y editores
 .DS_Store
 Thumbs.db
 npm-debug.*

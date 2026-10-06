@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "description": "Vitalis · RIBAS — frontend web (React + Vite), app móvil (Expo) y código compartido.",
+  "engines": {
+    "node": ">=22.12"
+  },
   "workspaces": [
     "packages/*",
     "frontend-web",
@@ -11,10 +14,51 @@
   "scripts": {
     "web": "npm run dev -w frontend-web",
     "mobile": "npm run start -w frontend-mobile",
-    "lint": "npm run lint -w frontend-web -w frontend-mobile",
-    "typecheck": "npm run typecheck --workspaces --if-present",
-    "test": "npm test -w frontend-web",
+    "lint": "npm run lint --workspaces",
+    "format": "npm run format --workspaces --if-present && prettier --write .",
+    "format:check": "npm run format:check --workspaces --if-present && prettier --check .",
+    "typecheck": "npm run typecheck --workspaces",
+    "test": "npm test --workspaces",
     "build:web": "npm run build -w frontend-web",
     "test:html": "node --test \"legacy-html/tests/*.test.mjs\""
+  },
+  "devDependencies": {
+    "prettier": "^3.9.9"
+  },
+  "overrides": {
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-test-renderer": "19.2.3"
+  },
+  "knip": {
+    "ignore": [
+      "legacy-html/**"
+    ],
+    "workspaces": {
+      "frontend-web": {
+        "entry": [
+          "src/__tests__/*.{ts,tsx}"
+        ]
+      },
+      "frontend-mobile": {
+        "entry": [
+          "src/app/**/*.tsx",
+          "src/__tests__/*.{ts,tsx}"
+        ],
+        "metro": false,
+        "ignoreDependencies": [
+          "expo-updates",
+          "expo-system-ui"
+        ],
+        "ignore": [
+          "metro.config.js"
+        ]
+      },
+      "packages/shared": {
+        "entry": [
+          "src/__tests__/*.ts"
+        ]
+      }
+    }
   }
 }
