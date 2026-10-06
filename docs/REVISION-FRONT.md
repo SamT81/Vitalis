@@ -234,3 +234,106 @@ al día con `origin/front-react`. Esta sección se añadió en un commit posteri
 
 No se subió ningún `node_modules/`, `dist/`, `.expo/`, `web-build/` ni `.env`. Los commits
 intermedios del refactor no compilan por separado; el estado verificado es el del último commit.
+
+---
+
+# Orden del repositorio y auditoría general
+
+Fecha: 2026-10-05 · Respaldo previo: tag local `backup-antes-orden`.
+
+## A. Críticas del equipo y cómo quedaron resueltas
+
+| Crítica                                                                    | Resolución                                                                                                                                                                                                           |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. "No está el `src` de un proyecto, solo vistas."                         | El sitio HTML se movió con `git mv` a `legacy-html/` (conserva el historial). La raíz ahora muestra `frontend-web/`, `frontend-mobile/`, `packages/shared/`, `docs/` y un README que habla solo del proyecto actual. |
+| 2. "Se define un framework y una estructura, y luego se piden borradores." | `docs/ARQUITECTURA-FRONTEND.md` define stack, scaffolding, árbol de carpetas, patrones y el paso a paso para agregar un módulo. `CLAUDE.md` obliga a que todo trabajo con asistentes parta de esa estructura.        |
+| 3. "Eso lo hace el framework automáticamente."                             | Cada app sigue la convención de su framework: web como la plantilla `react-ts` de Vite; móvil como `create-expo-app` con rutas en `src/app/`; shadcn/ui con `components.json`. No hay carpetas inventadas.           |
+
+**Precisión importante sobre la crítica 2 y 3.** `frontend-mobile` sí se generó con
+`create-expo-app`. `frontend-web` tiene la estructura exacta de la plantilla oficial de Vite,
+pero sus archivos se escribieron a mano siguiendo esa plantilla (el asistente de Vite es
+interactivo). El documento de arquitectura lo dice así, sin afirmar que se usó el comando.
+
+## B. Auditoría: problema · dónde · corrección
+
+| Problema                                                  | Dónde                                                   | Corrección                                                                                          |
+| --------------------------------------------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Modo dev que iniciaba sesión solo                         | `legacy-html/js/auth-guard.js`                          | `DEV_MODE_DEFAULT = false`                                                                          |
+| Dos versiones de React instaladas (19.2.3 y 19.3.0)       | `node_modules` tras instalar las herramientas de prueba | `overrides` en el `package.json` raíz que fijan `react`, `react-dom` y `react-test-renderer`        |
+| `packages/shared` sin lint ni pruebas                     | `packages/shared`                                       | ESLint propio (prohíbe importar React/Expo) y 22 pruebas unitarias con Vitest                       |
+| La app móvil no tenía pruebas                             | `frontend-mobile`                                       | 7 pruebas con `jest-expo` y Testing Library (validación, error, login, guardián con y sin sesión)   |
+| Imports sin orden fijo                                    | las tres partes                                         | `eslint-plugin-simple-import-sort` como error; se reordenaron todos                                 |
+| Nada impedía `any`, `@ts-ignore` o rutas relativas largas | configuración de ESLint                                 | Reglas `no-explicit-any`, `ban-ts-comment` y `no-restricted-imports` para `../../*`                 |
+| String mágico `'expired'` repetido en 5 archivos          | `AuthProvider`, `LoginPage`, `login.tsx`, tipos         | Constante `LOGIN_REASONS.SESSION_EXPIRED` en `@ribas/shared`                                        |
+| Números sin nombre (`3600 * 1000`, `60000`, `60`)         | `authService.mock.ts`, `lib/format.ts`                  | `MS_PER_HOUR`, `MS_PER_MINUTE`, `MINUTES_PER_HOUR`                                                  |
+| Tres `catch` devolvían `null` sin explicar por qué        | `lib/sessionStore.ts` (web y móvil), `auth/session.ts`  | Comentario con la razón en cada uno                                                                 |
+| Tres `as` sin justificar                                  | `LoginPage`, `createHttpClient`, `session.ts`           | Se conservan (son fronteras con datos sin tipo) con un comentario que lo explica                    |
+| Scripts distintos en cada parte; faltaba `format:check`   | los `package.json`                                      | Mismos scripts (`lint`, `format`, `format:check`, `typecheck`, `test`) y comandos únicos en la raíz |
+| Prettier con `endOfLine: "auto"` y sin `.gitattributes`   | configuración                                           | `endOfLine: "lf"` y `.gitattributes` con `* text=auto eol=lf`                                       |
+| Sin `.editorconfig`, `.nvmrc` ni `engines`                | raíz                                                    | Creados (Node 24 en `.nvmrc`, `engines.node >= 22.12`)                                              |
+| Regla de lint sobrante para Axios en móvil                | `frontend-mobile/eslint.config.js`                      | Eliminada (móvil ya no importa Axios)                                                               |
+| `tsconfig` de móvil no cargaba los tipos de Jest          | `frontend-mobile/tsconfig.json`                         | `"types": ["jest"]`                                                                                 |
+| README raíz describía el sitio HTML                       | `README.md`                                             | Reescrito; el original quedó en `legacy-html/DOCUMENTACION-ORIGINAL.md`                             |
+| README de las apps pedían Node 20                         | README de web y móvil                                   | Corregido a Node 22.12 (lo exige Vite 8)                                                            |
+| Sin CI                                                    | —                                                       | `.github/workflows/frontend-ci.yml`                                                                 |
+| Token en `localStorage` podía verse como descuido         | —                                                       | Documentado en "Decisiones conocidas" del documento de arquitectura                                 |
+
+Revisado y sin hallazgos: dependencias circulares (`madge`, 0 ciclos en las tres partes),
+`console.*`, `TODO`/`FIXME`, código comentado, `eslint-disable`, imports que se salten el barrel,
+lógica en `components/ui`, `.env` versionados, archivos generados en git, scroll horizontal a
+360 px, `tsconfig` con `strict: true` en las tres partes.
+
+## C. Lo que no se corrigió y por qué
+
+- **Hooks duplicados entre web y móvil** (`useSession`, `useProfile`, `useBadges`,
+  `useSessionCountdown`): `@ribas/shared` se mantiene sin React. Explicado en la sección 8 del
+  documento de arquitectura.
+- **`aria-invalid` en los campos de la app móvil**: React Native no lo expone; el error se
+  anuncia con una región viva (`accessibilityLiveRegion`).
+- **`depcheck` sigue marcando** `tailwindcss`, `postcss`, `autoprefixer`,
+  `prettier-plugin-tailwindcss` y `react-native-worklets`: son falsos positivos (los cargan
+  archivos de configuración y Reanimated 4).
+- **Cada app conserva su `.prettierrc.json`**: el plugin de Tailwind busca `tailwind.config.js`
+  junto a la configuración de Prettier.
+- **El CI no se pudo ejecutar localmente**: se verificó cada uno de sus comandos en un clon
+  limpio; su primera ejecución real ocurre en GitHub con este push.
+- **La app móvil sigue sin probarse en un celular físico.**
+
+## D. Árbol final de la raíz
+
+```
+Vitalis/
+├── frontend-web/
+├── frontend-mobile/
+├── packages/shared/
+├── legacy-html/
+├── docs/                  ARQUITECTURA-FRONTEND.md · REVISION-FRONT.md
+├── .github/workflows/     frontend-ci.yml
+├── package.json  package-lock.json
+├── README.md  CLAUDE.md
+├── .editorconfig  .nvmrc  .gitignore  .gitattributes
+└── .prettierrc.json  .prettierignore
+```
+
+- **Movido:** todos los `*.html`, `css/`, `js/`, `tests/` y `assets/` → `legacy-html/`; el
+  README antiguo → `legacy-html/DOCUMENTACION-ORIGINAL.md`; `REVISION-FRONT.md` → `docs/`.
+- **Creado:** `docs/ARQUITECTURA-FRONTEND.md`, `CLAUDE.md`, `README.md`, `legacy-html/README.md`,
+  `.github/workflows/frontend-ci.yml`, `.editorconfig`, `.gitattributes`, `.nvmrc`,
+  `.prettierrc.json`, `.prettierignore`, `packages/shared/eslint.config.js`, las pruebas de
+  `shared` y de móvil.
+- **Borrado:** nada más allá de lo movido.
+
+## E. Verificación (clon limpio con `npm ci`)
+
+| Verificación                              | Resultado                                               |
+| ----------------------------------------- | ------------------------------------------------------- |
+| `npm run lint`                            | ✅ sin errores ni avisos en las tres partes             |
+| `npm run format:check`                    | ✅                                                      |
+| `npm run typecheck`                       | ✅                                                      |
+| `npm test`                                | ✅ shared 22 · web 25 · móvil 7                         |
+| `npm run build:web`                       | ✅                                                      |
+| `npm run test:html`                       | ✅ 13                                                   |
+| `npx expo export --platform web`          | ✅                                                      |
+| `legacy-html` con `python -m http.server` | ✅ `index`, `login`, `cuenta` y `perfil` sin 404        |
+| Recorrido web (360 px y 1280 px)          | ✅ 0 errores y 0 warnings en consola; servidor detenido |
+| `git status`                              | ✅ limpio                                               |
