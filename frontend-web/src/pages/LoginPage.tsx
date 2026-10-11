@@ -1,5 +1,4 @@
 import { LOGIN_REASONS, ROUTES } from '@ribas/shared';
-import { LogIn } from 'lucide-react';
 import { Navigate, useLocation } from 'react-router-dom';
 
 import { AuthCard } from '@/components/layout/AuthCard';
@@ -17,7 +16,6 @@ export function LoginPage() {
 
   return (
     <AuthCard
-      icon={<LogIn />}
       title="Iniciar sesión"
       description="Accede a tu cuenta de la red RIBAS para ver tus datos, puntos y medallas."
     >

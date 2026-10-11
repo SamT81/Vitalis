@@ -2,6 +2,7 @@ import { ROUTES } from '@ribas/shared';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { AppLayout } from '@/components/layout/AppLayout';
+import { AuthLayout } from '@/components/layout/AuthLayout';
 import { AuthProvider, ProtectedRoute } from '@/features/auth';
 import { AccountPage } from '@/pages/AccountPage';
 import { ComingSoonPage } from '@/pages/ComingSoonPage';
@@ -17,9 +18,13 @@ export default function App() {
       <Routes>
         <Route element={<AppLayout />}>
           <Route path={ROUTES.HOME} element={<HomePage />} />
-          <Route path={ROUTES.LOGIN} element={<LoginPage />} />
-          <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPasswordPage />} />
-          <Route path={ROUTES.REGISTER} element={<ComingSoonPage />} />
+
+          {/* Pantallas de acceso: comparten el panel de marca de AuthLayout. */}
+          <Route element={<AuthLayout />}>
+            <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+            <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPasswordPage />} />
+            <Route path={ROUTES.REGISTER} element={<ComingSoonPage />} />
+          </Route>
 
           {/* Rutas protegidas: sin sesión válida siempre redirigen a Login. */}
           <Route element={<ProtectedRoute />}>

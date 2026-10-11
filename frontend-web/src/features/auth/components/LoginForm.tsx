@@ -38,7 +38,7 @@ export function LoginForm({ sessionExpired = false, showMockHint = false }: Logi
       )}
 
       <form onSubmit={submit} noValidate>
-        <div className="mb-4">
+        <div className="mb-5">
           <Label htmlFor="login-email">Correo electrónico</Label>
           <Input
             id="login-email"
@@ -66,10 +66,10 @@ export function LoginForm({ sessionExpired = false, showMockHint = false }: Logi
           <FieldError id="login-password-error" message={errors.password?.message} />
         </div>
 
-        <div className="mb-4 text-right">
+        <div className="mb-6 text-right">
           <Link
             to={ROUTES.FORGOT_PASSWORD}
-            className="text-sm font-medium text-primary-700 hover:text-primary-800 hover:underline"
+            className="text-sm font-medium text-slate-700 underline underline-offset-4 hover:text-slate-900"
           >
             ¿Olvidaste tu contraseña?
           </Link>
@@ -89,16 +89,16 @@ export function LoginForm({ sessionExpired = false, showMockHint = false }: Logi
       </form>
 
       {showMockHint && (
-        <p className="mt-5 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs leading-relaxed text-slate-600">
-          <b className="text-slate-800">Modo simulado (sin backend).</b> Usuario de prueba:{' '}
-          <code className="break-all text-primary-700">donante@gmail.com</code> · contraseña{' '}
-          <code className="text-primary-700">{MOCK_PASSWORD}</code>. Más usuarios en el README.
+        <p className="mt-6 rounded-xl bg-slate-50 px-4 py-3 text-xs leading-relaxed text-slate-600">
+          <b className="text-slate-900">Modo simulado (sin backend).</b> Usuario de prueba:{' '}
+          <code className="break-all text-slate-900">donante@gmail.com</code> · contraseña{' '}
+          <code className="text-slate-900">{MOCK_PASSWORD}</code>. Más usuarios en el README.
         </p>
       )}
 
-      <p className="mt-5 text-center text-sm text-slate-600">
+      <p className="mt-8 border-t border-slate-200 pt-6 text-sm text-slate-600">
         ¿Primera vez donando?{' '}
-        <Link to={ROUTES.REGISTER} className="font-semibold text-primary-700 hover:underline">
+        <Link to={ROUTES.REGISTER} className="font-semibold text-slate-900 underline underline-offset-4 hover:decoration-primary">
           Regístrate aquí
         </Link>
       </p>

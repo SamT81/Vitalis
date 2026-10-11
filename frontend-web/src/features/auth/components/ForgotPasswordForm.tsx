@@ -64,8 +64,8 @@ export function ForgotPasswordForm() {
         </>
       )}
 
-      <p className="mt-5 text-center text-sm">
-        <Link to={ROUTES.LOGIN} className="font-semibold text-primary-700 hover:underline">
+      <p className="mt-8 border-t border-slate-200 pt-6 text-sm">
+        <Link to={ROUTES.LOGIN} className="font-semibold text-slate-900 underline underline-offset-4 hover:decoration-primary">
           Volver a iniciar sesión
         </Link>
       </p>
