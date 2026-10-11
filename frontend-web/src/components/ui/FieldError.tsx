@@ -7,7 +7,7 @@ interface FieldErrorProps {
 export function FieldError({ id, message }: FieldErrorProps) {
   if (!message) return null;
   return (
-    <p id={id} className="mt-1.5 text-sm text-primary-700">
+    <p id={id} className="fade-in mt-1.5 text-sm text-primary-700">
       {message}
     </p>
   );
