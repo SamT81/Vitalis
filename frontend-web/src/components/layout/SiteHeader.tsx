@@ -11,8 +11,8 @@ import { Brand } from './Brand';
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   cn(
-    'rounded-lg px-2 py-2 text-sm font-medium transition-colors hover:text-slate-900',
-    isActive ? 'font-semibold text-primary-700' : 'text-slate-600',
+    'rounded-lg px-2 py-2 text-sm font-medium underline-offset-[6px] transition-colors hover:text-slate-900',
+    isActive ? 'text-slate-900 underline decoration-primary decoration-2' : 'text-slate-600',
   );
 
 export function SiteHeader() {
@@ -27,13 +27,13 @@ export function SiteHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-100 bg-white/85 backdrop-blur-md">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 px-4 py-2.5 sm:px-6">
+    <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/85 backdrop-blur-md">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-6 px-4 py-3 sm:px-6 lg:px-10">
         <Brand />
 
         <button
           type="button"
-          className="inline-flex size-10 items-center justify-center rounded-lg text-slate-700 hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 md:hidden"
+          className="press inline-flex size-11 items-center justify-center rounded-full text-slate-900 hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 md:hidden"
           aria-label={open ? 'Cerrar menú de navegación' : 'Abrir menú de navegación'}
           aria-expanded={open}
           aria-controls="main-menu"
@@ -47,7 +47,7 @@ export function SiteHeader() {
           aria-label="Principal"
           className={cn(
             'w-full flex-col gap-3 pb-3 pt-2 md:flex md:w-auto md:flex-1 md:flex-row md:items-center md:justify-between md:p-0',
-            open ? 'flex' : 'hidden',
+            open ? 'menu-in flex md:animate-none' : 'hidden',
           )}
         >
           <ul className="flex flex-col gap-1 md:mx-auto md:flex-row md:gap-5">
@@ -81,11 +81,11 @@ export function SiteHeader() {
               >
                 <span
                   aria-hidden
-                  className="flex size-8 items-center justify-center rounded-full border border-primary-100 bg-primary-50 text-xs font-bold text-primary-700"
+                  className="flex size-8 items-center justify-center rounded-full bg-blush-200 text-xs font-semibold text-slate-900"
                 >
                   {initials(user.name)}
                 </span>
-                <span className="text-sm font-semibold text-slate-700">{firstName(user.name)}</span>
+                <span className="text-sm font-semibold text-slate-900">{firstName(user.name)}</span>
               </Link>
               <Button variant="ghost" onClick={handleLogout}>
                 <LogOut aria-hidden /> Salir
