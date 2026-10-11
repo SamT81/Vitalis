@@ -3,24 +3,124 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  }
+
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   body {
-    @apply min-w-[320px] overflow-x-hidden bg-slate-50 font-sans tracking-[-0.01em] text-slate-900;
+    @apply min-w-[320px] overflow-x-hidden bg-white font-sans text-slate-900;
   }
 
   h1,
   h2,
   h3 {
     @apply font-semibold tracking-tight;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
   }
 
   /* Foco visible por teclado en enlaces y controles sin estilo propio. */
   a:focus-visible,
   summary:focus-visible {
-    @apply rounded outline outline-2 outline-offset-2 outline-primary-600;
+    @apply rounded outline outline-2 outline-offset-2 outline-slate-900;
+  }
+}
+
+@layer components {
+  /* Titular editorial: serif con tamaño óptico, peso medio. */
+  .font-display {
+    font-optical-sizing: auto;
+    font-weight: 500;
+  }
+
+  /* Respuesta al presionar: el control cede un poco bajo el dedo. */
+  .press {
+    transition:
+      transform 160ms var(--ease-out),
+      background-color 160ms ease,
+      border-color 160ms ease,
+      color 160ms ease;
+  }
+
+  .press:active {
+    transform: scale(0.97);
+  }
+
+  /* Entrada escalonada: cada elemento define su turno con --i. */
+  .rise {
+    animation: rise 520ms var(--ease-out) both;
+    animation-delay: calc(var(--i, 0) * 70ms);
+  }
+
+  /* Cambio entre pantallas de acceso: solo el contenido del formulario se mueve. */
+  .auth-swap {
+    animation: rise-sm 260ms var(--ease-out) both;
+  }
+
+  /* Avisos y errores que aparecen dentro de un formulario. */
+  .fade-in {
+    animation: rise-xs 200ms var(--ease-out) both;
+  }
+
+  .menu-in {
+    animation: menu 200ms var(--ease-out) both;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes rise-sm {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes rise-xs {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes menu {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+/* Con movimiento reducido se conserva el fundido y se quita el desplazamiento. */
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .auth-swap,
+  .fade-in,
+  .menu-in {
+    animation: fade 200ms ease both;
+    animation-delay: 0ms;
+  }
+
+  .press:active {
+    transform: none;
   }
 }
